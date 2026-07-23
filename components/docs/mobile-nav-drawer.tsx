@@ -1,70 +1,32 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { NavigationTree } from "@/components/navigation-tree";
+import { useModalBehavior } from "@/components/use-modal-behavior";
 import type { DocNavigationGroup } from "@/lib/docs/navigation";
 
 type MobileNavDrawerProps = {
   groups: DocNavigationGroup[];
 };
 
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const titleId = useId();
+  const baseId = useId();
+  const drawerId = `${baseId}-drawer`;
+  const titleId = `${baseId}-title`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const closeDrawer = useCallback(() => setIsOpen(false), []);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    const trigger = triggerRef.current;
-    document.body.style.overflow = "hidden";
-    const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
-      FOCUSABLE_SELECTOR,
-    );
-    firstFocusable?.focus();
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsOpen(false);
-        return;
-      }
-
-      if (event.key !== "Tab" || !drawerRef.current) return;
-
-      const focusable = Array.from(
-        drawerRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      const first = focusable[0];
-      const last = focusable.at(-1);
-
-      if (!first || !last) return;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      trigger?.focus();
-    };
-  }, [isOpen]);
+  useModalBehavior({
+    dialogRef: drawerRef,
+    isOpen,
+    onClose: closeDrawer,
+    triggerRef,
+  });
 
   if (groups.length === 0) {
     return null;
@@ -73,6 +35,7 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
   return (
     <>
       <button
+        aria-controls={drawerId}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label="Abrir navegação da documentação"
@@ -89,22 +52,24 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
             <div
               className="drawer-backdrop"
               onMouseDown={(event) => {
-                if (event.currentTarget === event.target) setIsOpen(false);
+                if (event.currentTarget === event.target) closeDrawer();
               }}
             >
               <div
                 aria-labelledby={titleId}
                 aria-modal="true"
                 className="drawer"
+                id={drawerId}
                 ref={drawerRef}
                 role="dialog"
+                tabIndex={-1}
               >
                 <div className="drawer__header">
                   <h2 id={titleId}>Navegação</h2>
                   <button
                     aria-label="Fechar navegação"
                     className="icon-button"
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeDrawer}
                     type="button"
                   >
                     <X aria-hidden="true" size={18} />
@@ -113,7 +78,7 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
                 <nav aria-label="Documentação" className="drawer__navigation">
                   <NavigationTree
                     groups={groups}
-                    onNavigate={() => setIsOpen(false)}
+                    onNavigate={closeDrawer}
                   />
                 </nav>
               </div>

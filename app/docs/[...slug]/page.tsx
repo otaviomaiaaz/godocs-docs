@@ -6,7 +6,11 @@ import remarkGfm from "remark-gfm";
 
 import { ArticleShell } from "@/components/docs/article-shell";
 import { mdxComponents } from "@/components/docs/mdx-components";
-import { buildNavigation, getAdjacentDocs } from "@/lib/docs/navigation";
+import {
+  buildBreadcrumbs,
+  buildNavigation,
+  getAdjacentDocs,
+} from "@/lib/docs/navigation";
 import { getAllDocs, getDocBySlug } from "@/lib/docs/source";
 
 type DocPageProps = {
@@ -47,6 +51,7 @@ export default async function DocPage({ params }: DocPageProps) {
 
   return (
     <ArticleShell
+      breadcrumbs={buildBreadcrumbs(doc, docs)}
       doc={doc}
       navigation={navigation}
       next={next}

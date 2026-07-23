@@ -7,7 +7,6 @@ import "./globals.css";
 
 import { DocsHeader } from "@/components/docs-header";
 import { buildNavigation } from "@/lib/docs/navigation";
-import { createSearchIndex } from "@/lib/docs/search";
 import { getAllDocs } from "@/lib/docs/source";
 
 export const metadata: Metadata = {
@@ -30,7 +29,6 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const docs = await getAllDocs();
   const navigation = buildNavigation(docs);
-  const searchIndex = createSearchIndex(docs);
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -42,11 +40,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         />
       </head>
       <body>
-        <a className="skip-link" href="#main-content">
-          Pular para o conteúdo
-        </a>
-        <DocsHeader navigation={navigation} searchIndex={searchIndex} />
-        {children}
+        <div id="site-shell">
+          <a className="skip-link" href="#main-content">
+            Pular para o conteúdo
+          </a>
+          <DocsHeader navigation={navigation} />
+          {children}
+        </div>
       </body>
     </html>
   );

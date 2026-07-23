@@ -3,14 +3,12 @@ import { MobileNavDrawer } from "@/components/docs/mobile-nav-drawer";
 import { SearchDialog } from "@/components/search-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { DocNavigationGroup } from "@/lib/docs/navigation";
-import type { SearchDocument } from "@/lib/docs/search";
 
 type DocsHeaderProps = {
   navigation: DocNavigationGroup[];
-  searchIndex: SearchDocument[];
 };
 
-export function DocsHeader({ navigation, searchIndex }: DocsHeaderProps) {
+export function DocsHeader({ navigation }: DocsHeaderProps) {
   return (
     <header className="docs-header">
       <div className="docs-header__inner">
@@ -19,7 +17,7 @@ export function DocsHeader({ navigation, searchIndex }: DocsHeaderProps) {
           <Brand />
         </div>
         <div className="docs-header__search">
-          <SearchDialog index={searchIndex} />
+          <SearchDialog />
         </div>
         <ThemeToggle />
       </div>

@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowRight, FileText, Search, X } from "lucide-react";
+import {
+  ArrowRight,
+  FileText,
+  LoaderCircle,
+  RotateCcw,
+  Search,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useCallback,
@@ -12,17 +19,14 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { useModalBehavior } from "@/components/use-modal-behavior";
 import {
+  isSearchIndex,
   searchDocuments,
-  type SearchDocument,
+  type SearchIndex,
 } from "@/lib/docs/search";
 
-type SearchDialogProps = {
-  index: SearchDocument[];
-};
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+type IndexState = "idle" | "loading" | "ready" | "error";
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -35,18 +39,35 @@ function isEditableTarget(target: EventTarget | null): boolean {
   );
 }
 
-export function SearchDialog({ index }: SearchDialogProps) {
+export function SearchDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [index, setIndex] = useState<SearchIndex | null>(null);
+  const [indexState, setIndexState] = useState<IndexState>("idle");
   const router = useRouter();
-  const dialogTitleId = useId();
-  const dialogDescriptionId = useId();
+  const baseId = useId();
+  const dialogId = `${baseId}-dialog`;
+  const dialogTitleId = `${baseId}-title`;
+  const dialogDescriptionId = `${baseId}-description`;
+  const inputId = `${baseId}-input`;
+  const listboxId = `${baseId}-listbox`;
+  const statusId = `${baseId}-status`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const requestRef = useRef<AbortController | null>(null);
 
-  const results = useMemo(() => searchDocuments(index, query), [index, query]);
+  const results = useMemo(
+    () => (index ? searchDocuments(index, query, 10) : []),
+    [index, query],
+  );
+  const safeActiveIndex =
+    results.length > 0 ? Math.min(activeIndex, results.length - 1) : 0;
+  const activeResult = results[safeActiveIndex];
+  const activeOptionId = activeResult
+    ? `${baseId}-option-${safeActiveIndex}`
+    : undefined;
 
   const closeDialog = useCallback(() => {
     setIsOpen(false);
@@ -54,7 +75,47 @@ export function SearchDialog({ index }: SearchDialogProps) {
     setActiveIndex(0);
   }, []);
 
-  const openDialog = useCallback(() => setIsOpen(true), []);
+  const loadIndex = useCallback(async () => {
+    if (requestRef.current) return;
+
+    const controller = new AbortController();
+    requestRef.current = controller;
+    setIndexState("loading");
+
+    try {
+      const response = await fetch("/search-index.json", {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Falha ao carregar o índice (${response.status})`);
+      }
+
+      const payload: unknown = await response.json();
+      if (!isSearchIndex(payload)) {
+        throw new Error("O índice de pesquisa recebido é inválido");
+      }
+
+      setIndex(payload);
+      setIndexState("ready");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setIndexState("error");
+    } finally {
+      requestRef.current = null;
+    }
+  }, []);
+
+  const openDialog = useCallback(() => {
+    setIsOpen(true);
+    if (indexState === "idle") void loadIndex();
+  }, [indexState, loadIndex]);
+
+  const retryIndex = useCallback(() => {
+    setIndex(null);
+    void loadIndex();
+  }, [loadIndex]);
 
   const chooseResult = useCallback(
     (href: string) => {
@@ -63,6 +124,14 @@ export function SearchDialog({ index }: SearchDialogProps) {
     },
     [closeDialog, router],
   );
+
+  useModalBehavior({
+    dialogRef,
+    initialFocusRef: inputRef,
+    isOpen,
+    onClose: closeDialog,
+    triggerRef,
+  });
 
   useEffect(() => {
     function handleShortcut(event: KeyboardEvent) {
@@ -80,48 +149,17 @@ export function SearchDialog({ index }: SearchDialogProps) {
     return () => document.removeEventListener("keydown", handleShortcut);
   }, [openDialog]);
 
+  useEffect(
+    () => () => {
+      requestRef.current?.abort();
+    },
+    [],
+  );
+
   useEffect(() => {
-    if (!isOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    const trigger = triggerRef.current;
-    document.body.style.overflow = "hidden";
-    window.requestAnimationFrame(() => inputRef.current?.focus());
-
-    function handleDialogKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeDialog();
-        return;
-      }
-
-      if (event.key !== "Tab" || !dialogRef.current) return;
-
-      const focusable = Array.from(
-        dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      const first = focusable[0];
-      const last = focusable.at(-1);
-
-      if (!first || !last) return;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    document.addEventListener("keydown", handleDialogKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleDialogKeyDown);
-      document.body.style.overflow = previousOverflow;
-      trigger?.focus();
-    };
-  }, [closeDialog, isOpen]);
+    if (!isOpen || !activeOptionId) return;
+    document.getElementById(activeOptionId)?.scrollIntoView({ block: "nearest" });
+  }, [activeOptionId, isOpen]);
 
   function handleInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (results.length === 0) return;
@@ -136,23 +174,34 @@ export function SearchDialog({ index }: SearchDialogProps) {
       );
     } else if (event.key === "Enter") {
       event.preventDefault();
-      const result = results[activeIndex];
+      const result = results[safeActiveIndex];
       if (result) chooseResult(result.href);
     }
   }
 
+  const resultAnnouncement =
+    indexState === "ready" && query.trim()
+      ? `${results.length} ${
+          results.length === 1 ? "resultado encontrado" : "resultados encontrados"
+        }`
+      : "";
+
   return (
     <>
       <button
-        aria-label="Pesquisar na documentação"
+        aria-controls={dialogId}
+        aria-expanded={isOpen}
         aria-haspopup="dialog"
+        aria-label="Pesquisar na documentação"
         className="search-trigger"
         onClick={openDialog}
         ref={triggerRef}
         type="button"
       >
         <Search aria-hidden="true" size={17} strokeWidth={1.8} />
-        <span className="search-trigger__label">Pesquisar na documentação...</span>
+        <span className="search-trigger__label">
+          Pesquisar na documentação...
+        </span>
         <span className="search-trigger__mobile-label">Buscar</span>
         <kbd className="search-trigger__shortcut">
           <span className="shortcut-command">⌘</span>
@@ -174,8 +223,10 @@ export function SearchDialog({ index }: SearchDialogProps) {
                 aria-labelledby={dialogTitleId}
                 aria-modal="true"
                 className="search-dialog"
+                id={dialogId}
                 ref={dialogRef}
                 role="dialog"
+                tabIndex={-1}
               >
                 <div className="search-dialog__heading">
                   <div>
@@ -193,18 +244,24 @@ export function SearchDialog({ index }: SearchDialogProps) {
                 </div>
 
                 <p className="sr-only" id={dialogDescriptionId}>
-                  Pesquise nos documentos publicados. Use as setas para navegar nos
-                  resultados e Enter para abrir.
+                  Pesquise nos documentos publicados. Use as setas para navegar
+                  nos resultados, Enter para abrir e Tab para percorrer os
+                  controles.
                 </p>
 
                 <div className="search-field">
                   <Search aria-hidden="true" size={19} strokeWidth={1.8} />
-                  <label className="sr-only" htmlFor={`${dialogTitleId}-input`}>
+                  <label className="sr-only" htmlFor={inputId}>
                     Termo de pesquisa
                   </label>
                   <input
+                    aria-activedescendant={activeOptionId}
+                    aria-autocomplete="list"
+                    aria-controls={listboxId}
+                    aria-describedby={statusId}
+                    aria-expanded={isOpen}
                     autoComplete="off"
-                    id={`${dialogTitleId}-input`}
+                    id={inputId}
                     onChange={(event) => {
                       setQuery(event.target.value);
                       setActiveIndex(0);
@@ -212,14 +269,50 @@ export function SearchDialog({ index }: SearchDialogProps) {
                     onKeyDown={handleInputKeyDown}
                     placeholder="Pesquisar na documentação..."
                     ref={inputRef}
+                    role="combobox"
                     type="search"
                     value={query}
                   />
                   <kbd>Esc</kbd>
                 </div>
 
-                <div aria-live="polite" className="search-dialog__results">
-                  {index.length === 0 ? (
+                <p
+                  aria-live="polite"
+                  className="sr-only"
+                  id={statusId}
+                  role="status"
+                >
+                  {resultAnnouncement}
+                </p>
+
+                <div className="search-dialog__results">
+                  {indexState === "idle" || indexState === "loading" ? (
+                    <div aria-live="polite" className="search-empty">
+                      <span aria-hidden="true" className="search-empty__icon">
+                        <LoaderCircle
+                          className="search-loading-icon"
+                          size={22}
+                          strokeWidth={1.6}
+                        />
+                      </span>
+                      <p>Carregando índice de pesquisa...</p>
+                    </div>
+                  ) : indexState === "error" ? (
+                    <div className="search-empty">
+                      <span aria-hidden="true" className="search-empty__icon">
+                        <FileText size={22} strokeWidth={1.6} />
+                      </span>
+                      <p>Não foi possível carregar a pesquisa.</p>
+                      <button
+                        className="search-retry"
+                        onClick={retryIndex}
+                        type="button"
+                      >
+                        <RotateCcw aria-hidden="true" size={15} />
+                        Tentar novamente
+                      </button>
+                    </div>
+                  ) : !index || index.entries.length === 0 ? (
                     <div className="search-empty">
                       <span aria-hidden="true" className="search-empty__icon">
                         <FileText size={22} strokeWidth={1.6} />
@@ -232,39 +325,56 @@ export function SearchDialog({ index }: SearchDialogProps) {
                     <p className="search-hint">
                       Nenhum resultado encontrado para “{query.trim()}”.
                     </p>
-                  ) : (
-                    <ul aria-label="Resultados da pesquisa" role="listbox">
-                      {results.map((result, resultIndex) => (
-                        <li key={result.href}>
-                          <button
-                            aria-selected={resultIndex === activeIndex}
-                            className="search-result"
-                            onClick={() => chooseResult(result.href)}
-                            onMouseEnter={() => setActiveIndex(resultIndex)}
-                            role="option"
-                            type="button"
-                          >
-                            <span>
-                              {result.section ? (
-                                <span className="search-result__section">
-                                  {result.section}
-                                </span>
-                              ) : null}
-                              <strong>{result.title}</strong>
-                              <small>{result.description}</small>
-                            </span>
-                            <ArrowRight aria-hidden="true" size={17} />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  ) : null}
+                  <div
+                    aria-label="Resultados da pesquisa"
+                    className="search-results-list"
+                    id={listboxId}
+                    role="listbox"
+                  >
+                    {indexState === "ready" && query.trim() !== ""
+                      ? results.map((result, resultIndex) => (
+                        <button
+                          aria-selected={resultIndex === safeActiveIndex}
+                          className="search-result"
+                          id={`${baseId}-option-${resultIndex}`}
+                          key={result.href}
+                          onClick={() => chooseResult(result.href)}
+                          onFocus={() => setActiveIndex(resultIndex)}
+                          onMouseEnter={() => setActiveIndex(resultIndex)}
+                          role="option"
+                          type="button"
+                        >
+                          <span>
+                            {result.section ? (
+                              <span className="search-result__section">
+                                {result.section}
+                              </span>
+                            ) : null}
+                            <strong>{result.title}</strong>
+                            <small>{result.description}</small>
+                          </span>
+                          <ArrowRight aria-hidden="true" size={17} />
+                        </button>
+                        ))
+                      : null}
+                  </div>
                 </div>
 
                 <div className="search-dialog__footer" aria-hidden="true">
-                  <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
-                  <span><kbd>↵</kbd> abrir</span>
-                  <span><kbd>Esc</kbd> fechar</span>
+                  <span>
+                    <kbd>↑</kbd>
+                    <kbd>↓</kbd> navegar
+                  </span>
+                  <span>
+                    <kbd>↵</kbd> abrir
+                  </span>
+                  <span>
+                    <kbd>Tab</kbd> percorrer
+                  </span>
+                  <span>
+                    <kbd>Esc</kbd> fechar
+                  </span>
                 </div>
               </div>
             </div>,

@@ -7,10 +7,13 @@ import matter from "gray-matter";
 import { parseDocumentText } from "@/lib/docs/headings";
 import { parseDocFrontmatter, type DocRecord } from "@/lib/docs/schema";
 
-const CONTENT_DIRECTORY = path.join(process.cwd(), "content", "docs");
+const CONTENT_DIRECTORY =
+  process.env.GODOCS_FIXTURE_MODE === "filled"
+    ? path.join(process.cwd(), "tests", "fixtures", "content-filled")
+    : path.join(process.cwd(), "content", "docs");
 const DOCUMENT_EXTENSION = /\.mdx?$/i;
 
-async function findDocumentFiles(directory: string): Promise<string[]> {
+export async function findDocumentFiles(directory: string): Promise<string[]> {
   let entries;
 
   try {
@@ -38,29 +41,37 @@ async function findDocumentFiles(directory: string): Promise<string[]> {
   return files.flat().sort((a, b) => a.localeCompare(b));
 }
 
+export async function loadDocumentFile(filePath: string): Promise<DocRecord> {
+  const rawFile = await readFile(filePath, "utf8");
+  const { data, content } = matter(rawFile);
+  const metadata = parseDocFrontmatter(data, filePath);
+
+  try {
+    const parsed = parseDocumentText(content);
+
+    return {
+      metadata,
+      slug: metadata.slug,
+      segments: metadata.slug.split("/"),
+      href: `/docs/${metadata.slug}`,
+      source: content,
+      searchableText: parsed.searchableText,
+      headings: parsed.headings,
+      filePath,
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Conteúdo inválido em ${filePath}: ${message}`, {
+      cause: error,
+    });
+  }
+}
+
 export async function loadDocumentsFromDirectory(
   directory: string,
 ): Promise<DocRecord[]> {
   const files = await findDocumentFiles(directory);
-  const docs = await Promise.all(
-    files.map(async (filePath) => {
-      const rawFile = await readFile(filePath, "utf8");
-      const { data, content } = matter(rawFile);
-      const metadata = parseDocFrontmatter(data, filePath);
-      const parsed = parseDocumentText(content);
-
-      return {
-        metadata,
-        slug: metadata.slug,
-        segments: metadata.slug.split("/"),
-        href: `/docs/${metadata.slug}`,
-        source: content,
-        searchableText: parsed.searchableText,
-        headings: parsed.headings,
-        filePath,
-      } satisfies DocRecord;
-    }),
-  );
+  const docs = await Promise.all(files.map(loadDocumentFile));
 
   const slugs = new Map<string, string>();
 
@@ -77,13 +88,17 @@ export async function loadDocumentsFromDirectory(
   });
 
   return docs.sort((a, b) => {
-    const sectionComparison = (a.metadata.section ?? "").localeCompare(
-      b.metadata.section ?? "",
+    const sectionOrder =
+      (a.metadata.section?.order ?? Number.MAX_SAFE_INTEGER) -
+      (b.metadata.section?.order ?? Number.MAX_SAFE_INTEGER);
+    const sectionLabelComparison = (a.metadata.section?.label ?? "").localeCompare(
+      b.metadata.section?.label ?? "",
       "pt-BR",
     );
 
     return (
-      sectionComparison ||
+      sectionOrder ||
+      sectionLabelComparison ||
       a.metadata.order - b.metadata.order ||
       a.metadata.title.localeCompare(b.metadata.title, "pt-BR")
     );

@@ -1,20 +1,13 @@
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 
+import type { DocBreadcrumb } from "@/lib/docs/navigation";
+
 type BreadcrumbsProps = {
-  section?: string;
-  title: string;
+  items: DocBreadcrumb[];
 };
 
-function humanizeSection(section: string): string {
-  return section
-    .split(/[-_/]+/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toLocaleUpperCase("pt-BR") + word.slice(1))
-    .join(" ");
-}
-
-export function Breadcrumbs({ section, title }: BreadcrumbsProps) {
+export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <nav aria-label="Caminho da página" className="breadcrumbs">
       <ol>
@@ -23,18 +16,22 @@ export function Breadcrumbs({ section, title }: BreadcrumbsProps) {
             <Home aria-hidden="true" size={14} />
           </Link>
         </li>
-        {section ? (
-          <>
-            <li aria-hidden="true">
-              <ChevronRight size={13} />
+        {items.map((item, index) => {
+          const isCurrent = index === items.length - 1;
+
+          return (
+            <li className="breadcrumbs__segment" key={item.id}>
+              <ChevronRight aria-hidden="true" size={13} />
+              {item.href && !isCurrent ? (
+                <Link href={item.href}>{item.label}</Link>
+              ) : (
+                <span aria-current={isCurrent ? "page" : undefined}>
+                  {item.label}
+                </span>
+              )}
             </li>
-            <li>{humanizeSection(section)}</li>
-          </>
-        ) : null}
-        <li aria-hidden="true">
-          <ChevronRight size={13} />
-        </li>
-        <li aria-current="page">{title}</li>
+          );
+        })}
       </ol>
     </nav>
   );

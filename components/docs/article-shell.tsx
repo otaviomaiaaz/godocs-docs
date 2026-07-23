@@ -4,12 +4,16 @@ import { Breadcrumbs } from "@/components/docs/breadcrumbs";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { Pagination } from "@/components/docs/pagination";
 import { TableOfContents } from "@/components/docs/table-of-contents";
-import type { DocNavigationGroup } from "@/lib/docs/navigation";
+import type {
+  DocBreadcrumb,
+  DocNavigationGroup,
+} from "@/lib/docs/navigation";
 import type { DocRecord } from "@/lib/docs/schema";
 
 type ArticleShellProps = {
   doc: DocRecord;
   navigation: DocNavigationGroup[];
+  breadcrumbs: DocBreadcrumb[];
   previous?: DocRecord;
   next?: DocRecord;
   children: ReactNode;
@@ -18,6 +22,7 @@ type ArticleShellProps = {
 export function ArticleShell({
   doc,
   navigation,
+  breadcrumbs,
   previous,
   next,
   children,
@@ -34,10 +39,7 @@ export function ArticleShell({
         <DocsSidebar groups={navigation} />
 
         <article className="article">
-          <Breadcrumbs
-            section={doc.metadata.section}
-            title={doc.metadata.title}
-          />
+          <Breadcrumbs items={breadcrumbs} />
           <header className="article__header">
             <h1>{doc.metadata.title}</h1>
             <p>{doc.metadata.description}</p>

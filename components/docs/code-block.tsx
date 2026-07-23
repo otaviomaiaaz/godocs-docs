@@ -8,26 +8,40 @@ type CodeBlockProps = {
   language?: string;
 };
 
+type CopyState = "idle" | "copied" | "error";
+
 export function CodeBlock({ code, language }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<CopyState>("idle");
 
   useEffect(() => {
-    if (!copied) return;
-    const timeout = window.setTimeout(() => setCopied(false), 1600);
+    if (copyState === "idle") return;
+    const timeout = window.setTimeout(() => setCopyState("idle"), 2200);
     return () => window.clearTimeout(timeout);
-  }, [copied]);
+  }, [copyState]);
 
   async function copyCode() {
-    await navigator.clipboard.writeText(code);
-    setCopied(true);
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
   }
+
+  const copied = copyState === "copied";
+  const label =
+    copyState === "error"
+      ? "Não foi possível copiar"
+      : copied
+        ? "Código copiado"
+        : "Copiar código";
 
   return (
     <figure className="code-block">
       <figcaption>
         <span>{language ?? "Código"}</span>
         <button
-          aria-label={copied ? "Código copiado" : "Copiar código"}
+          aria-label={label}
           onClick={copyCode}
           type="button"
         >
@@ -36,7 +50,9 @@ export function CodeBlock({ code, language }: CodeBlockProps) {
           ) : (
             <Copy aria-hidden="true" size={15} />
           )}
-          <span>{copied ? "Copiado" : "Copiar"}</span>
+          <span aria-live="polite">
+            {copyState === "error" ? "Falha ao copiar" : copied ? "Copiado" : "Copiar"}
+          </span>
         </button>
       </figcaption>
       <pre>

@@ -23,8 +23,17 @@ Todo documento precisa começar com este contrato de frontmatter:
 ---
 title: Título da página
 description: Descrição curta da página.
-slug: caminho-da-pagina
-section: identificador-da-secao
+slug: guias/caminho-da-pagina
+navTitle: Título curto
+section:
+  id: guias
+  label: Guias
+  description: Orientações publicadas.
+  order: 10
+ancestors:
+  - segment: guias
+    label: Guias
+    order: 10
 order: 10
 keywords:
   - termo opcional
@@ -32,28 +41,32 @@ keywords:
 ```
 
 - `title`, `description`, `slug` e `order` são obrigatórios.
-- `section` agrupa páginas na navegação e passa a ser obrigatório quando o conteúdo usar categorias.
+- `section` agrupa páginas e define `id`, label visível, descrição e ordem sem derivar texto do slug.
+- `navTitle` é opcional e fornece um título curto para navegação; o artigo continua usando `title`.
+- `ancestors` descreve cada nível anterior de um slug aninhado com `segment`, label e ordem explícitos. A quantidade e os segmentos devem corresponder ao slug.
 - `keywords` é opcional e melhora a relevância da busca.
 - `order` é um inteiro não negativo usado na navegação e na paginação.
 - `slug` aceita segmentos minúsculos com números e hífens, por exemplo `configuracao/perfis`. A URL resultante será `/docs/configuracao/perfis`.
-- slugs duplicados ou metadados inválidos interrompem o build com uma mensagem clara.
+- slugs duplicados, taxonomia divergente ou metadados inválidos interrompem o build com uma mensagem clara.
 - o título principal vem do frontmatter; o corpo deve começar em `##` para manter um único `h1` por página.
 
 O corpo aceita Markdown e MDX. Os componentes `Callout`, `Steps`, `Step`, `Figure` e `CodeBlock` já estão disponíveis para documentos futuros.
 
 ## Organização e ordenação
 
-Arquivos podem ser organizados livremente em subpastas; a URL é definida exclusivamente por `slug`. `section` cria o agrupamento de primeiro nível e slugs com `/` geram ramos aninhados. Dentro da coleção, páginas são ordenadas por seção, `order` e título.
+Arquivos podem ser organizados livremente em subpastas; a URL é definida exclusivamente por `slug`. `section` cria o agrupamento de primeiro nível e `ancestors` nomeia os ramos de slugs com `/`. Home, sidebar, drawer, busca e breadcrumbs consomem essa mesma taxonomia explícita.
 
 ## Validação
 
 Execute a verificação completa antes de publicar alterações:
 
 ```bash
+pnpm audit:prod
+pnpm content:validate
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-O build deve continuar funcionando quando `content/docs/` contém apenas o arquivo `.gitkeep`.
+`content:validate` compila MD/MDX e verifica frontmatter, taxonomia, componentes permitidos, links internos, fragmentos e assets locais. O build deve continuar funcionando quando `content/docs/` contém apenas o arquivo `.gitkeep`.
