@@ -199,10 +199,7 @@ export function SearchDialog() {
         type="button"
       >
         <Search aria-hidden="true" size={17} strokeWidth={1.8} />
-        <span className="search-trigger__label">
-          Pesquisar na documentação...
-        </span>
-        <span className="search-trigger__mobile-label">Buscar</span>
+        <span className="search-trigger__label">Buscar</span>
         <kbd className="search-trigger__shortcut">
           <span className="shortcut-command">⌘</span>
           <span className="shortcut-control">Ctrl</span>
@@ -228,10 +225,34 @@ export function SearchDialog() {
                 role="dialog"
                 tabIndex={-1}
               >
-                <div className="search-dialog__heading">
-                  <div>
-                    <p className="eyebrow">PESQUISA LOCAL</p>
-                    <h2 id={dialogTitleId}>Pesquisar na documentação</h2>
+                <div className="search-dialog__toolbar">
+                  <h2 className="sr-only" id={dialogTitleId}>
+                    Pesquisar na documentação
+                  </h2>
+                  <div className="search-field">
+                    <Search aria-hidden="true" size={19} strokeWidth={1.8} />
+                    <label className="sr-only" htmlFor={inputId}>
+                      Termo de pesquisa
+                    </label>
+                    <input
+                      aria-activedescendant={activeOptionId}
+                      aria-autocomplete="list"
+                      aria-controls={listboxId}
+                      aria-describedby={statusId}
+                      aria-expanded={isOpen}
+                      autoComplete="off"
+                      id={inputId}
+                      onChange={(event) => {
+                        setQuery(event.target.value);
+                        setActiveIndex(0);
+                      }}
+                      onKeyDown={handleInputKeyDown}
+                      placeholder="Buscar na documentação..."
+                      ref={inputRef}
+                      role="combobox"
+                      type="search"
+                      value={query}
+                    />
                   </div>
                   <button
                     aria-label="Fechar pesquisa"
@@ -248,33 +269,6 @@ export function SearchDialog() {
                   nos resultados, Enter para abrir e Tab para percorrer os
                   controles.
                 </p>
-
-                <div className="search-field">
-                  <Search aria-hidden="true" size={19} strokeWidth={1.8} />
-                  <label className="sr-only" htmlFor={inputId}>
-                    Termo de pesquisa
-                  </label>
-                  <input
-                    aria-activedescendant={activeOptionId}
-                    aria-autocomplete="list"
-                    aria-controls={listboxId}
-                    aria-describedby={statusId}
-                    aria-expanded={isOpen}
-                    autoComplete="off"
-                    id={inputId}
-                    onChange={(event) => {
-                      setQuery(event.target.value);
-                      setActiveIndex(0);
-                    }}
-                    onKeyDown={handleInputKeyDown}
-                    placeholder="Pesquisar na documentação..."
-                    ref={inputRef}
-                    role="combobox"
-                    type="search"
-                    value={query}
-                  />
-                  <kbd>Esc</kbd>
-                </div>
 
                 <p
                   aria-live="polite"
@@ -361,21 +355,6 @@ export function SearchDialog() {
                   </div>
                 </div>
 
-                <div className="search-dialog__footer" aria-hidden="true">
-                  <span>
-                    <kbd>↑</kbd>
-                    <kbd>↓</kbd> navegar
-                  </span>
-                  <span>
-                    <kbd>↵</kbd> abrir
-                  </span>
-                  <span>
-                    <kbd>Tab</kbd> percorrer
-                  </span>
-                  <span>
-                    <kbd>Esc</kbd> fechar
-                  </span>
-                </div>
               </div>
             </div>,
             document.body,

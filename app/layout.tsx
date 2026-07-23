@@ -8,14 +8,47 @@ import "./globals.css";
 import { DocsHeader } from "@/components/docs-header";
 import { buildNavigation } from "@/lib/docs/navigation";
 import { getAllDocs } from "@/lib/docs/source";
+import {
+  absoluteUrl,
+  SITE_DESCRIPTION,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
   title: {
-    default: "GoDocs Docs",
-    template: "%s | GoDocs Docs",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "Documentação oficial do GoDocs.",
-  applicationName: "GoDocs Docs",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  alternates: {
+    canonical: absoluteUrl("/"),
+  },
+  openGraph: {
+    type: "website",
+    locale: SITE_LOCALE,
+    url: absoluteUrl("/"),
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: absoluteUrl("/opengraph-image"),
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [absoluteUrl("/opengraph-image")],
+  },
 };
 
 export const viewport: Viewport = {
@@ -31,7 +64,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const navigation = buildNavigation(docs);
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html
+      data-scroll-behavior="smooth"
+      lang="pt-BR"
+      suppressHydrationWarning
+    >
       <head>
         <Script
           id="theme-initialization"

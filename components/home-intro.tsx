@@ -1,5 +1,8 @@
+"use client";
+
 import { ArrowRight, FileText } from "lucide-react";
 import Link from "next/link";
+import { useId, useState } from "react";
 
 import type {
   DocNavigationGroup,
@@ -11,6 +14,7 @@ type HomeIntroProps = {
 };
 
 type LinkedNavigationItem = DocNavigationItem & { href: string };
+const INITIAL_PAGES_PER_SECTION = 6;
 
 function collectDocumentItems(
   items: DocNavigationItem[],
@@ -31,6 +35,58 @@ function HomeAmbient() {
   );
 }
 
+function HomeSection({ group }: { group: DocNavigationGroup }) {
+  const entries = collectDocumentItems(group.items);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const pagesId = `${useId()}-pages`;
+  const hasMore = entries.length > INITIAL_PAGES_PER_SECTION;
+  const visibleEntries = isExpanded
+    ? entries
+    : entries.slice(0, INITIAL_PAGES_PER_SECTION);
+
+  return (
+    <section className="home-section">
+      <div className="home-section__heading">
+        <div>
+          {group.title ? <h2>{group.title}</h2> : null}
+          {group.description ? <p>{group.description}</p> : null}
+        </div>
+      </div>
+
+      <ul className="home-section__pages" id={pagesId}>
+        {visibleEntries.map((item) => (
+          <li key={item.id}>
+            <Link className="home-page-card" href={item.href}>
+              <FileText aria-hidden="true" size={20} strokeWidth={1.7} />
+              <span>
+                <strong>{item.label}</strong>
+                {item.description ? <small>{item.description}</small> : null}
+              </span>
+              <ArrowRight
+                aria-hidden="true"
+                className="home-page-card__arrow"
+                size={16}
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      {hasMore ? (
+        <button
+          aria-controls={pagesId}
+          aria-expanded={isExpanded}
+          className="home-section__expand"
+          onClick={() => setIsExpanded((current) => !current)}
+          type="button"
+        >
+          {isExpanded ? "Mostrar menos" : "Mostrar mais"}
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
 export function HomeIntro({ groups }: HomeIntroProps) {
   if (groups.length === 0) {
     return (
@@ -48,7 +104,7 @@ export function HomeIntro({ groups }: HomeIntroProps) {
           </p>
           <p className="home__status">
             <span aria-hidden="true" className="home__status-marker" />
-            Novos conteúdos serão publicados progressivamente.
+            Ainda não há documentos publicados.
           </p>
         </section>
       </main>
@@ -71,45 +127,9 @@ export function HomeIntro({ groups }: HomeIntroProps) {
       </section>
 
       <nav aria-label="Seções da documentação" className="home-sections">
-        {groups.map((group) => {
-          const entries = collectDocumentItems(group.items);
-
-          return (
-            <section className="home-section" key={group.id}>
-              <div className="home-section__heading">
-                <div>
-                  {group.title ? <h2>{group.title}</h2> : null}
-                  {group.description ? <p>{group.description}</p> : null}
-                </div>
-                {group.entryHref && group.title ? (
-                  <Link className="home-section__entry" href={group.entryHref}>
-                    Abrir seção
-                    <ArrowRight aria-hidden="true" size={15} />
-                  </Link>
-                ) : null}
-              </div>
-
-              <ul className="home-section__pages">
-                {entries.map((item) => (
-                  <li key={item.id}>
-                    <Link className="home-page-card" href={item.href}>
-                      <FileText aria-hidden="true" size={20} strokeWidth={1.7} />
-                      <span>
-                        <strong>{item.label}</strong>
-                        {item.description ? <small>{item.description}</small> : null}
-                      </span>
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="home-page-card__arrow"
-                        size={16}
-                      />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+        {groups.map((group) => (
+          <HomeSection group={group} key={group.id} />
+        ))}
       </nav>
     </main>
   );

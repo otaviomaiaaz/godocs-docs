@@ -1,23 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export function Brand() {
   return (
     <Link
-      aria-label="GoDocs Documentação — página inicial"
+      aria-label="GoDocs — página inicial"
       className="brand"
       href="/"
     >
-      <span aria-hidden="true" className="brand__wordmark">
-        <span className="brand__accent">go</span>
-        <span>docs</span>
-      </span>
-      <span aria-hidden="true" className="brand__separator" />
-      <span aria-hidden="true" className="brand__label brand__label--desktop">
-        Documentação
-      </span>
-      <span aria-hidden="true" className="brand__label brand__label--mobile">
-        Docs
-      </span>
+      <Image
+        alt=""
+        className="brand__logo"
+        height={78}
+        priority
+        sizes="(max-width: 767px) 108px, 124px"
+        src="/brand/godocs-logo.png"
+        width={178}
+      />
     </Link>
   );
 }

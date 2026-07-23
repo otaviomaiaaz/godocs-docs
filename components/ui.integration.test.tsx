@@ -5,7 +5,9 @@ import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Brand } from "@/components/brand";
 import { MobileNavDrawer } from "@/components/docs/mobile-nav-drawer";
+import { DocsHeader } from "@/components/docs-header";
 import { SearchDialog } from "@/components/search-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -24,12 +26,13 @@ const searchIndex: SearchIndex = {
   version: 1,
   entries: [
     createSearchEntry({
-      title: "Configuração",
-      description: "Ajustes disponíveis.",
-      href: "/docs/configuracao",
-      section: "Guias",
-      keywords: ["preferências"],
-      content: "Defina as opções necessárias.",
+      title: "O que é o GoDocs?",
+      description:
+        "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
+      href: "/docs/o-que-e-o-godocs",
+      section: "Comece por aqui",
+      keywords: ["GoDocs", "GED", "documentos"],
+      content: "Gestão Eletrônica de Documentos e Processos.",
     }),
     createSearchEntry({
       title: "Pesquisa",
@@ -111,13 +114,16 @@ describe("fluxos interativos", () => {
     expect(combobox.getAttribute("aria-expanded")).toBe("true");
     expect(combobox.getAttribute("aria-controls")).toBeTruthy();
 
-    await user.type(combobox, "configuracao");
-    const option = await screen.findByRole("option", { name: /Configuração/ });
+    expect(screen.queryByText("PESQUISA LOCAL")).toBeNull();
+    expect(screen.queryByText("navegar")).toBeNull();
+
+    await user.type(combobox, "GoDocs");
+    const option = await screen.findByRole("option", { name: /O que é o GoDocs/ });
     expect(combobox.getAttribute("aria-activedescendant")).toBe(option.id);
     expect(screen.getByRole("status").textContent).toContain("1 resultado");
 
     await user.keyboard("{Enter}");
-    expect(push).toHaveBeenCalledWith("/docs/configuracao");
+    expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
       false,
@@ -125,6 +131,62 @@ describe("fluxos interativos", () => {
 
     await user.click(trigger);
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("abre com Ctrl+K e navega pelos resultados com setas", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => searchIndex,
+      })),
+    );
+    const user = userEvent.setup();
+
+    renderInSiteShell(<SearchDialog />);
+    await user.keyboard("{Control>}k{/Control}");
+
+    const combobox = await screen.findByRole("combobox");
+    await user.type(combobox, "documentos");
+    const options = await screen.findAllByRole("option");
+    expect(options).toHaveLength(2);
+
+    await user.keyboard("{ArrowDown}");
+    expect(combobox.getAttribute("aria-activedescendant")).toBe(options[1]?.id);
+    await user.keyboard("{ArrowUp}");
+    expect(combobox.getAttribute("aria-activedescendant")).toBe(options[0]?.id);
+    await user.keyboard("{Enter}");
+
+    expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
+  });
+
+  it("mantém compactos os estados de carregamento e índice vazio", async () => {
+    let resolveFetch: ((value: {
+      ok: true;
+      json: () => Promise<SearchIndex>;
+    }) => void) | undefined;
+    const fetchPromise = new Promise<{
+      ok: true;
+      json: () => Promise<SearchIndex>;
+    }>((resolve) => {
+      resolveFetch = resolve;
+    });
+    vi.stubGlobal("fetch", vi.fn(() => fetchPromise));
+    const user = userEvent.setup();
+
+    renderInSiteShell(<SearchDialog />);
+    await user.click(
+      screen.getByRole("button", { name: "Pesquisar na documentação" }),
+    );
+    expect(screen.getByText("Carregando índice de pesquisa...")).toBeTruthy();
+
+    resolveFetch?.({
+      ok: true,
+      json: async () => ({ version: 1, entries: [] }),
+    });
+    expect(
+      await screen.findByText("Nenhum conteúdo disponível para pesquisa."),
+    ).toBeTruthy();
   });
 
   it("fecha a busca com Escape, contém Tab e restaura o foco", async () => {
@@ -236,5 +298,55 @@ describe("fluxos interativos", () => {
     expect(document.documentElement.dataset.theme).toBe("light");
     expect(window.localStorage.getItem("godocs-theme")).toBe("light");
     expect(toggle.getAttribute("aria-label")).toBe("Ativar tema escuro");
+  });
+});
+
+describe("marca oficial", () => {
+  it("usa o asset oficial como link acessível sem rótulos extras", () => {
+    render(<Brand />);
+
+    const brand = screen.getByRole("link", { name: "GoDocs — página inicial" });
+    expect(brand.getAttribute("href")).toBe("/");
+    expect(brand.querySelector("img")?.getAttribute("src")).toContain(
+      "godocs-logo.png",
+    );
+    expect(screen.queryByText("Documentação")).toBeNull();
+    expect(screen.queryByText("Docs")).toBeNull();
+  });
+
+  it("preserva busca, tema e menu móvel condicional no header", async () => {
+    renderInSiteShell(
+      <DocsHeader
+        navigation={[
+          {
+            id: "comece-por-aqui",
+            title: "Comece por aqui",
+            description: "Conteúdos introdutórios.",
+            order: 10,
+            entryHref: "/docs/o-que-e-o-godocs",
+            items: [
+              {
+                id: "o-que-e-o-godocs",
+                label: "O que é o GoDocs?",
+                href: "/docs/o-que-e-o-godocs",
+                children: [],
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Pesquisar na documentação" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", {
+        name: "Abrir navegação da documentação",
+      }),
+    ).toBeTruthy();
+    expect(
+      await screen.findByRole("button", { name: "Ativar tema claro" }),
+    ).toBeTruthy();
   });
 });
