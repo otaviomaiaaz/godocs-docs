@@ -21,6 +21,7 @@ import { createPortal } from "react-dom";
 
 import { useModalBehavior } from "@/components/use-modal-behavior";
 import {
+  hasUsefulSearchQuery,
   isSearchIndex,
   searchDocuments,
   type SearchIndex,
@@ -62,6 +63,7 @@ export function SearchDialog() {
     () => (index ? searchDocuments(index, query, 10) : []),
     [index, query],
   );
+  const hasUsefulQuery = hasUsefulSearchQuery(query);
   const safeActiveIndex =
     results.length > 0 ? Math.min(activeIndex, results.length - 1) : 0;
   const activeResult = results[safeActiveIndex];
@@ -180,7 +182,7 @@ export function SearchDialog() {
   }
 
   const resultAnnouncement =
-    indexState === "ready" && query.trim()
+    indexState === "ready" && hasUsefulQuery
       ? `${results.length} ${
           results.length === 1 ? "resultado encontrado" : "resultados encontrados"
         }`
@@ -315,6 +317,10 @@ export function SearchDialog() {
                     </div>
                   ) : query.trim() === "" ? (
                     <p className="search-hint">Digite um termo para pesquisar.</p>
+                  ) : !hasUsefulQuery ? (
+                    <p className="search-hint">
+                      Digite ao menos dois caracteres para pesquisar.
+                    </p>
                   ) : results.length === 0 ? (
                     <p className="search-hint">
                       Nenhum resultado encontrado para “{query.trim()}”.
@@ -326,7 +332,7 @@ export function SearchDialog() {
                     id={listboxId}
                     role="listbox"
                   >
-                    {indexState === "ready" && query.trim() !== ""
+                    {indexState === "ready" && hasUsefulQuery
                       ? results.map((result, resultIndex) => (
                         <button
                           aria-selected={resultIndex === safeActiveIndex}

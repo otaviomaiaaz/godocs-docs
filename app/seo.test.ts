@@ -14,7 +14,7 @@ describe("SEO e indexação", () => {
         default: "GoDocs Docs",
         template: "%s | GoDocs Docs",
       },
-      description: "Documentação oficial do GoDocs.",
+      description: "Guias, conceitos e instruções para utilizar o GoDocs.",
       alternates: {
         canonical: absoluteUrl("/"),
       },
@@ -22,9 +22,11 @@ describe("SEO e indexação", () => {
         type: "website",
         locale: "pt_BR",
         url: absoluteUrl("/"),
+        title: "Documentação do GoDocs",
       },
       twitter: {
         card: "summary_large_image",
+        title: "Documentação do GoDocs",
       },
     });
   });

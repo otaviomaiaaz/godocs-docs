@@ -7,6 +7,7 @@ export type SearchIndexEntry = {
   section?: string;
   normalized: {
     title: string;
+    headings: string;
     description: string;
     section: string;
     keywords: string;
@@ -31,6 +32,7 @@ export type SearchEntrySource = {
   description: string;
   href: string;
   section?: string;
+  headings?: string[];
   keywords?: string[];
   content: string;
 };
@@ -40,8 +42,19 @@ export function normalizeSearchText(value: string): string {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLocaleLowerCase("pt-BR")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+export function getUsefulSearchTerms(value: string): string[] {
+  return normalizeSearchText(value)
+    .split(" ")
+    .filter((term) => term.length >= 2);
+}
+
+export function hasUsefulSearchQuery(value: string): boolean {
+  return getUsefulSearchTerms(value).length > 0;
 }
 
 export function createSearchEntry(source: SearchEntrySource): SearchIndexEntry {
@@ -52,6 +65,7 @@ export function createSearchEntry(source: SearchEntrySource): SearchIndexEntry {
     section: source.section,
     normalized: {
       title: normalizeSearchText(source.title),
+      headings: normalizeSearchText((source.headings ?? []).join(" ")),
       description: normalizeSearchText(source.description),
       section: normalizeSearchText(source.section ?? ""),
       keywords: normalizeSearchText((source.keywords ?? []).join(" ")),
@@ -69,6 +83,7 @@ export function createSearchIndex(docs: DocRecord[]): SearchIndex {
         description: doc.metadata.description,
         href: doc.href,
         section: doc.metadata.section?.label,
+        headings: doc.headings.map((heading) => heading.title),
         keywords: doc.metadata.keywords,
         content: doc.searchableText,
       }),
@@ -95,6 +110,7 @@ export function isSearchIndex(value: unknown): value is SearchIndex {
       typeof item.href === "string" &&
       (item.section === undefined || typeof item.section === "string") &&
       typeof normalized?.title === "string" &&
+      typeof normalized.headings === "string" &&
       typeof normalized.description === "string" &&
       typeof normalized.section === "string" &&
       typeof normalized.keywords === "string" &&
@@ -103,35 +119,112 @@ export function isSearchIndex(value: unknown): value is SearchIndex {
   });
 }
 
+type SearchField = {
+  value: string;
+  exactWordScore: number;
+  prefixScore: number;
+  phraseScore: number;
+};
+
+function scoreTermInField(
+  field: SearchField,
+  term: string,
+): number {
+  const paddedValue = ` ${field.value} `;
+  const paddedTerm = ` ${term} `;
+
+  if (paddedValue.includes(paddedTerm)) {
+    return field.exactWordScore;
+  }
+
+  if (
+    field.value.startsWith(term) ||
+    field.value.includes(` ${term}`)
+  ) {
+    return field.prefixScore;
+  }
+
+  return 0;
+}
+
+function containsPhrase(value: string, terms: string[]): boolean {
+  if (terms.length < 2 || !value) return false;
+
+  return ` ${value} `.includes(` ${terms.join(" ")} `);
+}
+
 export function searchDocuments(
   index: SearchIndex,
   rawQuery: string,
   limit = 10,
 ): SearchResult[] {
-  const query = normalizeSearchText(rawQuery);
+  const terms = getUsefulSearchTerms(rawQuery);
 
-  if (!query || limit <= 0) {
+  if (terms.length === 0 || limit <= 0) {
     return [];
   }
 
-  const terms = query.split(" ").filter(Boolean);
-
   return index.entries
-    .map((document) => {
+    .map<SearchResult | null>((document) => {
       const fields = document.normalized;
-      const score = terms.reduce((total, term) => {
-        let termScore = 0;
+      const weightedFields: SearchField[] = [
+        {
+          value: fields.title,
+          exactWordScore: 80,
+          prefixScore: 56,
+          phraseScore: 72,
+        },
+        {
+          value: fields.headings,
+          exactWordScore: 48,
+          prefixScore: 34,
+          phraseScore: 42,
+        },
+        {
+          value: fields.keywords,
+          exactWordScore: 48,
+          prefixScore: 34,
+          phraseScore: 42,
+        },
+        {
+          value: fields.description,
+          exactWordScore: 28,
+          prefixScore: 20,
+          phraseScore: 26,
+        },
+        {
+          value: fields.section,
+          exactWordScore: 18,
+          prefixScore: 12,
+          phraseScore: 14,
+        },
+        {
+          value: fields.content,
+          exactWordScore: 10,
+          prefixScore: 7,
+          phraseScore: 8,
+        },
+      ];
+      const termScores = terms.map((term) =>
+        weightedFields.reduce(
+          (total, field) => total + scoreTermInField(field, term),
+          0,
+        ),
+      );
 
-        if (fields.title.includes(term)) {
-          termScore += fields.title === term ? 12 : 8;
-        }
-        if (fields.keywords.includes(term)) termScore += 6;
-        if (fields.description.includes(term)) termScore += 4;
-        if (fields.section.includes(term)) termScore += 2;
-        if (fields.content.includes(term)) termScore += 1;
+      if (termScores.some((termScore) => termScore === 0)) {
+        return null;
+      }
 
-        return total + termScore;
-      }, 0);
+      const phraseScore = weightedFields.reduce(
+        (total, field) =>
+          total + (containsPhrase(field.value, terms) ? field.phraseScore : 0),
+        0,
+      );
+      const score =
+        termScores.reduce((total, termScore) => total + termScore, 0) +
+        phraseScore +
+        (terms.length > 1 ? 20 : 0);
 
       return {
         title: document.title,
@@ -141,7 +234,7 @@ export function searchDocuments(
         score,
       };
     })
-    .filter((document) => document.score > 0)
+    .filter((document): document is SearchResult => document !== null)
     .sort(
       (a, b) =>
         b.score - a.score || a.title.localeCompare(b.title, "pt-BR"),

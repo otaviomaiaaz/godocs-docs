@@ -70,7 +70,7 @@ A direção inicial ainda trazia ambiguidade sobre integrar a documentação ao 
 
 - o GoDocs Docs é uma **aplicação independente**;
 - não acessa código, APIs, autenticação ou serviços privados do GoDocs;
-- deve parecer uma experiência oficial do mesmo ecossistema;
+- deve manter coerência visual com o mesmo ecossistema, sem se declarar oficial;
 - a home canônica será `/`;
 - artigos futuros usarão `/docs/[...slug]`;
 - o MVP nasce sem artigos, categorias ou cards fictícios.
@@ -290,7 +290,7 @@ identidade, paleta e tom visual do GoDocs
 | Decisão | Estado | Motivo |
 |---|---|---|
 | Produto independente do GoDocs | Confirmada | Reduz acoplamento e preserva autonomia técnica |
-| Aparência oficial do ecossistema GoDocs | Confirmada | Mantém continuidade de marca |
+| Coerência visual com o ecossistema GoDocs | Confirmada | Mantém continuidade de marca sem alegação institucional |
 | Mintlify como referência, não cópia | Confirmada | Reutiliza padrões de UX sem reproduzir identidade alheia |
 | Home canônica em `/` | Confirmada | Entrada direta e simples |
 | Artigos em `/docs/[...slug]` | Confirmada | Rota clara e extensível |

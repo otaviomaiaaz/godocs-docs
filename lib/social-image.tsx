@@ -3,7 +3,11 @@ import path from "node:path";
 
 import { ImageResponse } from "next/og";
 
-import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import {
+  SITE_DESCRIPTION,
+  SITE_HOME_TITLE,
+  SITE_NAME,
+} from "@/lib/site";
 
 type SocialImageOptions = {
   eyebrow?: string;
@@ -19,17 +23,22 @@ export const socialImageSize = {
 export const socialImageContentType = "image/png";
 
 export async function createSocialImage({
-  eyebrow = "DOCUMENTAÇÃO OFICIAL",
-  title = SITE_NAME,
+  eyebrow = SITE_NAME,
+  title = SITE_HOME_TITLE,
   description = SITE_DESCRIPTION,
 }: SocialImageOptions = {}) {
   const logo = await readFile(
-    path.join(process.cwd(), "public", "brand", "godocs-logo.png"),
+    path.join(
+      process.cwd(),
+      "public",
+      "brand",
+      "godocs-wordmark-on-dark.svg",
+    ),
+    "utf8",
   );
-  const logoSource = logo.buffer.slice(
-    logo.byteOffset,
-    logo.byteOffset + logo.byteLength,
-  ) as ArrayBuffer;
+  const logoSource = `data:image/svg+xml;base64,${Buffer.from(logo).toString(
+    "base64",
+  )}`;
 
   return new ImageResponse(
     (
@@ -56,10 +65,10 @@ export async function createSocialImage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt=""
-            height={78}
-            src={logoSource as unknown as string}
+            height={60}
+            src={logoSource}
             style={{ display: "block" }}
-            width={178}
+            width={242}
           />
           <span
             style={{

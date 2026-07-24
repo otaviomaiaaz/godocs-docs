@@ -301,14 +301,25 @@ describe("fluxos interativos", () => {
   });
 });
 
-describe("marca oficial", () => {
-  it("usa o asset oficial como link acessível sem rótulos extras", () => {
+describe("marca", () => {
+  it("usa variantes vetoriais de tema sem depender do recorte raster", () => {
     render(<Brand />);
 
     const brand = screen.getByRole("link", { name: "GoDocs — página inicial" });
     expect(brand.getAttribute("href")).toBe("/");
-    expect(brand.querySelector("img")?.getAttribute("src")).toContain(
-      "godocs-logo.png",
+    const sources = Array.from(brand.querySelectorAll("img")).map((image) =>
+      image.getAttribute("src"),
+    );
+    expect(sources).toHaveLength(2);
+    expect(sources.some((source) => source?.includes("wordmark-on-dark.svg"))).toBe(
+      true,
+    );
+    expect(
+      sources.some((source) => source?.includes("wordmark-on-light.svg")),
+    ).toBe(true);
+    const defectiveAssetName = ["godocs", "logo.png"].join("-");
+    expect(sources.some((source) => source?.includes(defectiveAssetName))).toBe(
+      false,
     );
     expect(screen.queryByText("Documentação")).toBeNull();
     expect(screen.queryByText("Docs")).toBeNull();

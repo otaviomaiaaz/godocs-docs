@@ -11,6 +11,7 @@ import { getAllDocs } from "@/lib/docs/source";
 import {
   absoluteUrl,
   SITE_DESCRIPTION,
+  SITE_HOME_TITLE,
   SITE_LOCALE,
   SITE_NAME,
   SITE_URL,
@@ -32,20 +33,20 @@ export const metadata: Metadata = {
     locale: SITE_LOCALE,
     url: absoluteUrl("/"),
     siteName: SITE_NAME,
-    title: SITE_NAME,
+    title: SITE_HOME_TITLE,
     description: SITE_DESCRIPTION,
     images: [
       {
         url: absoluteUrl("/opengraph-image"),
         width: 1200,
         height: 630,
-        alt: SITE_NAME,
+        alt: SITE_HOME_TITLE,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_NAME,
+    title: SITE_HOME_TITLE,
     description: SITE_DESCRIPTION,
     images: [absoluteUrl("/opengraph-image")],
   },
@@ -55,7 +56,7 @@ export const viewport: Viewport = {
   colorScheme: "dark light",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#1B1B1B" },
-    { media: "(prefers-color-scheme: light)", color: "#FAFAFA" },
+    { media: "(prefers-color-scheme: light)", color: "#F8F9FB" },
   ],
 };
 

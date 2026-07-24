@@ -17,7 +17,7 @@ Não entregue apenas um plano ou mockup. Crie a aplicação funcional, execute-a
 
 ## Contexto do produto
 
-O GoDocs Docs não será incorporado ao código ou aos serviços privados do GoDocs. Ele será publicado como uma aplicação própria, mas deve parecer uma documentação oficial do produto.
+O GoDocs Docs não será incorporado ao código ou aos serviços privados do GoDocs. Ele será publicado como uma aplicação própria e deve manter coerência visual com o ecossistema do produto, sem se declarar oficial.
 
 Combine:
 
@@ -81,7 +81,7 @@ Use o gerenciador indicado por lockfile. Se não houver lockfile, escolha um ún
 Use estes textos:
 
 - título: `Documentação do GoDocs`;
-- descrição: `Encontre guias, conceitos e instruções para utilizar o GoDocs.`;
+- descrição: `Guias, conceitos e instruções para utilizar o GoDocs.`;
 - estado: `Novos conteúdos serão publicados progressivamente.`
 
 ### Header e marca

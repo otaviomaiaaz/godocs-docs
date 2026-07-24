@@ -13,6 +13,14 @@ describe("home orientada ao conteúdo", () => {
     render(<HomeIntro groups={[]} />);
 
     expect(screen.getByText("Ainda não há documentos publicados.")).toBeTruthy();
+    expect(
+      screen.getByText("Guias, conceitos e instruções para utilizar o GoDocs."),
+    ).toBeTruthy();
+    expect(
+      screen.queryByText(
+        new RegExp(["documentação", "oficial"].join(" "), "i"),
+      ),
+    ).toBeNull();
     expect(screen.queryByRole("navigation", { name: "Seções da documentação" })).toBeNull();
   });
 
@@ -47,11 +55,14 @@ describe("home orientada ao conteúdo", () => {
     expect(
       screen.getByRole("link", { name: /O que é o GoDocs\?/ }).getAttribute("href"),
     ).toBe("/docs/o-que-e-o-godocs");
+    const description = screen.getByText(
+      "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
+    );
+    expect(description.textContent?.endsWith("...")).toBe(false);
+    expect(description.textContent?.endsWith("…")).toBe(false);
     expect(
-      screen.getByText(
-        "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
-      ),
-    ).toBeTruthy();
+      description.closest(".home-section__pages")?.getAttribute("data-count"),
+    ).toBe("1");
     expect(screen.queryByText("Abrir seção")).toBeNull();
   });
 

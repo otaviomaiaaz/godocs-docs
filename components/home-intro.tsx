@@ -8,6 +8,7 @@ import type {
   DocNavigationGroup,
   DocNavigationItem,
 } from "@/lib/docs/navigation";
+import { SITE_DESCRIPTION } from "@/lib/site";
 
 type HomeIntroProps = {
   groups: DocNavigationGroup[];
@@ -53,7 +54,11 @@ function HomeSection({ group }: { group: DocNavigationGroup }) {
         </div>
       </div>
 
-      <ul className="home-section__pages" id={pagesId}>
+      <ul
+        className="home-section__pages"
+        data-count={visibleEntries.length}
+        id={pagesId}
+      >
         {visibleEntries.map((item) => (
           <li key={item.id}>
             <Link className="home-page-card" href={item.href}>
@@ -96,12 +101,10 @@ export function HomeIntro({ groups }: HomeIntroProps) {
         <section aria-labelledby="home-title" className="home__content">
           <p className="eyebrow home__eyebrow">
             <span aria-hidden="true" />
-            DOCUMENTAÇÃO OFICIAL
+            GODOCS DOCS
           </p>
           <h1 id="home-title">Documentação do GoDocs</h1>
-          <p className="home__description">
-            Encontre guias, conceitos e instruções para utilizar o GoDocs.
-          </p>
+          <p className="home__description">{SITE_DESCRIPTION}</p>
           <p className="home__status">
             <span aria-hidden="true" className="home__status-marker" />
             Ainda não há documentos publicados.
@@ -118,12 +121,10 @@ export function HomeIntro({ groups }: HomeIntroProps) {
       <section aria-labelledby="home-title" className="home__content">
         <p className="eyebrow home__eyebrow">
           <span aria-hidden="true" />
-          DOCUMENTAÇÃO OFICIAL
+          GODOCS DOCS
         </p>
         <h1 id="home-title">Documentação do GoDocs</h1>
-        <p className="home__description">
-          Encontre guias, conceitos e instruções para utilizar o GoDocs.
-        </p>
+        <p className="home__description">{SITE_DESCRIPTION}</p>
       </section>
 
       <nav aria-label="Seções da documentação" className="home-sections">

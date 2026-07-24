@@ -129,7 +129,7 @@ Não criar rotas para login, dashboard, API, busca dedicada, admin ou CMS.
 │ godocs | Documentação [ Pesquisar na documentação... Ctrl K ]   ◐  │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│                DOCUMENTAÇÃO OFICIAL                                  │
+│                GODOCS DOCS                                           │
 │                Documentação do GoDocs                               │
 │                Encontre guias, conceitos e instruções...             │
 │                Novos conteúdos serão publicados progressivamente.    │
@@ -182,11 +182,13 @@ Use variáveis CSS. Os nomes são contratuais; os valores podem receber pequenos
 | Token | Valor inicial | Uso |
 |---|---:|---|
 | `--brand` | `#FF7900` | links, ícones ativos, indicador e foco |
-| `--brand-hover` | `#FF8A1F` | hover de elementos de marca |
-| `--brand-active` | `#E86E00` | estado pressionado |
+| `--brand-hover` | varia por tema | hover de elementos de marca com contraste adequado |
+| `--brand-active` | varia por tema | estado pressionado com contraste adequado |
 | `--brand-contrast` | `#FFFFFF` | texto sobre laranja quando inevitável |
 | `--brand-subtle` | `rgba(255,121,0,.12)` | fundos sutis |
 | `--brand-border` | `rgba(255,121,0,.30)` | borda de destaque |
+| `--brand-text` | varia por tema | laranja com contraste adequado para texto |
+| `--focus-ring` | varia por tema | foco visível com contraste mínimo de componente |
 
 #### Tema escuro
 
@@ -194,30 +196,32 @@ Use variáveis CSS. Os nomes são contratuais; os valores podem receber pequenos
 |---|---:|
 | `--background` | `#1B1B1B` |
 | `--header` | `#1D1D1D` |
-| `--surface-1` | `#232323` |
-| `--surface-2` | `#292929` |
-| `--surface-hover` | `#303030` |
-| `--border` | `#3A3A3A` |
-| `--border-subtle` | `#303030` |
+| `--surface-1` | `#242424` |
+| `--surface-2` | `#2B2B2B` |
+| `--surface-hover` | `#333333` |
+| `--border` | `#474747` |
+| `--border-subtle` | `#393939` |
+| `--divider` | `#3E3E3E` |
 | `--text-primary` | `#F6F6F6` |
-| `--text-secondary` | `#B2B2B2` |
-| `--text-muted` | `#858585` |
+| `--text-secondary` | `#C2C2C2` |
+| `--text-muted` | `#9A9A9A` |
 | `--overlay` | `rgba(0,0,0,.58)` |
 
 #### Tema claro
 
 | Token | Valor inicial |
 |---|---:|
-| `--background` | `#FAFAFA` |
-| `--header` | `rgba(255,255,255,.92)` |
+| `--background` | `#F8F9FB` |
+| `--header` | `rgba(255,255,255,.94)` |
 | `--surface-1` | `#FFFFFF` |
-| `--surface-2` | `#F6F6F6` |
-| `--surface-hover` | `#F0F0F0` |
-| `--border` | `#E2E2E2` |
-| `--border-subtle` | `#ECECEC` |
+| `--surface-2` | `#F1F3F5` |
+| `--surface-hover` | `#ECEFF2` |
+| `--border` | `#CFD4DB` |
+| `--border-subtle` | `#DDE1E6` |
+| `--divider` | `#D6DBE1` |
 | `--text-primary` | `#202020` |
-| `--text-secondary` | `#626262` |
-| `--text-muted` | `#8A8A8A` |
+| `--text-secondary` | `#555B63` |
+| `--text-muted` | `#6F7680` |
 | `--overlay` | `rgba(24,24,24,.35)` |
 
 #### Estados
@@ -242,12 +246,13 @@ Essas cores são funcionais e não substituem o laranja como identidade.
 
 | Papel | Desktop | Mobile | Line-height |
 |---|---:|---:|---:|
-| Hero | 44px / 700 | 34px / 700 | 1.12 |
-| H1 de artigo | 40px / 700 | 32px / 700 | 1.18 |
-| H2 | 28px / 650 | 24px / 650 | 1.3 |
+| Hero | 40px / 700 | 30px / 700 | 1.16 |
+| H1 de artigo | 36px / 700 | 28px / 700 | 1.16 |
+| H2 | 26px / 650 | 21px / 650 | 1.3 |
 | H3 | 21px / 600 | 19px / 600 | 1.4 |
-| Corpo | 16px / 400 | 16px / 400 | 1.75 |
+| Corpo | 16px / 400 | 16px / 400 | 1.68 |
 | Texto pequeno | 14px / 400 | 14px / 400 | 1.55 |
+| Navegação | 13px / 400 | 13px / 400 | 1.45 |
 | Label | 12px / 600 | 12px / 600 | 1.4 |
 
 Comprimento ideal do corpo: 60–78 caracteres por linha.
@@ -267,7 +272,7 @@ Escala base: `4px`.
 | Altura do header | 64px |
 | Largura máxima global | 1440px |
 | Largura da sidebar | 240px |
-| Largura do conteúdo | 720–760px |
+| Largura do conteúdo | `70ch` |
 | Largura do TOC | 220px |
 | Gap entre colunas | 40px |
 | Padding desktop | 32px |
@@ -335,7 +340,7 @@ Sombras devem ser quase imperceptíveis no tema escuro. No tema claro, use uma s
 
 ### 7.6 `HomeIntro`
 
-- Eyebrow opcional `DOCUMENTAÇÃO OFICIAL`.
+- Eyebrow opcional `GODOCS DOCS`.
 - Título e descrição definidos no prompt.
 - Mensagem progressiva em tom secundário.
 - Sem CTA ou card fictício.

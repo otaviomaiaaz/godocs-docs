@@ -1,5 +1,4 @@
 import { getAllDocs, getDocBySlug } from "@/lib/docs/source";
-import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 import { createSocialImage } from "@/lib/social-image";
 
 type ShareImageRouteContext = {
@@ -20,9 +19,13 @@ export async function GET(
   const { slug } = await params;
   const doc = await getDocBySlug(slug.join("/"));
 
+  if (!doc) {
+    return new Response(null, { status: 404 });
+  }
+
   return createSocialImage({
-    eyebrow: doc?.metadata.section?.label ?? "DOCUMENTAÇÃO OFICIAL",
-    title: doc?.metadata.title ?? SITE_NAME,
-    description: doc?.metadata.description ?? SITE_DESCRIPTION,
+    eyebrow: doc.metadata.section?.label ?? "GoDocs Docs",
+    title: doc.metadata.title,
+    description: doc.metadata.description,
   });
 }
