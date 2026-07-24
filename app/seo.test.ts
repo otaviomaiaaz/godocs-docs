@@ -60,6 +60,9 @@ describe("SEO e indexação", () => {
     expect(entries.map((entry) => entry.url)).toEqual([
       absoluteUrl("/"),
       absoluteUrl("/docs/o-que-e-o-godocs"),
+      absoluteUrl("/docs/primeiro-acesso"),
+      absoluteUrl("/docs/funcionalidades/visao-geral"),
+      absoluteUrl("/docs/funcionalidades/busca-inteligente"),
     ]);
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
   });

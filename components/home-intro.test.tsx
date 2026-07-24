@@ -2,9 +2,12 @@
 
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { HomeIntro } from "@/components/home-intro";
+import { buildNavigation } from "@/lib/docs/navigation";
+import { loadDocumentsFromDirectory } from "@/lib/docs/source";
 
 afterEach(cleanup);
 
@@ -102,5 +105,48 @@ describe("home orientada ao conteúdo", () => {
 
     await user.click(screen.getByRole("button", { name: "Mostrar menos" }));
     expect(screen.queryByText("Página 7")).toBeNull();
+  });
+
+  it("renderiza as seções e os quatro cards publicados com a mesma estrutura", async () => {
+    const docs = await loadDocumentsFromDirectory(
+      path.join(process.cwd(), "content", "docs"),
+    );
+
+    render(<HomeIntro groups={buildNavigation(docs)} />);
+
+    const sectionHeadings = screen.getAllByRole("heading", { level: 2 });
+    expect(sectionHeadings.map((heading) => heading.textContent)).toEqual([
+      "Comece por aqui",
+      "Funcionalidades",
+    ]);
+    expect(
+      screen.getByText("Conheça os principais recursos disponíveis no GoDocs."),
+    ).toBeTruthy();
+
+    const expectedCards = [
+      ["O que é o GoDocs?", "/docs/o-que-e-o-godocs"],
+      ["Primeiro Acesso", "/docs/primeiro-acesso"],
+      ["Visão Geral", "/docs/funcionalidades/visao-geral"],
+      ["Busca Inteligente", "/docs/funcionalidades/busca-inteligente"],
+    ] as const;
+
+    expectedCards.forEach(([name, href]) => {
+      const card = screen.getByRole("link", { name: new RegExp(name) });
+      expect(card.getAttribute("href")).toBe(href);
+      expect(card.className).toBe("home-page-card");
+      expect(card.querySelector("svg")).toBeTruthy();
+      expect(card.querySelector(".home-page-card__arrow")).toBeTruthy();
+    });
+
+    const sections = document.querySelectorAll(".home-section");
+    expect(sections).toHaveLength(2);
+    sections.forEach((section) => {
+      expect(section.querySelector(".home-section__heading")).toBeTruthy();
+      expect(
+        section.querySelector(".home-section__pages")?.getAttribute(
+          "data-count",
+        ),
+      ).toBe("2");
+    });
   });
 });

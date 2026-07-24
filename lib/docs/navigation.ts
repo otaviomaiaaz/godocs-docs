@@ -75,8 +75,17 @@ export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
     groups.set(groupId, group);
 
     let level = group.items;
+    const collapsesSectionPrefix =
+      section !== undefined &&
+      doc.segments[0] === section.id &&
+      doc.metadata.ancestors[0]?.label.toLocaleLowerCase("pt-BR") ===
+        section.label.toLocaleLowerCase("pt-BR");
 
     doc.segments.forEach((segment, index) => {
+      if (collapsesSectionPrefix && index === 0) {
+        return;
+      }
+
       const path = doc.segments.slice(0, index + 1).join("/");
       const isDocument = index === doc.segments.length - 1;
       const ancestor = doc.metadata.ancestors[index];

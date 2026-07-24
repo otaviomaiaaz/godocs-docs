@@ -2,10 +2,10 @@
 
 > Documento vivo de contexto, decisões, progresso e próximos passos.
 >
-> **Última atualização:** 24 de julho de 2026, 12:50 (UTC−03:00)  
-> **Estado geral:** MVP implementado, conteúdo inicial publicado, repositório integrado ao GitHub e deploy de produção aprovado no Vercel  
-> **Fase atual:** evolução visual e funcional da plataforma, expansão progressiva da documentação e consolidação das fontes internas do projeto  
-> **Próxima ação recomendada:** corrigir as inconsistências dos documentos internos, incorporar os conteúdos editoriais já aprovados e concluir o primeiro card da seção **Funcionalidades — Visão Geral**
+> **Última atualização:** 24 de julho de 2026, 14:55 (UTC−03:00)<br>
+> **Estado geral:** MVP implementado e coleção local expandida para quatro documentos reais, com home, navegação, busca, SEO e imagens sociais derivados dos arquivos MDX<br>
+> **Fase atual:** validação da primeira coleção editorial com as seções **Comece por aqui** e **Funcionalidades**<br>
+> **Próxima ação recomendada:** revisar as alterações locais, criar commit e publicar somente mediante instrução explícita; depois, confirmar o deployment correspondente no Vercel
 
 ## 1. Finalidade deste arquivo
 
@@ -44,16 +44,15 @@ A direção do produto combina:
 - **crescimento progressivo:** novas seções e páginas são incorporadas somente quando existe conteúdo real e aprovado;
 - **qualidade técnica:** validação de conteúdo, testes, acessibilidade, SEO, responsividade, temas claro e escuro e deploy contínuo.
 
-A aplicação já foi implementada e passou por diversas rodadas de melhoria. O repositório público está na branch `main`, o Vercel está conectado ao GitHub e o commit mais recente observado possui status de deploy bem-sucedido.
+A aplicação já foi implementada e passou por diversas rodadas de melhoria. O repositório público está na branch `main` e o Vercel está conectado ao GitHub. Nesta atualização, o `HEAD` local observado é `2268fed`; as mudanças editoriais descritas abaixo permanecem sem commit e não tiveram deployment verificado.
 
 No estado editorial atual:
 
-- a seção **Comece por aqui** concentra os conteúdos introdutórios;
-- **O que é o GoDocs?** está publicado no repositório;
-- **Primeiro Acesso** já foi trabalhado editorialmente, mas ainda precisa ser consolidado na fonte oficial do repositório;
-- o antigo card **Explorando o GoDocs** deixou de ser uma página única;
-- foi criada a seção **Funcionalidades**, com páginas individuais para cada recurso;
-- o primeiro card dessa nova seção é **Visão Geral**, atualmente em desenvolvimento a partir de prints do sistema.
+- a seção **Comece por aqui** contém **O que é o GoDocs?** e **Primeiro Acesso**;
+- a seção **Funcionalidades** contém **Visão Geral** e **Busca Inteligente**;
+- os quatro cards da home são derivados da taxonomia dos arquivos MDX;
+- sidebar, drawer mobile, breadcrumbs, sumário, paginação, busca, sitemap e imagens sociais refletem os quatro documentos;
+- os três novos documentos estão implementados e validados localmente, mas ainda não foram enviados ao GitHub nem ao Vercel.
 
 ## 3. Fontes de verdade e ordem de autoridade
 
@@ -231,26 +230,21 @@ Esse commit também foi identificado pelo Vercel durante o fluxo de atualizaçã
 
 ### 4.9 Última melhoria observada
 
-O commit mais recente confirmado é:
+O commit local mais recente confirmado é:
 
 ```text
-17bb648 — Melhoria 3
+2268fed — Melhoria 4
 ```
 
 Principais mudanças registradas:
 
-- novo conjunto de tokens semânticos de cor;
-- refinamento dos temas claro e escuro;
-- redução e ajuste da escala tipográfica;
-- adoção dos arquivos PNG oficiais do logotipo;
-- ajustes de tamanho e proporção da marca no header;
-- uso de elementos nativos `<dialog>` na busca e no drawer mobile;
-- simplificação do gerenciamento de foco e fechamento dos modais;
-- melhorias adicionais de acessibilidade;
-- novo metadado `cardDescription` para permitir descrições curtas nos cards sem alterar a descrição SEO do artigo;
-- ampliação dos testes de identidade, design e integração.
+- novos refinamentos em `app/globals.css`;
+- ajustes no componente de marca;
+- evolução da busca e do comportamento modal;
+- ampliação dos testes de integração, identidade e design;
+- consolidação desta memória operacional.
 
-O status combinado desse commit registra **Vercel: success**, confirmando deploy bem-sucedido para a versão mais recente observada.
+O estado de deployment desse commit não foi verificado nesta atualização. O status Vercel bem-sucedido registrado anteriormente permanece apenas como evidência histórica de uma fase anterior.
 
 ### 4.10 Fluxo de desenvolvimento e publicação
 
@@ -290,14 +284,17 @@ A seção **Comece por aqui** ficou focada em conteúdos introdutórios, como:
 
 O card **Explorando o GoDocs**, que concentraria explicações gerais sobre várias áreas do sistema, foi removido dessa seção. Seu conteúdo passou a ser dividido em uma nova seção chamada **Funcionalidades**, com uma página específica para cada recurso.
 
-A nova seção deverá incluir, progressivamente, páginas como:
+A nova seção contém atualmente:
 
 - **Visão Geral**;
-- Busca inteligente;
+- **Busca Inteligente**.
+
+Ela poderá incluir progressivamente páginas como:
+
 - Workflows;
 - demais funcionalidades confirmadas durante a análise do sistema.
 
-O primeiro conteúdo em produção nessa nova estrutura é **Funcionalidades → Visão Geral**. A página deve explicar o que é a área de Visão Geral do GoDocs, sua finalidade, informações exibidas, recursos disponíveis e forma de utilização, sempre com base nos prints e evidências fornecidos.
+Os conteúdos **Funcionalidades → Visão Geral** e **Funcionalidades → Busca Inteligente** estão implementados e validados no checkout local, com publicação externa pendente de commit e push.
 
 ## 5. Conversas e materiais considerados nesta atualização
 
@@ -312,8 +309,8 @@ Esta consolidação considerou:
 - versão anterior do `daily_stats.md`;
 - repositório público `otaviomaiaaz/godocs-docs`;
 - estrutura atual da branch `main`;
-- sequência de commits desde o commit inicial até `17bb648`;
-- status atual de integração com o Vercel.
+- sequência de commits desde o commit inicial até `2268fed`;
+- estado de integração com o Vercel registrado anteriormente, sem nova verificação de provider nesta tarefa.
 
 ## 6. Contexto de negócio e público
 
@@ -363,8 +360,9 @@ A linguagem deve ser:
 |---|---|---|
 | Repositório GitHub | Ativo e público | `otaviomaiaaz/godocs-docs` |
 | Branch principal | Ativa | `main` |
-| Último commit observado | Publicado | `17bb648` — `Melhoria 3` |
-| Vercel | Integrado e aprovado | Status `success` no último commit observado |
+| Último commit local observado | Presente | `2268fed` — `Melhoria 4` |
+| Alterações desta fase | Locais e sem commit | Três novos documentos, taxonomia, estilos e testes |
+| Vercel | Integrado; estado desta fase não verificado | Nenhum commit ou deployment foi criado nesta tarefa |
 | URL configurada | Definida no código | `https://godocs-docs.vercel.app` |
 | Aplicação | Implementada | Next.js com App Router |
 | Deploy contínuo | Funcional | GitHub → Vercel |
@@ -450,7 +448,17 @@ pnpm build
 
 O `prebuild` executa automaticamente `pnpm content:validate` antes do build.
 
-Nesta atualização do `daily_stats.md`, os comandos locais não foram executados. A evidência técnica confirmada é o status bem-sucedido do Vercel no commit mais recente observado.
+Resultados desta atualização:
+
+| Validação | Resultado |
+|---|---|
+| `pnpm audit:prod` | Bloqueado: a consulta ao registro npm foi recusada dentro do sandbox e a execução externa foi negada pela política do ambiente |
+| `pnpm content:validate` | Aprovado: 4 documentos válidos |
+| `pnpm lint` | Aprovado |
+| `pnpm typecheck` | Aprovado |
+| `pnpm test` | Aprovado: 10 arquivos e 70 testes |
+| `pnpm build` | Aprovado: 16 páginas estáticas, incluindo os 4 documentos e suas imagens sociais |
+| Inspeção visual e funcional | Aprovada nos temas claro e escuro, em desktop, notebook, tablet, celular e 320 px; sem overflow horizontal ou erros no console |
 
 ## 8. Estado editorial atual
 
@@ -465,9 +473,7 @@ GoDocs Docs
 │   └── Primeiro Acesso
 └── Funcionalidades
     ├── Visão Geral
-    ├── Busca inteligente
-    ├── Workflows
-    └── outras funcionalidades confirmadas futuramente
+    └── Busca Inteligente
 ```
 
 Outras seções previstas continuam válidas como direção futura, quando houver conteúdo suficiente:
@@ -484,29 +490,31 @@ Outras seções previstas continuam válidas como direção futura, quando houve
 | Conteúdo | Estado editorial | Estado no repositório |
 |---|---|---|
 | O que é o GoDocs? | Aprovado e refinado | Publicado em `content/docs/o-que-e-o-godocs.mdx` |
-| Primeiro Acesso | Criado/trabalhado | Ainda não consolidado na branch `main` |
+| Primeiro Acesso | Aprovado | Implementado localmente em `content/docs/primeiro-acesso.mdx`; commit pendente |
 | Explorando o GoDocs | Descontinuado como card único | Não deve ser publicado nessa forma |
-| Funcionalidades — Visão Geral | Em desenvolvimento | Ainda não publicado |
-| Busca inteligente | Planejado | Aguardando análise e conteúdo aprovado |
+| Funcionalidades — Visão Geral | Aprovado | Implementado localmente em `content/docs/funcionalidades/visao-geral.mdx`; commit pendente |
+| Funcionalidades — Busca Inteligente | Aprovado | Implementado localmente em `content/docs/funcionalidades/busca-inteligente.mdx`; commit pendente |
 | Workflows | Planejado | Aguardando análise e conteúdo aprovado |
 | Demais funcionalidades | Pendentes | Dependem de novas evidências |
 
 ### 8.3 Conteúdo atualmente publicado
 
-O repositório contém um documento real confirmado:
+O repositório contém quatro documentos reais confirmados:
 
 ```text
 content/docs/o-que-e-o-godocs.mdx
+content/docs/primeiro-acesso.mdx
+content/docs/funcionalidades/visao-geral.mdx
+content/docs/funcionalidades/busca-inteligente.mdx
 ```
 
-Metadados atuais:
+Estado derivado atual:
 
-- seção: `Comece por aqui`;
-- slug: `o-que-e-o-godocs`;
-- rota: `/docs/o-que-e-o-godocs`;
-- descrição SEO completa;
-- `cardDescription` curta para exibição na home;
-- palavras-chave relacionadas a GoDocs, GED, documentos e processos.
+- **Comece por aqui:** `/docs/o-que-e-o-godocs` e `/docs/primeiro-acesso`;
+- **Funcionalidades:** `/docs/funcionalidades/visao-geral` e `/docs/funcionalidades/busca-inteligente`;
+- quatro cards reais na home, com dimensões e estrutura visual uniformes;
+- ordem global: **O que é o GoDocs? → Primeiro Acesso → Visão Geral → Busca Inteligente**;
+- metadados, busca, navegação, sitemap e imagens sociais gerados pela mesma coleção.
 
 ### 8.4 Regra de escrita permanente
 
@@ -663,11 +671,11 @@ Elas são somente leitura e servem para orientar identidade, layout, densidade, 
 
 ## 12. Lacunas, riscos e inconsistências
 
-### 12.1 Documentos internos desatualizados
+### 12.1 Documentos internos ainda parcialmente desatualizados
 
-O `daily_stats.md` da branch `main` ainda registra que não existe aplicação. O README também mantém uma descrição anterior à publicação do primeiro artigo.
+Este `daily_stats.md` agora reflete a coleção local de quatro documentos. O README ainda mantém uma descrição anterior à expansão atual.
 
-Impacto: novas tarefas podem partir de premissas incorretas.
+Impacto: a introdução do README pode transmitir uma visão editorial incompleta.
 
 ### 12.2 Caminho incorreto no `AGENTS.md`
 
@@ -675,15 +683,17 @@ O arquivo usa `project_docs/`, mas a pasta real é `project-docs/`.
 
 Impacto: agentes podem falhar ao localizar blueprint, referências e memória.
 
-### 12.3 Conteúdo aprovado fora do repositório
+### 12.3 Alterações editoriais ainda não versionadas
 
-**Primeiro Acesso** e outros textos trabalhados no ChatGPT ainda não estão confirmados em `content/docs/`.
+**Primeiro Acesso**, **Visão Geral** e **Busca Inteligente** estão implementados e validados no checkout local, mas ainda não possuem commit, push ou deployment.
 
-Impacto: o conteúdo depende do histórico da conversa e pode se perder ou divergir da versão aprovada.
+Impacto: a publicação externa permanece pendente e não deve ser presumida.
 
-### 12.4 Seção Funcionalidades ainda não publicada
+### 12.4 Auditoria de dependências bloqueada
 
-A estrutura foi decidida, mas **Visão Geral** ainda está em produção e as páginas seguintes dependem de novos materiais.
+`pnpm audit:prod` não conseguiu consultar o registro npm no sandbox. A tentativa de execução externa foi negada pela política do ambiente por envolver transmissão de metadados de dependências.
+
+Impacto: a auditoria de segurança das dependências de produção não foi concluída nesta atualização.
 
 ### 12.5 Dependência de evidências do GoDocs 4
 
@@ -693,34 +703,33 @@ Impacto: qualquer tentativa de acelerar o conteúdo por suposição pode gerar d
 
 ### 12.6 Sincronização de deploy
 
-O último commit observado possui status Vercel bem-sucedido. Ainda assim, a rotina deve continuar verificando se cada novo push foi realmente promovido ao ambiente de produção esperado.
+As alterações desta fase não foram commitadas nem enviadas. Quando houver autorização para versioná-las, será necessário verificar se o novo push foi promovido ao ambiente de produção esperado.
 
-### 12.7 Qualidade local não auditada nesta atualização
+### 12.7 Qualidade local
 
-A presença de scripts e testes foi confirmada, e o deploy mais recente foi aprovado. Porém, esta atualização do arquivo não executou localmente `lint`, `typecheck`, `test` ou `build`.
+Conteúdo, lint, typecheck, testes e build foram aprovados. A inspeção visual cobriu temas, breakpoints, busca, navegação, sumários, breadcrumbs, paginação, menu mobile, medidas dos cards, overflow e console. A única lacuna é `pnpm audit:prod`, registrada em 12.4.
 
 ## 13. Próximos passos recomendados
 
 ### 13.1 Prioridade imediata — memória e regras
 
-1. substituir `project-docs/daily_stats.md` por esta versão atualizada;
-2. corrigir `project_docs/` para `project-docs/` no `AGENTS.md`;
-3. atualizar a introdução do README para reconhecer o conteúdo já publicado;
-4. verificar se o `SYSTEM_BLUEPRINT.md` reflete as decisões mais recentes de identidade e estrutura editorial.
+1. revisar as alterações locais desta fase;
+2. criar commit e push somente mediante instrução explícita;
+3. confirmar o deployment correspondente no Vercel após o push;
+4. corrigir `project_docs/` para `project-docs/` no `AGENTS.md` em tarefa própria;
+5. atualizar a introdução do README para reconhecer a coleção publicada.
 
 ### 13.2 Prioridade editorial
 
-1. concluir a página **Funcionalidades → Visão Geral**;
-2. recuperar e consolidar a versão aprovada de **Primeiro Acesso**;
-3. converter os conteúdos aprovados para MDX;
-4. revisar títulos, descrições, `cardDescription`, slugs, ordem e palavras-chave;
-5. publicar a nova seção sem adicionar cards vazios ou fictícios;
-6. avançar para Busca inteligente, Workflows e demais recursos conforme novos prints forem analisados.
+1. escolher o próximo conteúdo somente a partir de material real e aprovado;
+2. revisar títulos, descrições, `cardDescription`, slugs, ordem e palavras-chave a cada nova página;
+3. manter a home sem cards vazios ou fictícios;
+4. avançar para Workflows e demais recursos somente quando novas evidências forem analisadas.
 
 ### 13.3 Prioridade técnica
 
-1. executar a suíte completa de qualidade após as correções internas;
-2. confirmar o estado do workflow de qualidade na branch `main`;
+1. concluir `pnpm audit:prod` em um ambiente autorizado a consultar o registro npm;
+2. confirmar o estado do workflow de qualidade após o futuro push;
 3. validar busca, menu mobile, foco e temas após cada mudança visual;
 4. confirmar o deploy de cada novo commit no Vercel;
 5. manter SEO, sitemap e imagens sociais sincronizados com os novos conteúdos.
@@ -735,21 +744,15 @@ A presença de scripts e testes foi confirmada, e o deploy mais recente foi apro
 
 ## 14. Critério de conclusão da próxima fase
 
-A próxima fase poderá ser considerada concluída quando:
+A implementação local desta fase está concluída: os quatro conteúdos são navegáveis, a home e as estruturas derivadas refletem a taxonomia, os temas e breakpoints foram inspecionados e as validações locais aplicáveis foram aprovadas.
 
-- os documentos internos refletirem o estado real da aplicação;
-- o caminho `project-docs/` estiver consistente em todas as instruções;
-- **Primeiro Acesso** estiver versionado;
-- **Funcionalidades → Visão Geral** estiver aprovado, publicado e navegável;
-- a home exibir as seções reais sem cards fictícios;
-- a busca localizar os novos conteúdos;
-- sidebar, drawer, breadcrumbs, sumário e paginação refletirem a nova taxonomia;
-- temas claro e escuro estiverem validados;
-- desktop, tablet e celular estiverem validados;
-- teclado, foco e `Escape` funcionarem corretamente;
-- `content:validate`, lint, typecheck, testes e build passarem;
+A publicação externa desta fase poderá ser considerada concluída quando:
+
+- houver instrução explícita para criar commit e push;
 - o commit correspondente estiver publicado no GitHub;
-- o Vercel registrar deployment bem-sucedido.
+- o workflow de qualidade estiver aprovado;
+- o Vercel registrar deployment bem-sucedido;
+- `pnpm audit:prod` for executado em ambiente autorizado.
 
 ## 15. Protocolo de atualização deste arquivo
 
@@ -796,7 +799,8 @@ Não transformar este arquivo em um diário detalhado de cada comando. O objetiv
 | 24/07/2026 | Terceira rodada de melhorias | Commit `17bb648` refinou design, marca, acessibilidade e cards |
 | 24/07/2026 | Verificação do último commit | Status Vercel confirmado como `success` |
 | 24/07/2026 | Auditoria geral e atualização desta memória | Estado técnico, editorial e operacional consolidado |
+| 24/07/2026 | Expansão da primeira coleção editorial | **Primeiro Acesso**, **Visão Geral** e **Busca Inteligente** implementados localmente; home, navegação, busca, SEO, testes e layout atualizados e validados |
 
 ---
 
-**Resumo para retomada rápida:** o GoDocs Docs não está mais em fase de preparação. O MVP foi implementado em Next.js, possui pipeline MDX, busca, navegação, temas, acessibilidade, SEO, testes e deploy no Vercel. O repositório público está na branch `main`, e o commit mais recente observado é `17bb648`, com status Vercel bem-sucedido. **O que é o GoDocs?** está publicado; **Primeiro Acesso** ainda precisa ser consolidado no repositório. A arquitetura editorial foi reorganizada: **Comece por aqui** permanece introdutória e a nova seção **Funcionalidades** começa por **Visão Geral**. As próximas ações são corrigir os documentos internos, publicar os conteúdos já aprovados e continuar a expansão funcional da documentação.
+**Resumo para retomada rápida:** o GoDocs Docs possui pipeline MDX, busca, navegação, temas, acessibilidade, SEO, testes e integração com Vercel. O `HEAD` local observado é `2268fed`. A coleção local contém **O que é o GoDocs?**, **Primeiro Acesso**, **Visão Geral** e **Busca Inteligente**, distribuídos entre **Comece por aqui** e **Funcionalidades**. Conteúdo, lint, typecheck, 70 testes, build e inspeção visual foram aprovados; `pnpm audit:prod` ficou bloqueado pela política de rede. As mudanças permanecem sem commit, push ou deployment verificado.

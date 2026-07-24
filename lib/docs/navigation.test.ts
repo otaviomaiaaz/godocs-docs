@@ -87,4 +87,40 @@ describe("taxonomia documental", () => {
       },
     ]);
   });
+
+  it("colapsa o prefixo do slug quando ele apenas repete a seção", () => {
+    const functionalitySection = {
+      id: "funcionalidades",
+      label: "Funcionalidades",
+      description: "Recursos publicados.",
+      order: 20,
+    };
+    const overview = createDocument({
+      title: "Visão Geral",
+      description: "Indicadores do ambiente.",
+      slug: "funcionalidades/visao-geral",
+      navTitle: "Visão Geral",
+      section: functionalitySection,
+      ancestors: [
+        {
+          segment: "funcionalidades",
+          label: "Funcionalidades",
+          order: 1,
+        },
+      ],
+      order: 1,
+      keywords: [],
+    });
+
+    const groups = buildNavigation([overview]);
+
+    expect(groups[0]?.title).toBe("Funcionalidades");
+    expect(groups[0]?.items).toMatchObject([
+      {
+        id: "funcionalidades/visao-geral",
+        label: "Visão Geral",
+        href: "/docs/funcionalidades/visao-geral",
+      },
+    ]);
+  });
 });

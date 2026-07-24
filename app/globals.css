@@ -574,6 +574,7 @@ html[data-theme="light"] .home__orb {
   position: relative;
   display: grid;
   width: 100%;
+  height: 100%;
   max-width: 440px;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-content: start;
@@ -612,6 +613,7 @@ html[data-theme="light"] .home__orb {
 
 .home-page-card small {
   display: block;
+  min-height: 3.16em;
   color: var(--text-secondary);
   font-size: var(--type-card-description);
   line-height: 1.58;
@@ -1642,6 +1644,10 @@ body:has(dialog[open]) {
     min-height: 0;
   }
 
+  .home-page-card small {
+    min-height: 4.74em;
+  }
+
   .home__orb {
     right: -52%;
     bottom: -23%;
@@ -1774,6 +1780,12 @@ body:has(dialog[open]) {
 @keyframes drawer-in {
   from {
     transform: translateX(-20px);
+  }
+}
+
+@media (max-width: 359px) {
+  .home-page-card small {
+    min-height: 6.32em;
   }
 }
 
