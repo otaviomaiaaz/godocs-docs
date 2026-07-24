@@ -37,6 +37,11 @@ export const docFrontmatterSchema = z
   .object({
     title: z.string().trim().min(1, "title é obrigatório"),
     description: z.string().trim().min(1, "description é obrigatório"),
+    cardDescription: z
+      .string()
+      .trim()
+      .min(1, "cardDescription não pode ser vazio")
+      .optional(),
     slug: z
       .string()
       .trim()

@@ -102,7 +102,8 @@ export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
 
       if (isDocument) {
         current.label = label;
-        current.description = doc.metadata.description;
+        current.description =
+          doc.metadata.cardDescription ?? doc.metadata.description;
         current.href = doc.href;
       }
 

@@ -70,6 +70,18 @@ beforeEach(() => {
   push.mockReset();
   window.localStorage.clear();
   installMatchMedia();
+  Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
+    configurable: true,
+    value(this: HTMLDialogElement) {
+      this.setAttribute("open", "");
+    },
+  });
+  Object.defineProperty(HTMLDialogElement.prototype, "close", {
+    configurable: true,
+    value(this: HTMLDialogElement) {
+      this.removeAttribute("open");
+    },
+  });
   Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
     configurable: true,
     value: vi.fn(),
@@ -100,16 +112,17 @@ describe("fluxos interativos", () => {
     });
     await user.click(trigger);
 
-    expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
-      true,
-    );
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
     const combobox = await screen.findByRole("combobox");
-    expect(
-      (await axe.run(screen.getByRole("dialog", { name: "Pesquisar na documentação" })))
-        .violations,
-    ).toEqual([]);
+    const dialog = screen.getByRole("dialog", {
+      name: "Pesquisar na documentação",
+    });
+    expect(dialog.hasAttribute("open")).toBe(true);
+    expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
+      false,
+    );
+    expect((await axe.run(dialog)).violations).toEqual([]);
     expect(combobox.getAttribute("aria-autocomplete")).toBe("list");
     expect(combobox.getAttribute("aria-expanded")).toBe("true");
     expect(combobox.getAttribute("aria-controls")).toBeTruthy();
@@ -125,9 +138,7 @@ describe("fluxos interativos", () => {
     await user.keyboard("{Enter}");
     expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
     await waitFor(() => expect(document.activeElement).toBe(trigger));
-    expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
-      false,
-    );
+    expect(screen.queryByRole("button", { name: "Fechar pesquisa" })).toBeNull();
 
     await user.click(trigger);
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -189,7 +200,7 @@ describe("fluxos interativos", () => {
     ).toBeTruthy();
   });
 
-  it("fecha a busca com Escape, contém Tab e restaura o foco", async () => {
+  it("fecha a busca pelo cancel nativo, não deixa X órfão e restaura o foco", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
@@ -208,15 +219,16 @@ describe("fluxos interativos", () => {
 
     const closeButton = screen.getByRole("button", { name: "Fechar pesquisa" });
     const combobox = screen.getByRole("combobox");
-    combobox.focus();
-    await user.tab();
-    expect(document.activeElement).toBe(closeButton);
-    await user.tab({ shift: true });
+    const dialog = screen.getByRole("dialog", {
+      name: "Pesquisar na documentação",
+    });
     expect(document.activeElement).toBe(combobox);
+    expect(dialog.contains(closeButton)).toBe(true);
 
-    await user.keyboard("{Escape}");
+    fireEvent(dialog, new Event("cancel", { cancelable: true }));
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Fechar pesquisa" })).toBeNull();
   });
 
   it("permite recuperar uma falha no carregamento do índice", async () => {
@@ -274,12 +286,13 @@ describe("fluxos interativos", () => {
     await user.click(trigger);
 
     const dialog = screen.getByRole("dialog", { name: "Navegação" });
+    expect(dialog.hasAttribute("open")).toBe(true);
     expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
-      true,
+      false,
     );
     expect((await axe.run(dialog)).violations).toEqual([]);
 
-    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent(dialog, new Event("cancel", { cancelable: true }));
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
       false,
@@ -302,7 +315,7 @@ describe("fluxos interativos", () => {
 });
 
 describe("marca", () => {
-  it("usa variantes vetoriais de tema sem depender do recorte raster", () => {
+  it("usa as variantes PNG oficiais sem wordmark textual", () => {
     render(<Brand />);
 
     const brand = screen.getByRole("link", { name: "GoDocs — página inicial" });
@@ -311,11 +324,11 @@ describe("marca", () => {
       image.getAttribute("src"),
     );
     expect(sources).toHaveLength(2);
-    expect(sources.some((source) => source?.includes("wordmark-on-dark.svg"))).toBe(
+    expect(sources.some((source) => source?.includes("godocs-logo-official-dark.png"))).toBe(
       true,
     );
     expect(
-      sources.some((source) => source?.includes("wordmark-on-light.svg")),
+      sources.some((source) => source?.includes("godocs-logo-official-light.png")),
     ).toBe(true);
     const defectiveAssetName = ["godocs", "logo.png"].join("-");
     expect(sources.some((source) => source?.includes(defectiveAssetName))).toBe(

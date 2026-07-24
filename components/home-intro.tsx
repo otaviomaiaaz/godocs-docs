@@ -62,7 +62,7 @@ function HomeSection({ group }: { group: DocNavigationGroup }) {
         {visibleEntries.map((item) => (
           <li key={item.id}>
             <Link className="home-page-card" href={item.href}>
-              <FileText aria-hidden="true" size={20} strokeWidth={1.7} />
+              <FileText aria-hidden="true" size={18} strokeWidth={1.7} />
               <span>
                 <strong>{item.label}</strong>
                 {item.description ? <small>{item.description}</small> : null}
@@ -70,7 +70,7 @@ function HomeSection({ group }: { group: DocNavigationGroup }) {
               <ArrowRight
                 aria-hidden="true"
                 className="home-page-card__arrow"
-                size={16}
+                size={15}
               />
             </Link>
           </li>

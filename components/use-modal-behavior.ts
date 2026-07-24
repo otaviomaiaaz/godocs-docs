@@ -8,7 +8,7 @@ const FOCUSABLE_SELECTOR =
 type UseModalBehaviorOptions = {
   isOpen: boolean;
   onClose: () => void;
-  dialogRef: RefObject<HTMLElement | null>;
+  dialogRef: RefObject<HTMLDialogElement | null>;
   triggerRef: RefObject<HTMLElement | null>;
   initialFocusRef?: RefObject<HTMLElement | null>;
 };
@@ -25,60 +25,28 @@ export function useModalBehavior({
 
     const dialog = dialogRef.current;
     const trigger = triggerRef.current;
-    const siteShell = document.getElementById("site-shell");
-    const previousOverflow = document.body.style.overflow;
-    const previousInert = siteShell?.hasAttribute("inert") ?? false;
+    if (!dialog) return;
 
-    document.body.style.overflow = "hidden";
-    siteShell?.setAttribute("inert", "");
+    if (!dialog.open) dialog.showModal();
 
     const focusFrame = window.requestAnimationFrame(() => {
-      const firstFocusable = dialog?.querySelector<HTMLElement>(
+      const firstFocusable = dialog.querySelector<HTMLElement>(
         FOCUSABLE_SELECTOR,
       );
       (initialFocusRef?.current ?? firstFocusable ?? dialog)?.focus();
     });
 
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return;
-      }
-
-      if (event.key !== "Tab" || !dialog) return;
-
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
-      const first = focusable[0];
-      const last = focusable.at(-1);
-
-      if (!first || !last) {
-        event.preventDefault();
-        dialog.focus();
-        return;
-      }
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (
-        !event.shiftKey &&
-        (document.activeElement === last || !dialog.contains(document.activeElement))
-      ) {
-        event.preventDefault();
-        first.focus();
-      }
+    function handleCancel(event: Event) {
+      event.preventDefault();
+      onClose();
     }
 
-    document.addEventListener("keydown", handleKeyDown);
+    dialog.addEventListener("cancel", handleCancel);
 
     return () => {
       window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      if (siteShell && !previousInert) siteShell.removeAttribute("inert");
+      dialog.removeEventListener("cancel", handleCancel);
+      if (dialog.open) dialog.close();
       trigger?.focus();
     };
   }, [dialogRef, initialFocusRef, isOpen, onClose, triggerRef]);

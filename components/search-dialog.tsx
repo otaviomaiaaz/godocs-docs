@@ -55,7 +55,7 @@ export function SearchDialog() {
   const listboxId = `${baseId}-listbox`;
   const statusId = `${baseId}-status`;
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const requestRef = useRef<AbortController | null>(null);
 
@@ -211,77 +211,71 @@ export function SearchDialog() {
 
       {isOpen
         ? createPortal(
-            <div
-              className="search-backdrop"
+            <dialog
+              aria-describedby={dialogDescriptionId}
+              aria-labelledby={dialogTitleId}
+              className="search-dialog"
+              id={dialogId}
               onMouseDown={(event) => {
                 if (event.currentTarget === event.target) closeDialog();
               }}
+              ref={dialogRef}
             >
-              <div
-                aria-describedby={dialogDescriptionId}
-                aria-labelledby={dialogTitleId}
-                aria-modal="true"
-                className="search-dialog"
-                id={dialogId}
-                ref={dialogRef}
-                role="dialog"
-                tabIndex={-1}
-              >
-                <div className="search-dialog__toolbar">
-                  <h2 className="sr-only" id={dialogTitleId}>
-                    Pesquisar na documentação
-                  </h2>
-                  <div className="search-field">
-                    <Search aria-hidden="true" size={19} strokeWidth={1.8} />
-                    <label className="sr-only" htmlFor={inputId}>
-                      Termo de pesquisa
-                    </label>
-                    <input
-                      aria-activedescendant={activeOptionId}
-                      aria-autocomplete="list"
-                      aria-controls={listboxId}
-                      aria-describedby={statusId}
-                      aria-expanded={isOpen}
-                      autoComplete="off"
-                      id={inputId}
-                      onChange={(event) => {
-                        setQuery(event.target.value);
-                        setActiveIndex(0);
-                      }}
-                      onKeyDown={handleInputKeyDown}
-                      placeholder="Buscar na documentação..."
-                      ref={inputRef}
-                      role="combobox"
-                      type="search"
-                      value={query}
-                    />
-                  </div>
-                  <button
-                    aria-label="Fechar pesquisa"
-                    className="icon-button"
-                    onClick={closeDialog}
-                    type="button"
-                  >
-                    <X aria-hidden="true" size={18} />
-                  </button>
+              <div className="search-dialog__toolbar">
+                <h2 className="sr-only" id={dialogTitleId}>
+                  Pesquisar na documentação
+                </h2>
+                <div className="search-field">
+                  <Search aria-hidden="true" size={19} strokeWidth={1.8} />
+                  <label className="sr-only" htmlFor={inputId}>
+                    Termo de pesquisa
+                  </label>
+                  <input
+                    aria-activedescendant={activeOptionId}
+                    aria-autocomplete="list"
+                    aria-controls={listboxId}
+                    aria-describedby={statusId}
+                    aria-expanded={isOpen}
+                    autoComplete="off"
+                    id={inputId}
+                    onChange={(event) => {
+                      setQuery(event.target.value);
+                      setActiveIndex(0);
+                    }}
+                    onKeyDown={handleInputKeyDown}
+                    placeholder="Buscar na documentação..."
+                    ref={inputRef}
+                    role="combobox"
+                    type="search"
+                    value={query}
+                  />
                 </div>
-
-                <p className="sr-only" id={dialogDescriptionId}>
-                  Pesquise nos documentos publicados. Use as setas para navegar
-                  nos resultados, Enter para abrir e Tab para percorrer os
-                  controles.
-                </p>
-
-                <p
-                  aria-live="polite"
-                  className="sr-only"
-                  id={statusId}
-                  role="status"
+                <button
+                  aria-label="Fechar pesquisa"
+                  className="icon-button"
+                  onClick={closeDialog}
+                  type="button"
                 >
-                  {resultAnnouncement}
-                </p>
+                  <X aria-hidden="true" size={18} />
+                </button>
+              </div>
 
-                <div className="search-dialog__results">
+              <p className="sr-only" id={dialogDescriptionId}>
+                Pesquise nos documentos publicados. Use as setas para navegar
+                nos resultados, Enter para abrir e Tab para percorrer os
+                controles.
+              </p>
+
+              <p
+                aria-live="polite"
+                className="sr-only"
+                id={statusId}
+                role="status"
+              >
+                {resultAnnouncement}
+              </p>
+
+              <div className="search-dialog__results">
                   {indexState === "idle" || indexState === "loading" ? (
                     <div aria-live="polite" className="search-empty">
                       <span aria-hidden="true" className="search-empty__icon">
@@ -359,10 +353,8 @@ export function SearchDialog() {
                         ))
                       : null}
                   </div>
-                </div>
-
               </div>
-            </div>,
+            </dialog>,
             document.body,
           )
         : null}

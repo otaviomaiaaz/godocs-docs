@@ -18,7 +18,7 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
   const drawerId = `${baseId}-drawer`;
   const titleId = `${baseId}-title`;
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDialogElement>(null);
   const closeDrawer = useCallback(() => setIsOpen(false), []);
 
   useModalBehavior({
@@ -49,40 +49,33 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
 
       {isOpen
         ? createPortal(
-            <div
-              className="drawer-backdrop"
+            <dialog
+              aria-labelledby={titleId}
+              className="drawer"
+              id={drawerId}
               onMouseDown={(event) => {
                 if (event.currentTarget === event.target) closeDrawer();
               }}
+              ref={drawerRef}
             >
-              <div
-                aria-labelledby={titleId}
-                aria-modal="true"
-                className="drawer"
-                id={drawerId}
-                ref={drawerRef}
-                role="dialog"
-                tabIndex={-1}
-              >
-                <div className="drawer__header">
-                  <h2 id={titleId}>Navegação</h2>
-                  <button
-                    aria-label="Fechar navegação"
-                    className="icon-button"
-                    onClick={closeDrawer}
-                    type="button"
-                  >
-                    <X aria-hidden="true" size={18} />
-                  </button>
-                </div>
-                <nav aria-label="Documentação" className="drawer__navigation">
-                  <NavigationTree
-                    groups={groups}
-                    onNavigate={closeDrawer}
-                  />
-                </nav>
+              <div className="drawer__header">
+                <h2 id={titleId}>Navegação</h2>
+                <button
+                  aria-label="Fechar navegação"
+                  className="icon-button"
+                  onClick={closeDrawer}
+                  type="button"
+                >
+                  <X aria-hidden="true" size={18} />
+                </button>
               </div>
-            </div>,
+              <nav aria-label="Documentação" className="drawer__navigation">
+                <NavigationTree
+                  groups={groups}
+                  onNavigate={closeDrawer}
+                />
+              </nav>
+            </dialog>,
             document.body,
           )
         : null}

@@ -1,0 +1,25 @@
+{
+  "sourcePackage": "godocs-logo-reference-pack.zip",
+  "sourcePackageSha256": "aa7f5f43293fb64d4f50dc20cffb6d4378a1aa7422a1f1bbc321f8e73405a658",
+  "headerDark": {
+    "sourceEntry": "godocs-logo-official-reference-transparent.png",
+    "file": "public/brand/godocs-logo-official-dark.png",
+    "sha256": "d3a10e8743c80f93da56a70ed7de561d267aee2a87015f2cd4dafdfcebd67944",
+    "width": 150,
+    "height": 58
+  },
+  "headerLight": {
+    "file": "public/brand/godocs-logo-official-light.png",
+    "sha256": "edc3407ddd025657674e649ce6eb324a7ef3ece7b8fd65f255fa71a2f8db8992",
+    "width": 150,
+    "height": 58,
+    "unchangedThroughColumn": 56
+  },
+  "socialDark": {
+    "sourceEntry": "godocs-logo-official-reference-transparent-8x.png",
+    "file": "public/brand/godocs-logo-official-dark-8x.png",
+    "sha256": "e45a12681d2862a171d5673d279847999a16e2eb7963f27388689d8d4170f371",
+    "width": 1200,
+    "height": 464
+  }
+}

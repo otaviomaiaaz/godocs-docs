@@ -26,6 +26,7 @@ describe("primeiro documento publicado", () => {
       navTitle: "O que é o GoDocs?",
       description:
         "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
+      cardDescription: "Explicação inicial do sistema.",
       slug: "o-que-e-o-godocs",
       section: {
         id: "comece-por-aqui",
@@ -59,6 +60,7 @@ describe("primeiro documento publicado", () => {
     });
     expect(navigation[0]?.items[0]).toMatchObject({
       label: "O que é o GoDocs?",
+      description: "Explicação inicial do sistema.",
       href: "/docs/o-que-e-o-godocs",
     });
     expect(buildBreadcrumbs(doc, [doc])).toEqual([

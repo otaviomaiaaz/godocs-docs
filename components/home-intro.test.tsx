@@ -38,8 +38,7 @@ describe("home orientada ao conteúdo", () => {
               {
                 id: "o-que-e-o-godocs",
                 label: "O que é o GoDocs?",
-                description:
-                  "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
+                description: "Explicação inicial do sistema.",
                 href: "/docs/o-que-e-o-godocs",
                 children: [],
               },
@@ -55,9 +54,7 @@ describe("home orientada ao conteúdo", () => {
     expect(
       screen.getByRole("link", { name: /O que é o GoDocs\?/ }).getAttribute("href"),
     ).toBe("/docs/o-que-e-o-godocs");
-    const description = screen.getByText(
-      "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
-    );
+    const description = screen.getByText("Explicação inicial do sistema.");
     expect(description.textContent?.endsWith("...")).toBe(false);
     expect(description.textContent?.endsWith("…")).toBe(false);
     expect(

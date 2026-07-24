@@ -15,6 +15,14 @@ type SocialImageOptions = {
   description?: string;
 };
 
+const SOCIAL_COLORS = {
+  accent: "#ff7600",
+  background: "#232222",
+  border: "#3f3f3f",
+  text: "#ffffff",
+  textMuted: "#a1a1a1",
+} as const;
+
 export const socialImageSize = {
   width: 1200,
   height: 630,
@@ -32,11 +40,10 @@ export async function createSocialImage({
       process.cwd(),
       "public",
       "brand",
-      "godocs-wordmark-on-dark.svg",
+      "godocs-logo-official-dark-8x.png",
     ),
-    "utf8",
   );
-  const logoSource = `data:image/svg+xml;base64,${Buffer.from(logo).toString(
+  const logoSource = `data:image/png;base64,${Buffer.from(logo).toString(
     "base64",
   )}`;
 
@@ -49,8 +56,8 @@ export async function createSocialImage({
           display: "flex",
           flexDirection: "column",
           padding: "68px 78px",
-          background: "#1b1b1b",
-          color: "#f6f6f6",
+          background: SOCIAL_COLORS.background,
+          color: SOCIAL_COLORS.text,
           fontFamily: "Arial, sans-serif",
         }}
       >
@@ -65,14 +72,14 @@ export async function createSocialImage({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt=""
-            height={60}
+            height={93}
             src={logoSource}
             style={{ display: "block" }}
-            width={242}
+            width={240}
           />
           <span
             style={{
-              color: "#929292",
+              color: SOCIAL_COLORS.textMuted,
               fontSize: 22,
               letterSpacing: "-0.01em",
             }}
@@ -95,7 +102,7 @@ export async function createSocialImage({
               display: "flex",
               alignItems: "center",
               gap: 14,
-              color: "#ff7900",
+              color: SOCIAL_COLORS.accent,
               fontSize: 20,
               fontWeight: 700,
               letterSpacing: "0.09em",
@@ -106,7 +113,7 @@ export async function createSocialImage({
                 display: "flex",
                 width: 34,
                 height: 3,
-                background: "#ff7900",
+                background: SOCIAL_COLORS.accent,
               }}
             />
             {eyebrow.toLocaleUpperCase("pt-BR")}
@@ -129,7 +136,7 @@ export async function createSocialImage({
               display: "flex",
               maxWidth: 940,
               marginTop: 22,
-              color: "#b2b2b2",
+              color: SOCIAL_COLORS.textMuted,
               fontSize: 27,
               lineHeight: 1.42,
             }}
@@ -143,7 +150,7 @@ export async function createSocialImage({
             display: "flex",
             width: "100%",
             height: 2,
-            background: "#353535",
+            background: SOCIAL_COLORS.border,
           }}
         >
           <span
@@ -151,7 +158,7 @@ export async function createSocialImage({
               display: "flex",
               width: 184,
               height: 2,
-              background: "#ff7900",
+              background: SOCIAL_COLORS.accent,
             }}
           />
         </div>
