@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
+import { useLayoutEffect, type RefObject } from "react";
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -20,7 +20,7 @@ export function useModalBehavior({
   triggerRef,
   initialFocusRef,
 }: UseModalBehaviorOptions) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isOpen) return;
 
     const dialog = dialogRef.current;
@@ -29,11 +29,10 @@ export function useModalBehavior({
 
     if (!dialog.open) dialog.showModal();
 
-    const focusFrame = window.requestAnimationFrame(() => {
-      const firstFocusable = dialog.querySelector<HTMLElement>(
-        FOCUSABLE_SELECTOR,
-      );
-      (initialFocusRef?.current ?? firstFocusable ?? dialog)?.focus();
+    const firstFocusable =
+      dialog.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+    (initialFocusRef?.current ?? firstFocusable ?? dialog)?.focus({
+      preventScroll: true,
     });
 
     function handleCancel(event: Event) {
@@ -44,10 +43,9 @@ export function useModalBehavior({
     dialog.addEventListener("cancel", handleCancel);
 
     return () => {
-      window.cancelAnimationFrame(focusFrame);
       dialog.removeEventListener("cancel", handleCancel);
       if (dialog.open) dialog.close();
-      trigger?.focus();
+      trigger?.focus({ preventScroll: true });
     };
   }, [dialogRef, initialFocusRef, isOpen, onClose, triggerRef]);
 }

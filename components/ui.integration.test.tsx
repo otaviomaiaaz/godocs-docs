@@ -3,6 +3,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
+import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Brand } from "@/components/brand";
@@ -200,6 +201,59 @@ describe("fluxos interativos", () => {
     ).toBeTruthy();
   });
 
+  it("foca o campo de forma estável e preserva a navegação nativa por Tab", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => searchIndex,
+      })),
+    );
+    const user = userEvent.setup();
+
+    renderInSiteShell(
+      <StrictMode>
+        <SearchDialog />
+      </StrictMode>,
+    );
+    const trigger = screen.getByRole("button", {
+      name: "Pesquisar na documentação",
+    });
+    await user.click(trigger);
+
+    const combobox = await screen.findByRole("combobox");
+    expect(document.activeElement).toBe(combobox);
+
+    await user.tab();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Fechar pesquisa" }),
+    );
+  });
+
+  it("fecha a busca com Escape e restaura o foco sem deixar X órfão", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => searchIndex,
+      })),
+    );
+    const user = userEvent.setup();
+
+    renderInSiteShell(<SearchDialog />);
+    const trigger = screen.getByRole("button", {
+      name: "Pesquisar na documentação",
+    });
+    await user.click(trigger);
+    expect(document.activeElement).toBe(await screen.findByRole("combobox"));
+
+    await user.keyboard("{Escape}");
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Fechar pesquisa" })).toBeNull();
+  });
+
   it("fecha a busca pelo cancel nativo, não deixa X órfão e restaura o foco", async () => {
     vi.stubGlobal(
       "fetch",
@@ -320,9 +374,8 @@ describe("marca", () => {
 
     const brand = screen.getByRole("link", { name: "GoDocs — página inicial" });
     expect(brand.getAttribute("href")).toBe("/");
-    const sources = Array.from(brand.querySelectorAll("img")).map((image) =>
-      image.getAttribute("src"),
-    );
+    const images = Array.from(brand.querySelectorAll("img"));
+    const sources = images.map((image) => image.getAttribute("src"));
     expect(sources).toHaveLength(2);
     expect(sources.some((source) => source?.includes("godocs-logo-official-dark.png"))).toBe(
       true,
@@ -334,6 +387,16 @@ describe("marca", () => {
     expect(sources.some((source) => source?.includes(defectiveAssetName))).toBe(
       false,
     );
+    expect(sources.every((source) => !source?.includes("/_next/image"))).toBe(
+      true,
+    );
+    expect(
+      images.every(
+        (image) =>
+          image.getAttribute("width") === "150" &&
+          image.getAttribute("height") === "58",
+      ),
+    ).toBe(true);
     expect(screen.queryByText("Documentação")).toBeNull();
     expect(screen.queryByText("Docs")).toBeNull();
   });

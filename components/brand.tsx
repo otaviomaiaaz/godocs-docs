@@ -14,8 +14,9 @@ export function Brand() {
           className="brand__logo brand__logo--dark"
           height={58}
           priority
-          sizes="(max-width: 767px) 83px, 93px"
+          sizes="(max-width: 767px) 96px, 112px"
           src="/brand/godocs-logo-official-dark.png"
+          unoptimized
           width={150}
         />
         <Image
@@ -23,8 +24,9 @@ export function Brand() {
           className="brand__logo brand__logo--light"
           height={58}
           priority
-          sizes="(max-width: 767px) 83px, 93px"
+          sizes="(max-width: 767px) 96px, 112px"
           src="/brand/godocs-logo-official-light.png"
+          unoptimized
           width={150}
         />
       </span>

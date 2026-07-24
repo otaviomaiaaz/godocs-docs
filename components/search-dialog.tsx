@@ -216,6 +216,12 @@ export function SearchDialog() {
               aria-labelledby={dialogTitleId}
               className="search-dialog"
               id={dialogId}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.preventDefault();
+                  closeDialog();
+                }
+              }}
               onMouseDown={(event) => {
                 if (event.currentTarget === event.target) closeDialog();
               }}

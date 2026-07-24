@@ -138,6 +138,57 @@ function pixelAt(image: DecodedPng, x: number, y: number) {
   return image.pixels.subarray(offset, offset + 4);
 }
 
+function cssRuleBlock(css: string, selector: string): string {
+  const selectorStart = css.indexOf(`${selector} {`);
+  expect(selectorStart).toBeGreaterThanOrEqual(0);
+  const blockStart = css.indexOf("{", selectorStart);
+  const blockEnd = css.indexOf("}", blockStart);
+  return css.slice(blockStart + 1, blockEnd);
+}
+
+function cssProperty(css: string, selector: string, property: string): string {
+  const block = cssRuleBlock(css, selector);
+  const match = block.match(
+    new RegExp(`(?:^|\\n)\\s*${property.replaceAll("-", "\\-")}\\s*:\\s*([^;]+);`),
+  );
+  expect(match).not.toBeNull();
+  return match?.[1]?.trim() ?? "";
+}
+
+function resolveCssColor(css: string, selector: string, property: string): string {
+  const value = cssProperty(css, selector, property);
+  const reference = value.match(/^var\((--[^)]+)\)$/);
+  return reference?.[1]
+    ? resolveCssColor(css, selector, reference[1])
+    : value.toLowerCase();
+}
+
+function relativeLuminance(hex: string): number {
+  const channels = [1, 3, 5].map(
+    (index) => Number.parseInt(hex.slice(index, index + 2), 16) / 255,
+  );
+  const linear = channels.map((channel) =>
+    channel <= 0.04045
+      ? channel / 12.92
+      : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+
+  return (
+    0.2126 * (linear[0] ?? 0) +
+    0.7152 * (linear[1] ?? 0) +
+    0.0722 * (linear[2] ?? 0)
+  );
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  return (
+    (Math.max(foregroundLuminance, backgroundLuminance) + 0.05) /
+    (Math.min(foregroundLuminance, backgroundLuminance) + 0.05)
+  );
+}
+
 async function findSearchableFiles(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const nestedFiles = await Promise.all(
@@ -357,6 +408,60 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(icon).toContain('fill="#232222"');
     expect(icon).toContain('stroke="#FF7600"');
     expect(icon).not.toMatch(/#1b1b1b|#ff7900/i);
+  });
+
+  it("distingue divisores, superfícies, controles e níveis de texto com contraste", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+
+    for (const themeSelector of [":root", 'html[data-theme="light"]']) {
+      const background = resolveCssColor(css, themeSelector, "--surface");
+      const interactiveBackground = resolveCssColor(
+        css,
+        themeSelector,
+        "--surface-interactive",
+      );
+      const controlBorder = resolveCssColor(
+        css,
+        themeSelector,
+        "--control-border",
+      );
+      const secondary = resolveCssColor(
+        css,
+        themeSelector,
+        "--text-secondary",
+      );
+      const muted = resolveCssColor(css, themeSelector, "--text-muted");
+
+      expect(cssProperty(css, themeSelector, "--divider")).not.toBe(
+        cssProperty(css, themeSelector, "--surface-border"),
+      );
+      expect(secondary).not.toBe(muted);
+      expect(contrastRatio(controlBorder, background)).toBeGreaterThanOrEqual(3);
+      expect(
+        contrastRatio(controlBorder, interactiveBackground),
+      ).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(secondary, background)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(muted, background)).toBeGreaterThanOrEqual(4.5);
+    }
+
+    for (const selector of [
+      ".icon-button",
+      ".search-trigger",
+      ".home-page-card",
+      ".home-section__expand",
+      ".search-field",
+      ".article-pagination__link",
+    ]) {
+      expect(cssRuleBlock(css, selector)).toContain("var(--control-border)");
+    }
+
+    expect(cssRuleBlock(css, ".docs-header")).toContain("var(--divider)");
+    expect(cssRuleBlock(css, ".search-dialog")).toContain(
+      "var(--surface-border)",
+    );
   });
 
   it("centraliza a escala tipográfica e a aplica aos papéis principais", async () => {
