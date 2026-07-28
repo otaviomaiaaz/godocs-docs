@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
@@ -107,7 +108,7 @@ describe("home orientada ao conteúdo", () => {
     expect(screen.queryByText("Página 7")).toBeNull();
   });
 
-  it("renderiza as seções e os quatro cards publicados com a mesma estrutura", async () => {
+  it("renderiza os cards publicados, as seis funcionalidades na ordem e a FAQ vazia", async () => {
     const docs = await loadDocumentsFromDirectory(
       path.join(process.cwd(), "content", "docs"),
     );
@@ -118,6 +119,7 @@ describe("home orientada ao conteúdo", () => {
     expect(sectionHeadings.map((heading) => heading.textContent)).toEqual([
       "Comece por aqui",
       "Funcionalidades",
+      "Perguntas frequentes",
     ]);
     expect(
       screen.getByText("Conheça os principais recursos disponíveis no GoDocs."),
@@ -133,20 +135,110 @@ describe("home orientada ao conteúdo", () => {
     expectedCards.forEach(([name, href]) => {
       const card = screen.getByRole("link", { name: new RegExp(name) });
       expect(card.getAttribute("href")).toBe(href);
-      expect(card.className).toBe("home-page-card");
-      expect(card.querySelector("svg")).toBeTruthy();
+      expect(card.classList.contains("home-page-card--linked")).toBe(true);
+      expect(card.querySelector(".home-page-card__icon svg")).toBeTruthy();
       expect(card.querySelector(".home-page-card__arrow")).toBeTruthy();
     });
 
-    const sections = document.querySelectorAll(".home-section");
-    expect(sections).toHaveLength(2);
-    sections.forEach((section) => {
-      expect(section.querySelector(".home-section__heading")).toBeTruthy();
-      expect(
-        section.querySelector(".home-section__pages")?.getAttribute(
-          "data-count",
-        ),
-      ).toBe("2");
+    const features = screen.getByRole("region", { name: "Funcionalidades" });
+    const featureCards = Array.from(
+      features.querySelectorAll(".home-page-card"),
+    );
+    expect(
+      featureCards.map((card) => card.querySelector("h3")?.textContent),
+    ).toEqual([
+      "Visão Geral",
+      "Busca Inteligente",
+      "Documentos",
+      "Favoritos",
+      "Workflows",
+      "Relatórios",
+    ]);
+    expect(featureCards).toHaveLength(6);
+    expect(within(features).getAllByRole("link")).toHaveLength(2);
+    expect(within(features).getAllByText("Em breve")).toHaveLength(4);
+
+    ["Documentos", "Favoritos", "Workflows", "Relatórios"].forEach(
+      (title) => {
+        const heading = within(features).getByRole("heading", {
+          level: 3,
+          name: title,
+        });
+        const card = heading.closest(".home-page-card");
+
+        expect(card?.tagName).toBe("ARTICLE");
+        expect(card?.querySelector("a")).toBeNull();
+        expect(card?.querySelector(".home-page-card__badge")?.textContent).toBe(
+          "Em breve",
+        );
+      },
+    );
+
+    const faq = screen.getByRole("region", { name: "Perguntas frequentes" });
+    expect(
+      within(faq).getByText(
+        "Encontre respostas rápidas para as dúvidas mais comuns sobre o GoDocs.",
+      ),
+    ).toBeTruthy();
+    expect(
+      within(faq).getByText(
+        "Conteúdo em preparação. As perguntas frequentes serão adicionadas em breve.",
+      ),
+    ).toBeTruthy();
+    expect(within(faq).queryAllByRole("button")).toHaveLength(0);
+    expect(faq.querySelectorAll("details")).toHaveLength(0);
+
+    const documentationNavigation = screen.getByRole("navigation", {
+      name: "Seções da documentação",
     });
+    expect(
+      within(documentationNavigation).queryByText("Perguntas frequentes"),
+    ).toBeNull();
+
+    const sections = document.querySelectorAll(".home-section");
+    expect(sections).toHaveLength(3);
+    expect(
+      screen
+        .getByRole("region", { name: "Comece por aqui" })
+        .querySelector(".home-section__pages")
+        ?.getAttribute("data-count"),
+    ).toBe("2");
+    expect(
+      features
+        .querySelector(".home-section__pages")
+        ?.getAttribute("data-count"),
+    ).toBe("6");
+  });
+
+  it("mantém três colunas no desktop, duas no tablet e uma no mobile", async () => {
+    const css = await readFile(
+      path.join(process.cwd(), "app", "globals.css"),
+      "utf8",
+    );
+    const tabletStart = css.indexOf("@media (max-width: 1023px)");
+    const mobileStart = css.indexOf("@media (max-width: 767px)");
+    const narrowMobileStart = css.indexOf("@media (max-width: 340px)");
+    const reducedMotionStart = css.indexOf(
+      "@media (prefers-reduced-motion: reduce)",
+    );
+    const tabletCss = css.slice(tabletStart, mobileStart);
+    const mobileCss = css.slice(mobileStart, narrowMobileStart);
+    const reducedMotionCss = css.slice(reducedMotionStart);
+
+    expect(css).toMatch(
+      /\.home-section__pages--features\s*\{\s*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/,
+    );
+    expect(tabletCss).toMatch(
+      /\.home-section__pages\s*\{\s*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+    );
+    expect(mobileCss).toMatch(
+      /\.home-section__pages,\s*\.home-section__pages\[data-count\]\s*\{[^}]*grid-template-columns:\s*1fr;/,
+    );
+    expect(reducedMotionCss).toContain(
+      "animation-duration: 0.01ms !important",
+    );
+    expect(reducedMotionCss).toContain(
+      "transition-duration: 0.01ms !important",
+    );
   });
 });

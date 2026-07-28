@@ -450,7 +450,6 @@ describe("identidade e prevenção de regressões visuais", () => {
     for (const selector of [
       ".icon-button",
       ".search-trigger",
-      ".home-page-card",
       ".home-section__expand",
       ".search-field",
       ".article-pagination__link",
@@ -458,6 +457,9 @@ describe("identidade e prevenção de regressões visuais", () => {
       expect(cssRuleBlock(css, selector)).toContain("var(--control-border)");
     }
 
+    expect(cssRuleBlock(css, ".home-page-card")).toContain(
+      "var(--surface-border)",
+    );
     expect(cssRuleBlock(css, ".docs-header")).toContain("var(--divider)");
     expect(cssRuleBlock(css, ".search-dialog")).toContain(
       "var(--surface-border)",
@@ -486,8 +488,9 @@ describe("identidade e prevenção de regressões visuais", () => {
     }
 
     expect(css).toContain("--content-width: 66ch");
-    expect(css).toContain("max-width: 440px");
-    expect(css).toContain("padding: 18px");
+    expect(cssRuleBlock(css, ".home-page-card")).toContain("min-height: 172px");
+    expect(cssRuleBlock(css, ".home-page-card")).toContain("padding: 22px");
+    expect(cssRuleBlock(css, ".home-page-card")).not.toContain("max-width");
     expect(css).not.toContain("-webkit-line-clamp");
   });
 
