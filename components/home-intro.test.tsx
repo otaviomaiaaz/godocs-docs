@@ -135,14 +135,17 @@ describe("home orientada ao conteúdo", () => {
     expectedCards.forEach(([name, href]) => {
       const card = screen.getByRole("link", { name: new RegExp(name) });
       expect(card.getAttribute("href")).toBe(href);
-      expect(card.classList.contains("home-page-card--linked")).toBe(true);
-      expect(card.querySelector(".home-page-card__icon svg")).toBeTruthy();
-      expect(card.querySelector(".home-page-card__arrow")).toBeTruthy();
+      expect(card.classList.contains("doc-card--active")).toBe(true);
+      expect(card.getAttribute("data-status")).toBe("active");
+      expect(card.querySelector(".doc-card__icon svg")).toBeTruthy();
+      expect(
+        card.querySelector(".doc-card__indicator--arrow"),
+      ).toBeTruthy();
     });
 
     const features = screen.getByRole("region", { name: "Funcionalidades" });
     const featureCards = Array.from(
-      features.querySelectorAll(".home-page-card"),
+      features.querySelectorAll(".doc-card"),
     );
     expect(
       featureCards.map((card) => card.querySelector("h3")?.textContent),
@@ -164,13 +167,15 @@ describe("home orientada ao conteúdo", () => {
           level: 3,
           name: title,
         });
-        const card = heading.closest(".home-page-card");
+        const card = heading.closest(".doc-card");
 
         expect(card?.tagName).toBe("ARTICLE");
+        expect(card?.getAttribute("aria-label")).toBe(`${title}. Em breve`);
+        expect(card?.getAttribute("data-status")).toBe("comingSoon");
         expect(card?.querySelector("a")).toBeNull();
-        expect(card?.querySelector(".home-page-card__badge")?.textContent).toBe(
-          "Em breve",
-        );
+        expect(
+          card?.querySelector(".doc-card__indicator--badge")?.textContent,
+        ).toBe("Em breve");
       },
     );
 

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ArrowRight,
   BarChart3,
   BookOpen,
   FileText,
@@ -14,9 +13,9 @@ import {
   Star,
   type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { useId, useState } from "react";
 
+import { DocCard } from "@/components/doc-card";
 import type {
   DocNavigationGroup,
   DocNavigationItem,
@@ -28,12 +27,6 @@ type HomeIntroProps = {
 };
 
 type LinkedNavigationItem = DocNavigationItem & { href: string };
-type HomeCardProps = {
-  description: string;
-  href?: string;
-  icon: LucideIcon;
-  title: string;
-};
 type FeatureCardDefinition = {
   description: string;
   icon: LucideIcon;
@@ -113,51 +106,6 @@ function HomeAmbient() {
   );
 }
 
-function HomeCard({
-  description,
-  href,
-  icon: Icon,
-  title,
-}: HomeCardProps) {
-  const content = (
-    <>
-      <span aria-hidden="true" className="home-page-card__icon">
-        <Icon size={20} strokeWidth={1.8} />
-      </span>
-      <span className="home-page-card__body">
-        <h3>{title}</h3>
-        <p>{description}</p>
-      </span>
-      {href ? (
-        <ArrowRight
-          aria-hidden="true"
-          className="home-page-card__arrow"
-          size={18}
-        />
-      ) : (
-        <span className="home-page-card__badge">Em breve</span>
-      )}
-    </>
-  );
-
-  if (href) {
-    return (
-      <Link
-        className="home-page-card home-page-card--linked"
-        href={href}
-      >
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <article className="home-page-card home-page-card--upcoming">
-      {content}
-    </article>
-  );
-}
-
 function HomeSection({ group }: { group: DocNavigationGroup }) {
   const entries = collectDocumentItems(group.items);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -191,10 +139,11 @@ function HomeSection({ group }: { group: DocNavigationGroup }) {
 
           return (
             <li className="home-card-item" key={item.id}>
-              <HomeCard
+              <DocCard
                 description={item.description ?? ""}
                 href={item.href}
                 icon={Icon}
+                status="active"
                 title={item.label}
               />
             </li>
@@ -241,12 +190,22 @@ function FeaturesSection({ group }: { group: DocNavigationGroup }) {
 
           return (
             <li className="home-card-item" key={card.id}>
-              <HomeCard
-                description={card.description}
-                href={publishedEntry?.href}
-                icon={card.icon}
-                title={card.title}
-              />
+              {publishedEntry ? (
+                <DocCard
+                  description={card.description}
+                  href={publishedEntry.href}
+                  icon={card.icon}
+                  status="active"
+                  title={card.title}
+                />
+              ) : (
+                <DocCard
+                  description={card.description}
+                  icon={card.icon}
+                  status="comingSoon"
+                  title={card.title}
+                />
+              )}
             </li>
           );
         })}

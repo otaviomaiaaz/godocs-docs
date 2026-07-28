@@ -215,6 +215,7 @@ export function SearchDialog() {
               aria-describedby={dialogDescriptionId}
               aria-labelledby={dialogTitleId}
               className="search-dialog"
+              data-query-empty={query.trim() === ""}
               id={dialogId}
               onKeyDown={(event) => {
                 if (event.key === "Escape") {

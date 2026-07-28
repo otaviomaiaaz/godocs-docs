@@ -457,7 +457,7 @@ describe("identidade e prevenção de regressões visuais", () => {
       expect(cssRuleBlock(css, selector)).toContain("var(--control-border)");
     }
 
-    expect(cssRuleBlock(css, ".home-page-card")).toContain(
+    expect(cssRuleBlock(css, ".doc-card")).toContain(
       "var(--surface-border)",
     );
     expect(cssRuleBlock(css, ".docs-header")).toContain("var(--divider)");
@@ -488,10 +488,21 @@ describe("identidade e prevenção de regressões visuais", () => {
     }
 
     expect(css).toContain("--content-width: 66ch");
-    expect(cssRuleBlock(css, ".home-page-card")).toContain("min-height: 172px");
-    expect(cssRuleBlock(css, ".home-page-card")).toContain("padding: 22px");
-    expect(cssRuleBlock(css, ".home-page-card")).not.toContain("max-width");
-    expect(css).not.toContain("-webkit-line-clamp");
+    expect(cssRuleBlock(css, ".doc-card")).toContain("min-height: 116px");
+    expect(cssRuleBlock(css, ".doc-card")).toContain("padding: 20px");
+    expect(cssRuleBlock(css, ".doc-card")).toContain(
+      "border-radius: var(--radius-md)",
+    );
+    expect(cssRuleBlock(css, ".doc-card")).not.toContain("max-width");
+    expect(cssRuleBlock(css, ".home-section__pages--start .doc-card")).toContain(
+      "min-height: 132px",
+    );
+    expect(cssRuleBlock(css, ".doc-card__body p")).toContain(
+      "-webkit-line-clamp: 2",
+    );
+    expect(cssRuleBlock(css, ".doc-card--active:hover")).not.toContain(
+      "transform",
+    );
   });
 
   it("não mantém interceptação personalizada de Tab nem X fora de dialog", async () => {

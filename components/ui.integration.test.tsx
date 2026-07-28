@@ -120,6 +120,7 @@ describe("fluxos interativos", () => {
       name: "Pesquisar na documentação",
     });
     expect(dialog.hasAttribute("open")).toBe(true);
+    expect(dialog.getAttribute("data-query-empty")).toBe("true");
     expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
       false,
     );
@@ -132,6 +133,7 @@ describe("fluxos interativos", () => {
     expect(screen.queryByText("navegar")).toBeNull();
 
     await user.type(combobox, "GoDocs");
+    expect(dialog.getAttribute("data-query-empty")).toBe("false");
     const option = await screen.findByRole("option", { name: /O que é o GoDocs/ });
     expect(combobox.getAttribute("aria-activedescendant")).toBe(option.id);
     expect(screen.getByRole("status").textContent).toContain("1 resultado");
