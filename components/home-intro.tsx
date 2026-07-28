@@ -44,34 +44,31 @@ const FEATURE_CARDS: readonly FeatureCardDefinition[] = [
   {
     id: "funcionalidades/visao-geral",
     title: "Visão Geral",
-    description:
-      "Conheça os indicadores, gráficos e informações da página inicial do GoDocs.",
+    description: "Acompanhe os principais indicadores do GoDocs.",
     icon: LayoutDashboard,
   },
   {
     id: "funcionalidades/busca-inteligente",
     title: "Busca Inteligente",
-    description:
-      "Encontre documentos com pesquisa semântica e filtros avançados.",
+    description: "Encontre documentos com busca semântica e filtros.",
     icon: Search,
   },
   {
     id: "funcionalidades/documentos",
     title: "Documentos",
-    description: "Organize, consulte e acompanhe documentos no GoDocs.",
+    description: "Organize e consulte seus documentos.",
     icon: FolderOpen,
   },
   {
     id: "funcionalidades/favoritos",
     title: "Favoritos",
-    description:
-      "Acesse rapidamente os documentos marcados como favoritos.",
+    description: "Acesse rapidamente seus documentos favoritos.",
     icon: Star,
   },
   {
     id: "funcionalidades/workflows",
     title: "Workflows",
-    description: "Acompanhe processos e fluxos de trabalho no GoDocs.",
+    description: "Acompanhe processos e fluxos de trabalho.",
     icon: GitBranch,
   },
   {

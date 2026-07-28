@@ -64,8 +64,7 @@ describe("conteúdo publicado", () => {
     expect(docs).toHaveLength(4);
     expect(firstAccess?.metadata).toMatchObject({
       title: "Primeiro Acesso",
-      cardDescription:
-        "Aprenda a criar sua conta, fazer login e acessar seu ambiente no GoDocs.",
+      cardDescription: "Crie sua conta e acesse o GoDocs.",
       section: {
         id: "comece-por-aqui",
         order: 10,
@@ -86,8 +85,7 @@ describe("conteúdo publicado", () => {
 
     expect(overview?.metadata).toMatchObject({
       title: "Visão Geral",
-      cardDescription:
-        "Conheça os indicadores, gráficos e informações da página inicial do GoDocs.",
+      cardDescription: "Acompanhe os principais indicadores do GoDocs.",
       section: {
         id: "funcionalidades",
         label: "Funcionalidades",
@@ -115,8 +113,7 @@ describe("conteúdo publicado", () => {
 
     expect(smartSearch?.metadata).toMatchObject({
       title: "Busca Inteligente",
-      cardDescription:
-        "Encontre documentos com pesquisa semântica e filtros avançados.",
+      cardDescription: "Encontre documentos com busca semântica e filtros.",
       section: {
         id: "funcionalidades",
         order: 20,

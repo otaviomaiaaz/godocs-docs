@@ -488,19 +488,36 @@ describe("identidade e prevenção de regressões visuais", () => {
     }
 
     expect(css).toContain("--content-width: 66ch");
+    expect(css).toContain("--duration-interaction: 200ms");
     expect(cssRuleBlock(css, ".doc-card")).toContain("min-height: 116px");
-    expect(cssRuleBlock(css, ".doc-card")).toContain("padding: 20px");
+    expect(cssRuleBlock(css, ".doc-card")).toContain("padding: 18px 20px");
+    expect(cssRuleBlock(css, ".doc-card")).toContain(
+      "grid-template-columns: 34px minmax(0, 1fr)",
+    );
     expect(cssRuleBlock(css, ".doc-card")).toContain(
       "border-radius: var(--radius-md)",
     );
     expect(cssRuleBlock(css, ".doc-card")).not.toContain("max-width");
     expect(cssRuleBlock(css, ".home-section__pages--start .doc-card")).toContain(
-      "min-height: 132px",
+      "min-height: 116px",
     );
-    expect(cssRuleBlock(css, ".doc-card__body p")).toContain(
-      "-webkit-line-clamp: 2",
+    const cardDescription = cssRuleBlock(css, ".doc-card__body p");
+    expect(cardDescription).toContain("height: auto");
+    expect(cardDescription).toContain("overflow: visible");
+    expect(cardDescription).toContain("white-space: normal");
+    expect(cardDescription).not.toContain("-webkit-line-clamp");
+    expect(cardDescription).not.toContain("max-height");
+    expect(cardDescription).not.toContain("overflow: hidden");
+    expect(
+      cssRuleBlock(
+        css,
+        ".doc-card--active:hover,\n.doc-card--active:focus-visible",
+      ),
+    ).toContain("transform: translateY(-2px)");
+    expect(cssRuleBlock(css, ".doc-card--active:active")).toContain(
+      "transform: translateY(-1px)",
     );
-    expect(cssRuleBlock(css, ".doc-card--active:hover")).not.toContain(
+    expect(cssRuleBlock(css, ".doc-card--coming-soon")).not.toContain(
       "transform",
     );
   });

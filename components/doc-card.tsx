@@ -36,22 +36,24 @@ export function DocCard(props: DocCardProps) {
       <span aria-hidden="true" className="doc-card__icon">
         <Icon size={18} strokeWidth={1.7} />
       </span>
-      <span className="doc-card__body">
-        <h3>{title}</h3>
+      <div className="doc-card__body">
+        <div className="doc-card__title-row">
+          <h3>{title}</h3>
+          {status === "active" ? (
+            <ArrowRight
+              aria-hidden="true"
+              className="doc-card__indicator doc-card__indicator--arrow"
+              size={17}
+              strokeWidth={1.7}
+            />
+          ) : (
+            <span className="doc-card__indicator doc-card__indicator--badge">
+              Em breve
+            </span>
+          )}
+        </div>
         <p>{description}</p>
-      </span>
-      {status === "active" ? (
-        <ArrowRight
-          aria-hidden="true"
-          className="doc-card__indicator doc-card__indicator--arrow"
-          size={17}
-          strokeWidth={1.7}
-        />
-      ) : (
-        <span className="doc-card__indicator doc-card__indicator--badge">
-          Em breve
-        </span>
-      )}
+      </div>
     </>
   );
 

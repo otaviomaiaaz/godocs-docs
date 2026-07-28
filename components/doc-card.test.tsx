@@ -24,6 +24,7 @@ describe("DocCard", () => {
     );
 
     const link = screen.getByRole("link", { name: /Início/ });
+    const directChildren = Array.from(link.children);
     const activationSpy = vi.fn((event: Event) => event.preventDefault());
     link.addEventListener("click", activationSpy);
     link.focus();
@@ -32,6 +33,15 @@ describe("DocCard", () => {
     await user.keyboard(" ");
 
     expect(activationSpy).toHaveBeenCalledTimes(2);
+    expect(directChildren).toHaveLength(2);
+    expect(directChildren[0]?.classList.contains("doc-card__icon")).toBe(true);
+    expect(directChildren[1]?.classList.contains("doc-card__body")).toBe(true);
+    expect(
+      link.querySelector(".doc-card__title-row > .doc-card__indicator--arrow"),
+    ).toBeTruthy();
+    expect(
+      link.querySelector(".doc-card__body > p")?.textContent,
+    ).toBe("Explicação inicial.");
   });
 
   it("renderiza o estado futuro sem link ou foco interativo", () => {
@@ -51,5 +61,13 @@ describe("DocCard", () => {
     expect(card?.getAttribute("aria-label")).toBe("Próximo guia. Em breve");
     expect(card?.getAttribute("tabindex")).toBeNull();
     expect(screen.getByText("Em breve")).toBeTruthy();
+    expect(
+      card?.querySelector(
+        ".doc-card__title-row > .doc-card__indicator--badge",
+      ),
+    ).toBeTruthy();
+    expect(card?.querySelector(".doc-card__body > p")?.textContent).toBe(
+      "Conteúdo em preparação.",
+    );
   });
 });

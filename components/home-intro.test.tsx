@@ -126,18 +126,37 @@ describe("home orientada ao conteúdo", () => {
     ).toBeTruthy();
 
     const expectedCards = [
-      ["O que é o GoDocs?", "/docs/o-que-e-o-godocs"],
-      ["Primeiro Acesso", "/docs/primeiro-acesso"],
-      ["Visão Geral", "/docs/funcionalidades/visao-geral"],
-      ["Busca Inteligente", "/docs/funcionalidades/busca-inteligente"],
+      [
+        "O que é o GoDocs?",
+        "Explicação inicial do sistema.",
+        "/docs/o-que-e-o-godocs",
+      ],
+      [
+        "Primeiro Acesso",
+        "Crie sua conta e acesse o GoDocs.",
+        "/docs/primeiro-acesso",
+      ],
+      [
+        "Visão Geral",
+        "Acompanhe os principais indicadores do GoDocs.",
+        "/docs/funcionalidades/visao-geral",
+      ],
+      [
+        "Busca Inteligente",
+        "Encontre documentos com busca semântica e filtros.",
+        "/docs/funcionalidades/busca-inteligente",
+      ],
     ] as const;
 
-    expectedCards.forEach(([name, href]) => {
+    expectedCards.forEach(([name, description, href]) => {
       const card = screen.getByRole("link", { name: new RegExp(name) });
       expect(card.getAttribute("href")).toBe(href);
       expect(card.classList.contains("doc-card--active")).toBe(true);
       expect(card.getAttribute("data-status")).toBe("active");
       expect(card.querySelector(".doc-card__icon svg")).toBeTruthy();
+      expect(card.querySelector(".doc-card__body p")?.textContent).toBe(
+        description,
+      );
       expect(
         card.querySelector(".doc-card__indicator--arrow"),
       ).toBeTruthy();
@@ -160,6 +179,18 @@ describe("home orientada ao conteúdo", () => {
     expect(featureCards).toHaveLength(6);
     expect(within(features).getAllByRole("link")).toHaveLength(2);
     expect(within(features).getAllByText("Em breve")).toHaveLength(4);
+    expect(
+      featureCards.map(
+        (card) => card.querySelector(".doc-card__body p")?.textContent,
+      ),
+    ).toEqual([
+      "Acompanhe os principais indicadores do GoDocs.",
+      "Encontre documentos com busca semântica e filtros.",
+      "Organize e consulte seus documentos.",
+      "Acesse rapidamente seus documentos favoritos.",
+      "Acompanhe processos e fluxos de trabalho.",
+      "Consulte indicadores e informações consolidadas.",
+    ]);
 
     ["Documentos", "Favoritos", "Workflows", "Relatórios"].forEach(
       (title) => {
@@ -244,6 +275,12 @@ describe("home orientada ao conteúdo", () => {
     );
     expect(reducedMotionCss).toContain(
       "transition-duration: 0.01ms !important",
+    );
+    expect(reducedMotionCss).toMatch(
+      /\.home__content,\s*\.home-section,\s*\.home-card-item,\s*\.home-faq__empty\s*\{[^}]*animation:\s*none !important;/,
+    );
+    expect(reducedMotionCss).toMatch(
+      /\.doc-card--active:hover,\s*\.doc-card--active:focus-visible,\s*\.doc-card--active:active\s*\{[^}]*transform:\s*none;/,
     );
   });
 });
