@@ -1937,6 +1937,12 @@ body:has(dialog[open]) {
     padding-left: 18px;
   }
 
+  .search-result small {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
   .search-dialog[data-query-empty="true"] .search-dialog__results {
     min-height: 110px;
     flex: 0 0 auto;

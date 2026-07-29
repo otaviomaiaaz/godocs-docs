@@ -49,7 +49,7 @@ describe("conteúdo publicado", () => {
     );
   });
 
-  it("publica os três novos artigos com frontmatter, rotas e sumários aprovados", async () => {
+  it("publica os sete artigos adicionais com frontmatter, rotas e sumários aprovados", async () => {
     const docs = await loadPublishedDocs();
     const firstAccess = docs.find(
       (candidate) => candidate.slug === "primeiro-acesso",
@@ -60,8 +60,20 @@ describe("conteúdo publicado", () => {
     const smartSearch = docs.find(
       (candidate) => candidate.slug === "funcionalidades/busca-inteligente",
     );
+    const documents = docs.find(
+      (candidate) => candidate.slug === "funcionalidades/documentos",
+    );
+    const favorites = docs.find(
+      (candidate) => candidate.slug === "funcionalidades/favoritos",
+    );
+    const workflows = docs.find(
+      (candidate) => candidate.slug === "funcionalidades/workflows",
+    );
+    const reports = docs.find(
+      (candidate) => candidate.slug === "funcionalidades/relatorios",
+    );
 
-    expect(docs).toHaveLength(4);
+    expect(docs).toHaveLength(8);
     expect(firstAccess?.metadata).toMatchObject({
       title: "Primeiro Acesso",
       cardDescription: "Crie sua conta e acesse o GoDocs.",
@@ -129,7 +141,51 @@ describe("conteúdo publicado", () => {
       "Como utilizar",
     ]);
 
-    for (const doc of [firstAccess, overview, smartSearch]) {
+    expect(documents?.metadata).toMatchObject({
+      title: "Documentos",
+      cardDescription: "Organize e consulte seus documentos.",
+      section: {
+        id: "funcionalidades",
+        order: 20,
+      },
+      order: 3,
+    });
+    expect(documents?.href).toBe("/docs/funcionalidades/documentos");
+    expect(documents?.headings.map((heading) => heading.title)).toEqual([
+      "O que é a seção Documentos",
+      "Como utilizar a seção Documentos",
+      "Criando uma nova pasta",
+      "Formas de visualização das pastas",
+      "Funcionalidades da pasta",
+    ]);
+
+    for (const [doc, title, order] of [
+      [favorites, "Favoritos", 4],
+      [workflows, "Workflows", 5],
+      [reports, "Relatórios", 6],
+    ] as const) {
+      expect(doc?.metadata).toMatchObject({
+        title,
+        section: {
+          id: "funcionalidades",
+          order: 20,
+        },
+        order,
+      });
+      expect(doc?.headings.map((heading) => heading.title)).toEqual([
+        "Em breve",
+      ]);
+    }
+
+    for (const doc of [
+      firstAccess,
+      overview,
+      smartSearch,
+      documents,
+      favorites,
+      workflows,
+      reports,
+    ]) {
       expect(doc?.source).not.toMatch(/^# /m);
     }
   });
@@ -161,6 +217,22 @@ describe("conteúdo publicado", () => {
         label: "Busca Inteligente",
         href: "/docs/funcionalidades/busca-inteligente",
       },
+      {
+        label: "Documentos",
+        href: "/docs/funcionalidades/documentos",
+      },
+      {
+        label: "Favoritos",
+        href: "/docs/funcionalidades/favoritos",
+      },
+      {
+        label: "Workflows",
+        href: "/docs/funcionalidades/workflows",
+      },
+      {
+        label: "Relatórios",
+        href: "/docs/funcionalidades/relatorios",
+      },
     ]);
     expect(
       navigation[1]?.items.some((item) => item.label === "Funcionalidades"),
@@ -170,6 +242,10 @@ describe("conteúdo publicado", () => {
       "primeiro-acesso",
       "funcionalidades/visao-geral",
       "funcionalidades/busca-inteligente",
+      "funcionalidades/documentos",
+      "funcionalidades/favoritos",
+      "funcionalidades/workflows",
+      "funcionalidades/relatorios",
     ]);
 
     docs.forEach((doc, index) => {
@@ -223,6 +299,27 @@ describe("conteúdo publicado", () => {
         label: "Busca Inteligente",
       },
     ]);
+
+    for (const [slug, label] of [
+      ["funcionalidades/documentos", "Documentos"],
+      ["funcionalidades/favoritos", "Favoritos"],
+      ["funcionalidades/workflows", "Workflows"],
+      ["funcionalidades/relatorios", "Relatórios"],
+    ] as const) {
+      const doc = docs.find((candidate) => candidate.slug === slug);
+
+      expect(doc && buildBreadcrumbs(doc, docs)).toEqual([
+        {
+          id: "section:funcionalidades",
+          label: "Funcionalidades",
+          href: "/docs/funcionalidades/visao-geral",
+        },
+        {
+          id: `path:${slug}`,
+          label,
+        },
+      ]);
+    }
   });
 
   it.each([
@@ -240,6 +337,9 @@ describe("conteúdo publicado", () => {
     ["relevância", "funcionalidades/busca-inteligente"],
     ["autor", "funcionalidades/busca-inteligente"],
     ["proprietário", "funcionalidades/busca-inteligente"],
+    ["nova pasta", "funcionalidades/documentos"],
+    ["vincular a um grupo", "funcionalidades/documentos"],
+    ["logs da pasta", "funcionalidades/documentos"],
   ])("encontra %s no artigo esperado", async (query, expectedSlug) => {
     const docs = await loadPublishedDocs();
     const results = searchDocuments(createSearchIndex(docs), query);
@@ -251,6 +351,6 @@ describe("conteúdo publicado", () => {
     const result = await validateContentDirectory(contentDirectory);
 
     expect(result.issues).toEqual([]);
-    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(4);
+    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(8);
   });
 });

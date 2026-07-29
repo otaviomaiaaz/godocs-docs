@@ -508,6 +508,17 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(cardDescription).not.toContain("-webkit-line-clamp");
     expect(cardDescription).not.toContain("max-height");
     expect(cardDescription).not.toContain("overflow: hidden");
+    const mobileCss = css.slice(
+      css.indexOf("@media (max-width: 767px)"),
+      css.indexOf("@media (max-width: 340px)"),
+    );
+    const mobileSearchDescription = cssRuleBlock(
+      mobileCss,
+      ".search-result small",
+    );
+    expect(mobileSearchDescription).toContain("overflow: visible");
+    expect(mobileSearchDescription).toContain("text-overflow: clip");
+    expect(mobileSearchDescription).toContain("white-space: normal");
     expect(
       cssRuleBlock(
         css,

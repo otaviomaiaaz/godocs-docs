@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { generateMetadata } from "@/app/docs/[...slug]/page";
+import {
+  generateMetadata,
+  generateStaticParams,
+} from "@/app/docs/[...slug]/page";
 import { metadata } from "@/app/layout";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
@@ -63,8 +66,27 @@ describe("SEO e indexação", () => {
       absoluteUrl("/docs/primeiro-acesso"),
       absoluteUrl("/docs/funcionalidades/visao-geral"),
       absoluteUrl("/docs/funcionalidades/busca-inteligente"),
+      absoluteUrl("/docs/funcionalidades/documentos"),
+      absoluteUrl("/docs/funcionalidades/favoritos"),
+      absoluteUrl("/docs/funcionalidades/workflows"),
+      absoluteUrl("/docs/funcionalidades/relatorios"),
     ]);
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
+  });
+
+  it("gera estaticamente os oito documentos publicados", async () => {
+    const params = await generateStaticParams();
+
+    expect(params).toEqual([
+      { slug: ["o-que-e-o-godocs"] },
+      { slug: ["primeiro-acesso"] },
+      { slug: ["funcionalidades", "visao-geral"] },
+      { slug: ["funcionalidades", "busca-inteligente"] },
+      { slug: ["funcionalidades", "documentos"] },
+      { slug: ["funcionalidades", "favoritos"] },
+      { slug: ["funcionalidades", "workflows"] },
+      { slug: ["funcionalidades", "relatorios"] },
+    ]);
   });
 
   it("permite páginas públicas e referencia o sitemap", () => {

@@ -146,6 +146,26 @@ describe("home orientada ao conteúdo", () => {
         "Encontre documentos com busca semântica e filtros.",
         "/docs/funcionalidades/busca-inteligente",
       ],
+      [
+        "Documentos",
+        "Organize e consulte seus documentos.",
+        "/docs/funcionalidades/documentos",
+      ],
+      [
+        "Favoritos",
+        "Acesse rapidamente seus documentos favoritos.",
+        "/docs/funcionalidades/favoritos",
+      ],
+      [
+        "Workflows",
+        "Acompanhe processos e fluxos de trabalho.",
+        "/docs/funcionalidades/workflows",
+      ],
+      [
+        "Relatórios",
+        "Consulte indicadores e informações consolidadas.",
+        "/docs/funcionalidades/relatorios",
+      ],
     ] as const;
 
     expectedCards.forEach(([name, description, href]) => {
@@ -177,8 +197,8 @@ describe("home orientada ao conteúdo", () => {
       "Relatórios",
     ]);
     expect(featureCards).toHaveLength(6);
-    expect(within(features).getAllByRole("link")).toHaveLength(2);
-    expect(within(features).getAllByText("Em breve")).toHaveLength(4);
+    expect(within(features).getAllByRole("link")).toHaveLength(6);
+    expect(within(features).queryByText("Em breve")).toBeNull();
     expect(
       featureCards.map(
         (card) => card.querySelector(".doc-card__body p")?.textContent,
@@ -192,23 +212,12 @@ describe("home orientada ao conteúdo", () => {
       "Consulte indicadores e informações consolidadas.",
     ]);
 
-    ["Documentos", "Favoritos", "Workflows", "Relatórios"].forEach(
-      (title) => {
-        const heading = within(features).getByRole("heading", {
-          level: 3,
-          name: title,
-        });
-        const card = heading.closest(".doc-card");
-
-        expect(card?.tagName).toBe("ARTICLE");
-        expect(card?.getAttribute("aria-label")).toBe(`${title}. Em breve`);
-        expect(card?.getAttribute("data-status")).toBe("comingSoon");
-        expect(card?.querySelector("a")).toBeNull();
-        expect(
-          card?.querySelector(".doc-card__indicator--badge")?.textContent,
-        ).toBe("Em breve");
-      },
-    );
+    featureCards.forEach((card) => {
+      expect(card.tagName).toBe("A");
+      expect(card.getAttribute("data-status")).toBe("active");
+      expect(card.querySelector(".doc-card__indicator--arrow")).toBeTruthy();
+      expect(card.querySelector(".doc-card__indicator--badge")).toBeNull();
+    });
 
     const faq = screen.getByRole("region", { name: "Perguntas frequentes" });
     expect(
