@@ -1,14 +1,19 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type { DocHeading } from "@/lib/docs/schema";
 
 type TableOfContentsProps = {
   headings: DocHeading[];
+  variant?: "desktop" | "mobile";
 };
 
-export function TableOfContents({ headings }: TableOfContentsProps) {
+export function TableOfContents({
+  headings,
+  variant = "desktop",
+}: TableOfContentsProps) {
   const [activeId, setActiveId] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {
@@ -18,37 +23,72 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
 
     if (elements.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+    let frame = 0;
+    const updateActiveHeading = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const reachedPageEnd =
+          Math.ceil(window.scrollY + window.innerHeight) >=
+          document.documentElement.scrollHeight - 2;
 
-        if (visible) setActiveId(visible.target.id);
-      },
-      { rootMargin: "-96px 0px -70% 0px", threshold: [0, 1] },
-    );
+        if (reachedPageEnd) {
+          setActiveId(elements.at(-1)?.id ?? "");
+          return;
+        }
 
-    elements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+        const passed = elements.filter(
+          (element) => element.getBoundingClientRect().top <= 132,
+        );
+        setActiveId(passed.at(-1)?.id ?? elements[0]?.id ?? "");
+      });
+    };
+
+    updateActiveHeading();
+    window.addEventListener("scroll", updateActiveHeading, { passive: true });
+    window.addEventListener("resize", updateActiveHeading);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateActiveHeading);
+      window.removeEventListener("resize", updateActiveHeading);
+    };
   }, [headings]);
+
+  const links = (
+    <ol>
+      {headings.map((heading) => (
+        <li
+          className={heading.depth === 3 ? "is-nested" : undefined}
+          key={heading.id}
+        >
+          <a
+            aria-current={activeId === heading.id ? "location" : undefined}
+            href={`#${heading.id}`}
+          >
+            {heading.title}
+          </a>
+        </li>
+      ))}
+    </ol>
+  );
+
+  if (variant === "mobile") {
+    return (
+      <details className="article-toc-mobile">
+        <summary>
+          <span>Nesta página</span>
+          <ChevronDown aria-hidden="true" size={17} />
+        </summary>
+        <nav aria-label="Nesta página">{links}</nav>
+      </details>
+    );
+  }
 
   return (
     <aside className="table-of-contents">
       <nav aria-label="Nesta página">
         <h2>Nesta página</h2>
-        <ol>
-          {headings.map((heading) => (
-            <li className={heading.depth === 3 ? "is-nested" : undefined} key={heading.id}>
-              <a
-                aria-current={activeId === heading.id ? "location" : undefined}
-                href={`#${heading.id}`}
-              >
-                {heading.title}
-              </a>
-            </li>
-          ))}
-        </ol>
+        {links}
       </nav>
     </aside>
   );

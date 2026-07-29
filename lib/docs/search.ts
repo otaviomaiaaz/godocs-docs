@@ -1,13 +1,14 @@
 import type { DocRecord } from "@/lib/docs/schema";
 
 export type SearchIndexEntry = {
+  kind: "page" | "section";
   title: string;
   description: string;
   href: string;
   section?: string;
+  pageTitle?: string;
   normalized: {
     title: string;
-    headings: string;
     description: string;
     section: string;
     keywords: string;
@@ -16,23 +17,24 @@ export type SearchIndexEntry = {
 };
 
 export type SearchIndex = {
-  version: 1;
+  version: 2;
   entries: SearchIndexEntry[];
 };
 
 export type SearchResult = Pick<
   SearchIndexEntry,
-  "title" | "description" | "href" | "section"
+  "kind" | "title" | "description" | "href" | "section" | "pageTitle"
 > & {
   score: number;
 };
 
 export type SearchEntrySource = {
+  kind?: "page" | "section";
   title: string;
   description: string;
   href: string;
   section?: string;
-  headings?: string[];
+  pageTitle?: string;
   keywords?: string[];
   content: string;
 };
@@ -59,13 +61,14 @@ export function hasUsefulSearchQuery(value: string): boolean {
 
 export function createSearchEntry(source: SearchEntrySource): SearchIndexEntry {
   return {
+    kind: source.kind ?? "page",
     title: source.title,
     description: source.description,
     href: source.href,
     section: source.section,
+    pageTitle: source.pageTitle,
     normalized: {
       title: normalizeSearchText(source.title),
-      headings: normalizeSearchText((source.headings ?? []).join(" ")),
       description: normalizeSearchText(source.description),
       section: normalizeSearchText(source.section ?? ""),
       keywords: normalizeSearchText((source.keywords ?? []).join(" ")),
@@ -76,18 +79,31 @@ export function createSearchEntry(source: SearchEntrySource): SearchIndexEntry {
 
 export function createSearchIndex(docs: DocRecord[]): SearchIndex {
   return {
-    version: 1,
-    entries: docs.map((doc) =>
+    version: 2,
+    entries: docs.flatMap((doc) => [
       createSearchEntry({
+        kind: "page",
         title: doc.metadata.title,
         description: doc.metadata.description,
         href: doc.href,
         section: doc.metadata.section?.label,
-        headings: doc.headings.map((heading) => heading.title),
         keywords: doc.metadata.keywords,
         content: doc.searchableText,
       }),
-    ),
+      ...doc.sections.map((section) =>
+        createSearchEntry({
+          kind: "section",
+          title: section.title,
+          description:
+            section.text.slice(0, 220) || doc.metadata.description,
+          href: `${doc.href}#${section.id}`,
+          section: doc.metadata.section?.label,
+          pageTitle: doc.metadata.title,
+          keywords: doc.metadata.keywords,
+          content: section.text,
+        }),
+      ),
+    ]),
   };
 }
 
@@ -95,7 +111,7 @@ export function isSearchIndex(value: unknown): value is SearchIndex {
   if (!value || typeof value !== "object") return false;
 
   const candidate = value as { version?: unknown; entries?: unknown };
-  if (candidate.version !== 1 || !Array.isArray(candidate.entries)) return false;
+  if (candidate.version !== 2 || !Array.isArray(candidate.entries)) return false;
 
   return candidate.entries.every((entry) => {
     if (!entry || typeof entry !== "object") return false;
@@ -105,12 +121,13 @@ export function isSearchIndex(value: unknown): value is SearchIndex {
       | undefined;
 
     return (
+      (item.kind === "page" || item.kind === "section") &&
       typeof item.title === "string" &&
       typeof item.description === "string" &&
       typeof item.href === "string" &&
       (item.section === undefined || typeof item.section === "string") &&
+      (item.pageTitle === undefined || typeof item.pageTitle === "string") &&
       typeof normalized?.title === "string" &&
-      typeof normalized.headings === "string" &&
       typeof normalized.description === "string" &&
       typeof normalized.section === "string" &&
       typeof normalized.keywords === "string" &&
@@ -175,12 +192,6 @@ export function searchDocuments(
           phraseScore: 72,
         },
         {
-          value: fields.headings,
-          exactWordScore: 48,
-          prefixScore: 34,
-          phraseScore: 42,
-        },
-        {
           value: fields.keywords,
           exactWordScore: 48,
           prefixScore: 34,
@@ -227,10 +238,12 @@ export function searchDocuments(
         (terms.length > 1 ? 20 : 0);
 
       return {
+        kind: document.kind,
         title: document.title,
         description: document.description,
         href: document.href,
         section: document.section,
+        pageTitle: document.pageTitle,
         score,
       };
     })

@@ -58,6 +58,28 @@ export const docFrontmatterSchema = z
       .int("order deve ser inteiro")
       .nonnegative("order deve ser positivo"),
     keywords: z.array(z.string().trim().min(1)).default([]),
+    status: z.enum(["published", "draft"]).default("published"),
+    updatedAt: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, "updatedAt deve usar o formato YYYY-MM-DD")
+      .optional(),
+    version: z.string().trim().min(1, "version não pode ser vazio").optional(),
+    permission: z
+      .string()
+      .trim()
+      .min(1, "permission não pode ser vazio")
+      .optional(),
+    related: z
+      .array(
+        z
+          .string()
+          .trim()
+          .regex(
+            slugPattern,
+            "related deve conter slugs válidos, sem barras nas extremidades",
+          ),
+      )
+      .default([]),
   })
   .superRefine((value, context) => {
     const segments = value.slug.split("/");
@@ -93,6 +115,13 @@ export type DocHeading = {
   title: string;
 };
 
+export type DocSearchSection = {
+  depth: 2 | 3 | 4;
+  id: string;
+  title: string;
+  text: string;
+};
+
 export type DocRecord = {
   metadata: DocFrontmatter;
   slug: string;
@@ -101,6 +130,8 @@ export type DocRecord = {
   source: string;
   searchableText: string;
   headings: DocHeading[];
+  sections: DocSearchSection[];
+  readingMinutes: number;
   filePath: string;
 };
 

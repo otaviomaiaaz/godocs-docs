@@ -40,10 +40,18 @@ export function useModalBehavior({
       onClose();
     }
 
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      onClose();
+    }
+
     dialog.addEventListener("cancel", handleCancel);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       dialog.removeEventListener("cancel", handleCancel);
+      document.removeEventListener("keydown", handleKeyDown);
       if (dialog.open) dialog.close();
       trigger?.focus({ preventScroll: true });
     };

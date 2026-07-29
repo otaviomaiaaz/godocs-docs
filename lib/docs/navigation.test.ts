@@ -13,7 +13,16 @@ const section = {
   order: 10,
 };
 
-function createDocument(metadata: DocFrontmatter): DocRecord {
+type TestFrontmatter = Omit<DocFrontmatter, "status" | "related"> &
+  Partial<Pick<DocFrontmatter, "status" | "related">>;
+
+function createDocument(input: TestFrontmatter): DocRecord {
+  const metadata: DocFrontmatter = {
+    status: "published",
+    related: [],
+    ...input,
+  };
+
   return {
     metadata,
     slug: metadata.slug,
@@ -22,6 +31,8 @@ function createDocument(metadata: DocFrontmatter): DocRecord {
     source: "",
     searchableText: "",
     headings: [],
+    sections: [],
+    readingMinutes: 1,
     filePath: `${metadata.slug}.mdx`,
   };
 }

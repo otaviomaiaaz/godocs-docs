@@ -487,7 +487,7 @@ describe("identidade e prevenção de regressões visuais", () => {
       expect(css).toContain(`var(${token})`);
     }
 
-    expect(css).toContain("--content-width: 66ch");
+    expect(css).toContain("--content-width: 72ch");
     expect(css).toContain("--duration-interaction: 200ms");
     expect(cssRuleBlock(css, ".doc-card")).toContain("min-height: 116px");
     expect(cssRuleBlock(css, ".doc-card")).toContain("padding: 18px 20px");

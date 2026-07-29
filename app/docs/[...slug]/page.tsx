@@ -77,6 +77,13 @@ export default async function DocPage({ params }: DocPageProps) {
   const docs = await getAllDocs();
   const navigation = buildNavigation(docs);
   const { previous, next } = getAdjacentDocs(docs, doc.slug);
+  const related = doc.metadata.related
+    .map((relatedSlug) =>
+      docs.find((candidate) => candidate.slug === relatedSlug),
+    )
+    .filter((candidate): candidate is (typeof docs)[number] =>
+      Boolean(candidate),
+    );
 
   return (
     <ArticleShell
@@ -85,6 +92,7 @@ export default async function DocPage({ params }: DocPageProps) {
       navigation={navigation}
       next={next}
       previous={previous}
+      related={related}
     >
       <MDXRemote
         components={mdxComponents}

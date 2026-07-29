@@ -8,13 +8,16 @@ import {
   getAdjacentDocs,
 } from "@/lib/docs/navigation";
 import { createSearchIndex, searchDocuments } from "@/lib/docs/search";
-import { loadDocumentsFromDirectory } from "@/lib/docs/source";
+import {
+  loadDocumentsFromDirectory,
+  loadPublishedDocumentsFromDirectory,
+} from "@/lib/docs/source";
 import { validateContentDirectory } from "@/lib/docs/validation";
 
 const contentDirectory = path.join(process.cwd(), "content", "docs");
 
 async function loadPublishedDocs() {
-  return loadDocumentsFromDirectory(contentDirectory);
+  return loadPublishedDocumentsFromDirectory(contentDirectory);
 }
 
 describe("conteúdo publicado", () => {
@@ -49,7 +52,7 @@ describe("conteúdo publicado", () => {
     );
   });
 
-  it("publica os sete artigos adicionais com frontmatter, rotas e sumários aprovados", async () => {
+  it("publica os quatro artigos adicionais com frontmatter, rotas e sumários aprovados", async () => {
     const docs = await loadPublishedDocs();
     const firstAccess = docs.find(
       (candidate) => candidate.slug === "primeiro-acesso",
@@ -63,17 +66,7 @@ describe("conteúdo publicado", () => {
     const documents = docs.find(
       (candidate) => candidate.slug === "funcionalidades/documentos",
     );
-    const favorites = docs.find(
-      (candidate) => candidate.slug === "funcionalidades/favoritos",
-    );
-    const workflows = docs.find(
-      (candidate) => candidate.slug === "funcionalidades/workflows",
-    );
-    const reports = docs.find(
-      (candidate) => candidate.slug === "funcionalidades/relatorios",
-    );
-
-    expect(docs).toHaveLength(8);
+    expect(docs).toHaveLength(5);
     expect(firstAccess?.metadata).toMatchObject({
       title: "Primeiro Acesso",
       cardDescription: "Crie sua conta e acesse o GoDocs.",
@@ -85,15 +78,10 @@ describe("conteúdo publicado", () => {
     });
     expect(firstAccess?.href).toBe("/docs/primeiro-acesso");
     expect(firstAccess?.headings.map((heading) => heading.title)).toEqual([
-      "1. Localize o e-mail de convite",
-      "2. Acesse e aceite o convite",
-      "3. Crie sua conta",
-      "Preencha seus dados",
-      "Crie sua senha",
-      "4. Faça login no GoDocs",
-      "5. Selecione o ambiente que deseja acessar",
-      "6. Entre no GoDocs",
+      "Crie sua conta e acesse o ambiente",
     ]);
+    expect(firstAccess?.source).toContain("<Steps>");
+    expect(firstAccess?.source).toContain("<ExpectedResult>");
 
     expect(overview?.metadata).toMatchObject({
       title: "Visão Geral",
@@ -159,35 +147,33 @@ describe("conteúdo publicado", () => {
       "Funcionalidades da pasta",
     ]);
 
-    for (const [doc, title, order] of [
-      [favorites, "Favoritos", 4],
-      [workflows, "Workflows", 5],
-      [reports, "Relatórios", 6],
-    ] as const) {
-      expect(doc?.metadata).toMatchObject({
-        title,
-        section: {
-          id: "funcionalidades",
-          order: 20,
-        },
-        order,
-      });
-      expect(doc?.headings.map((heading) => heading.title)).toEqual([
-        "Em breve",
-      ]);
-    }
-
     for (const doc of [
       firstAccess,
       overview,
       smartSearch,
       documents,
-      favorites,
-      workflows,
-      reports,
     ]) {
       expect(doc?.source).not.toMatch(/^# /m);
     }
+  });
+
+  it("mantém rascunhos validados fora de rotas, navegação e busca públicas", async () => {
+    const allDocs = await loadDocumentsFromDirectory(contentDirectory);
+    const publishedDocs = await loadPublishedDocs();
+    const drafts = allDocs.filter((doc) => doc.metadata.status === "draft");
+    const publicIndex = createSearchIndex(publishedDocs);
+
+    expect(drafts.map((doc) => doc.slug)).toEqual([
+      "funcionalidades/favoritos",
+      "funcionalidades/workflows",
+      "funcionalidades/relatorios",
+    ]);
+    expect(publishedDocs).toHaveLength(5);
+    expect(
+      publicIndex.entries.some((entry) =>
+        drafts.some((draft) => entry.href.startsWith(draft.href)),
+      ),
+    ).toBe(false);
   });
 
   it("deriva as duas seções e a ordem global sem repetir o prefixo da seção", async () => {
@@ -221,18 +207,6 @@ describe("conteúdo publicado", () => {
         label: "Documentos",
         href: "/docs/funcionalidades/documentos",
       },
-      {
-        label: "Favoritos",
-        href: "/docs/funcionalidades/favoritos",
-      },
-      {
-        label: "Workflows",
-        href: "/docs/funcionalidades/workflows",
-      },
-      {
-        label: "Relatórios",
-        href: "/docs/funcionalidades/relatorios",
-      },
     ]);
     expect(
       navigation[1]?.items.some((item) => item.label === "Funcionalidades"),
@@ -243,9 +217,6 @@ describe("conteúdo publicado", () => {
       "funcionalidades/visao-geral",
       "funcionalidades/busca-inteligente",
       "funcionalidades/documentos",
-      "funcionalidades/favoritos",
-      "funcionalidades/workflows",
-      "funcionalidades/relatorios",
     ]);
 
     docs.forEach((doc, index) => {
@@ -302,9 +273,6 @@ describe("conteúdo publicado", () => {
 
     for (const [slug, label] of [
       ["funcionalidades/documentos", "Documentos"],
-      ["funcionalidades/favoritos", "Favoritos"],
-      ["funcionalidades/workflows", "Workflows"],
-      ["funcionalidades/relatorios", "Relatórios"],
     ] as const) {
       const doc = docs.find((candidate) => candidate.slug === slug);
 
@@ -344,7 +312,7 @@ describe("conteúdo publicado", () => {
     const docs = await loadPublishedDocs();
     const results = searchDocuments(createSearchIndex(docs), query);
 
-    expect(results[0]?.href).toBe(`/docs/${expectedSlug}`);
+    expect(results[0]?.href.startsWith(`/docs/${expectedSlug}`)).toBe(true);
   });
 
   it("mantém slugs, taxonomia, componentes, links, fragments e assets válidos", async () => {
@@ -352,5 +320,11 @@ describe("conteúdo publicado", () => {
 
     expect(result.issues).toEqual([]);
     expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(8);
+    expect(
+      result.documents.filter((doc) => doc.metadata.status === "published"),
+    ).toHaveLength(5);
+    expect(
+      result.documents.filter((doc) => doc.metadata.status === "draft"),
+    ).toHaveLength(3);
   });
 });

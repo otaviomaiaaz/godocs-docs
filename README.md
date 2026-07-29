@@ -1,6 +1,6 @@
 # GoDocs Docs
 
-Aplicação independente de documentação do GoDocs 4. O MVP contém a infraestrutura completa da plataforma e começa sem artigos publicados.
+Aplicação independente de documentação do GoDocs 4. A navegação, a busca, o sumário, a home e as rotas públicas são gerados a partir da mesma coleção local de Markdown/MDX.
 
 ## Executar o projeto
 
@@ -37,6 +37,12 @@ ancestors:
 order: 10
 keywords:
   - termo opcional
+status: published
+updatedAt: 2026-07-29
+version: GoDocs 4
+permission: Acesso ao módulo de documentos
+related:
+  - funcionalidades/visao-geral
 ---
 ```
 
@@ -45,12 +51,29 @@ keywords:
 - `navTitle` é opcional e fornece um título curto para navegação; o artigo continua usando `title`.
 - `ancestors` descreve cada nível anterior de um slug aninhado com `segment`, label e ordem explícitos. A quantidade e os segmentos devem corresponder ao slug.
 - `keywords` é opcional e melhora a relevância da busca.
+- `status` aceita `published` ou `draft`. Apenas documentos publicados aparecem na aplicação e um documento publicado não pode apontar para um rascunho.
+- `updatedAt` é opcional e usa `YYYY-MM-DD`; `version` e `permission` também são metadados editoriais opcionais.
+- `related` aceita slugs de outros documentos publicados e alimenta a navegação contextual ao fim do artigo.
 - `order` é um inteiro não negativo usado na navegação e na paginação.
 - `slug` aceita segmentos minúsculos com números e hífens, por exemplo `configuracao/perfis`. A URL resultante será `/docs/configuracao/perfis`.
 - slugs duplicados, taxonomia divergente ou metadados inválidos interrompem o build com uma mensagem clara.
 - o título principal vem do frontmatter; o corpo deve começar em `##` para manter um único `h1` por página.
 
-O corpo aceita Markdown e MDX. Os componentes `Callout`, `Steps`, `Step`, `Figure` e `CodeBlock` já estão disponíveis para documentos futuros.
+O corpo aceita Markdown e MDX. Estão disponíveis `Callout`, `Info`, `Tip`, `Warning`, `Steps`, `Step`, `Requirements`, `Permissions`, `ExpectedResult`, `KeyboardShortcut`, `RelatedLinks`, `Figure` e `CodeBlock`.
+
+`Figure` exige uma imagem local publicável e dimensões explícitas:
+
+```mdx
+<Figure
+  src="/docs/exemplo.png"
+  alt="Descrição objetiva da interface exibida"
+  width={1440}
+  height={900}
+  caption="Legenda opcional."
+/>
+```
+
+Coloque o arquivo correspondente em `public/docs/`. A imagem pode ser ampliada em um diálogo acessível; não publique capturas com dados privados, marcas de ambiente ou conteúdo de referência.
 
 ## Organização e ordenação
 

@@ -1,7 +1,10 @@
 "use client";
 
 import {
+  ArrowDown,
   ArrowRight,
+  ArrowUp,
+  CornerDownLeft,
   FileText,
   LoaderCircle,
   RotateCcw,
@@ -16,18 +19,28 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
 
 import { useModalBehavior } from "@/components/use-modal-behavior";
 import {
+  getUsefulSearchTerms,
   hasUsefulSearchQuery,
   isSearchIndex,
+  normalizeSearchText,
   searchDocuments,
   type SearchIndex,
+  type SearchResult,
 } from "@/lib/docs/search";
 
 type IndexState = "idle" | "loading" | "ready" | "error";
+type SearchLauncherProps = {
+  variant?: "header" | "hero";
+};
+type SearchOpenEvent = CustomEvent<{ trigger: HTMLButtonElement }>;
+
+const OPEN_SEARCH_EVENT = "godocs:open-search";
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -37,6 +50,114 @@ function isEditableTarget(target: EventTarget | null): boolean {
     target instanceof HTMLInputElement ||
     target instanceof HTMLTextAreaElement ||
     target instanceof HTMLSelectElement
+  );
+}
+
+function ShortcutHint() {
+  return (
+    <kbd className="search-trigger__shortcut">
+      <span className="shortcut-command">⌘</span>
+      <span className="shortcut-control">Ctrl</span>
+      <span>K</span>
+    </kbd>
+  );
+}
+
+export function SearchLauncher({
+  variant = "header",
+}: SearchLauncherProps) {
+  return (
+    <button
+      aria-haspopup="dialog"
+      aria-label="Pesquisar na documentação"
+      className={`search-trigger search-trigger--${variant}`}
+      data-search-trigger={variant}
+      onClick={(event) => {
+        window.dispatchEvent(
+          new CustomEvent(OPEN_SEARCH_EVENT, {
+            detail: { trigger: event.currentTarget },
+          }),
+        );
+      }}
+      type="button"
+    >
+      <Search aria-hidden="true" size={variant === "hero" ? 20 : 17} strokeWidth={1.8} />
+      <span className="search-trigger__label">
+        {variant === "hero" ? "Pesquisar na documentação" : "Buscar"}
+      </span>
+      <ShortcutHint />
+    </button>
+  );
+}
+
+function HighlightedText({
+  text,
+  query,
+}: {
+  text: string;
+  query: string;
+}) {
+  const terms = getUsefulSearchTerms(query);
+  if (terms.length === 0) return text;
+
+  return text
+    .split(/(\p{L}[\p{L}\p{N}-]*)/gu)
+    .map<ReactNode>((part, index) => {
+      const normalizedPart = normalizeSearchText(part);
+      const isMatch = terms.some(
+        (term) =>
+          normalizedPart === term ||
+          (term.length >= 3 && normalizedPart.startsWith(term)),
+      );
+
+      return isMatch ? <mark key={`${part}-${index}`}>{part}</mark> : part;
+    });
+}
+
+function ResultOption({
+  active,
+  baseId,
+  index,
+  onChoose,
+  onSelect,
+  query,
+  result,
+}: {
+  active: boolean;
+  baseId: string;
+  index: number;
+  onChoose: (href: string) => void;
+  onSelect: (index: number) => void;
+  query: string;
+  result: SearchResult;
+}) {
+  const context =
+    result.kind === "section"
+      ? [result.pageTitle, result.section].filter(Boolean).join(" · ")
+      : (result.section ?? "Documentação");
+
+  return (
+    <button
+      aria-selected={active}
+      className="search-result"
+      id={`${baseId}-option-${index}`}
+      onClick={() => onChoose(result.href)}
+      onFocus={() => onSelect(index)}
+      onMouseEnter={() => onSelect(index)}
+      role="option"
+      type="button"
+    >
+      <span className="search-result__content">
+        <span className="search-result__section">{context}</span>
+        <strong>
+          <HighlightedText query={query} text={result.title} />
+        </strong>
+        <small>
+          <HighlightedText query={query} text={result.description} />
+        </small>
+      </span>
+      <ArrowRight aria-hidden="true" size={17} />
+    </button>
   );
 }
 
@@ -54,14 +175,25 @@ export function SearchDialog() {
   const inputId = `${baseId}-input`;
   const listboxId = `${baseId}-listbox`;
   const statusId = `${baseId}-status`;
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const requestRef = useRef<AbortController | null>(null);
 
-  const results = useMemo(
-    () => (index ? searchDocuments(index, query, 10) : []),
+  const rankedResults = useMemo(
+    () => (index ? searchDocuments(index, query, 12) : []),
     [index, query],
+  );
+  const results = useMemo(
+    () => [
+      ...rankedResults.filter((result) => result.kind === "page"),
+      ...rankedResults.filter((result) => result.kind === "section"),
+    ],
+    [rankedResults],
+  );
+  const suggestions = useMemo(
+    () => index?.entries.filter((entry) => entry.kind === "page").slice(0, 5) ?? [],
+    [index],
   );
   const hasUsefulQuery = hasUsefulSearchQuery(query);
   const safeActiveIndex =
@@ -109,10 +241,18 @@ export function SearchDialog() {
     }
   }, []);
 
-  const openDialog = useCallback(() => {
-    setIsOpen(true);
-    if (indexState === "idle") void loadIndex();
-  }, [indexState, loadIndex]);
+  const openDialog = useCallback(
+    (trigger?: HTMLElement | null) => {
+      returnFocusRef.current =
+        trigger ??
+        (document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null);
+      setIsOpen(true);
+      if (indexState === "idle") void loadIndex();
+    },
+    [indexState, loadIndex],
+  );
 
   const retryIndex = useCallback(() => {
     setIndex(null);
@@ -132,10 +272,14 @@ export function SearchDialog() {
     initialFocusRef: inputRef,
     isOpen,
     onClose: closeDialog,
-    triggerRef,
+    triggerRef: returnFocusRef,
   });
 
   useEffect(() => {
+    function handleOpen(event: Event) {
+      openDialog((event as SearchOpenEvent).detail?.trigger);
+    }
+
     function handleShortcut(event: KeyboardEvent) {
       if (
         event.key.toLocaleLowerCase("pt-BR") === "k" &&
@@ -143,12 +287,20 @@ export function SearchDialog() {
         !isEditableTarget(event.target)
       ) {
         event.preventDefault();
-        openDialog();
+        const headerTrigger = document.querySelector<HTMLElement>(
+          '[data-search-trigger="header"]',
+        );
+        openDialog(headerTrigger);
       }
     }
 
+    window.addEventListener(OPEN_SEARCH_EVENT, handleOpen);
     document.addEventListener("keydown", handleShortcut);
-    return () => document.removeEventListener("keydown", handleShortcut);
+
+    return () => {
+      window.removeEventListener(OPEN_SEARCH_EVENT, handleOpen);
+      document.removeEventListener("keydown", handleShortcut);
+    };
   }, [openDialog]);
 
   useEffect(
@@ -187,27 +339,22 @@ export function SearchDialog() {
           results.length === 1 ? "resultado encontrado" : "resultados encontrados"
         }`
       : "";
+  const groupedResults = [
+    {
+      id: "pages",
+      title: "Páginas",
+      results: results.filter((result) => result.kind === "page"),
+    },
+    {
+      id: "sections",
+      title: "Seções",
+      results: results.filter((result) => result.kind === "section"),
+    },
+  ].filter((group) => group.results.length > 0);
 
   return (
     <>
-      <button
-        aria-controls={dialogId}
-        aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        aria-label="Pesquisar na documentação"
-        className="search-trigger"
-        onClick={openDialog}
-        ref={triggerRef}
-        type="button"
-      >
-        <Search aria-hidden="true" size={17} strokeWidth={1.8} />
-        <span className="search-trigger__label">Buscar</span>
-        <kbd className="search-trigger__shortcut">
-          <span className="shortcut-command">⌘</span>
-          <span className="shortcut-control">Ctrl</span>
-          <span>K</span>
-        </kbd>
-      </button>
+      <SearchLauncher />
 
       {isOpen
         ? createPortal(
@@ -250,7 +397,7 @@ export function SearchDialog() {
                       setActiveIndex(0);
                     }}
                     onKeyDown={handleInputKeyDown}
-                    placeholder="Buscar na documentação..."
+                    placeholder="Buscar páginas e seções..."
                     ref={inputRef}
                     role="combobox"
                     type="search"
@@ -283,84 +430,132 @@ export function SearchDialog() {
               </p>
 
               <div className="search-dialog__results">
-                  {indexState === "idle" || indexState === "loading" ? (
-                    <div aria-live="polite" className="search-empty">
-                      <span aria-hidden="true" className="search-empty__icon">
-                        <LoaderCircle
-                          className="search-loading-icon"
-                          size={22}
-                          strokeWidth={1.6}
-                        />
+                {indexState === "idle" || indexState === "loading" ? (
+                  <div aria-live="polite" className="search-empty">
+                    <span aria-hidden="true" className="search-empty__icon">
+                      <LoaderCircle
+                        className="search-loading-icon"
+                        size={22}
+                        strokeWidth={1.6}
+                      />
+                    </span>
+                    <p>Carregando índice de pesquisa...</p>
+                  </div>
+                ) : indexState === "error" ? (
+                  <div className="search-empty">
+                    <span aria-hidden="true" className="search-empty__icon">
+                      <FileText size={22} strokeWidth={1.6} />
+                    </span>
+                    <p>Não foi possível carregar a pesquisa.</p>
+                    <button
+                      className="search-retry"
+                      onClick={retryIndex}
+                      type="button"
+                    >
+                      <RotateCcw aria-hidden="true" size={15} />
+                      Tentar novamente
+                    </button>
+                  </div>
+                ) : !index || index.entries.length === 0 ? (
+                  <div className="search-empty">
+                    <span aria-hidden="true" className="search-empty__icon">
+                      <FileText size={22} strokeWidth={1.6} />
+                    </span>
+                    <p>Nenhum conteúdo disponível para pesquisa.</p>
+                  </div>
+                ) : query.trim() === "" ? (
+                  <div className="search-discovery">
+                    <header>
+                      <p>Comece com uma página sugerida</p>
+                      <span>
+                        A pesquisa também encontra títulos de seções internas.
                       </span>
-                      <p>Carregando índice de pesquisa...</p>
-                    </div>
-                  ) : indexState === "error" ? (
-                    <div className="search-empty">
-                      <span aria-hidden="true" className="search-empty__icon">
-                        <FileText size={22} strokeWidth={1.6} />
-                      </span>
-                      <p>Não foi possível carregar a pesquisa.</p>
-                      <button
-                        className="search-retry"
-                        onClick={retryIndex}
-                        type="button"
-                      >
-                        <RotateCcw aria-hidden="true" size={15} />
-                        Tentar novamente
-                      </button>
-                    </div>
-                  ) : !index || index.entries.length === 0 ? (
-                    <div className="search-empty">
-                      <span aria-hidden="true" className="search-empty__icon">
-                        <FileText size={22} strokeWidth={1.6} />
-                      </span>
-                      <p>Nenhum conteúdo disponível para pesquisa.</p>
-                    </div>
-                  ) : query.trim() === "" ? (
-                    <p className="search-hint">Digite um termo para pesquisar.</p>
-                  ) : !hasUsefulQuery ? (
-                    <p className="search-hint">
-                      Digite ao menos dois caracteres para pesquisar.
-                    </p>
-                  ) : results.length === 0 ? (
-                    <p className="search-hint">
-                      Nenhum resultado encontrado para “{query.trim()}”.
-                    </p>
-                  ) : null}
+                    </header>
+                    <ul>
+                      {suggestions.map((suggestion) => (
+                        <li key={suggestion.href}>
+                          <button
+                            onClick={() => chooseResult(suggestion.href)}
+                            type="button"
+                          >
+                            <span>
+                              <strong>{suggestion.title}</strong>
+                              <small>
+                                {suggestion.section ?? "Documentação"}
+                              </small>
+                            </span>
+                            <ArrowRight aria-hidden="true" size={16} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : !hasUsefulQuery ? (
+                  <p className="search-hint">
+                    Digite ao menos dois caracteres para pesquisar.
+                  </p>
+                ) : results.length === 0 ? (
+                  <p aria-live="polite" className="search-hint">
+                    Nenhum resultado encontrado para “{query.trim()}”.
+                  </p>
+                ) : (
                   <div
                     aria-label="Resultados da pesquisa"
                     className="search-results-list"
                     id={listboxId}
                     role="listbox"
                   >
-                    {indexState === "ready" && hasUsefulQuery
-                      ? results.map((result, resultIndex) => (
-                        <button
-                          aria-selected={resultIndex === safeActiveIndex}
-                          className="search-result"
-                          id={`${baseId}-option-${resultIndex}`}
-                          key={result.href}
-                          onClick={() => chooseResult(result.href)}
-                          onFocus={() => setActiveIndex(resultIndex)}
-                          onMouseEnter={() => setActiveIndex(resultIndex)}
-                          role="option"
-                          type="button"
-                        >
-                          <span>
-                            {result.section ? (
-                              <span className="search-result__section">
-                                {result.section}
-                              </span>
-                            ) : null}
-                            <strong>{result.title}</strong>
-                            <small>{result.description}</small>
-                          </span>
-                          <ArrowRight aria-hidden="true" size={17} />
-                        </button>
-                        ))
-                      : null}
+                    {groupedResults.map((group) => (
+                      <section
+                        aria-labelledby={`${baseId}-${group.id}-title`}
+                        className="search-result-group"
+                        key={group.id}
+                        role="group"
+                      >
+                        <h3 id={`${baseId}-${group.id}-title`}>
+                          {group.title}
+                        </h3>
+                        {group.results.map((result) => {
+                          const resultIndex = results.indexOf(result);
+
+                          return (
+                            <ResultOption
+                              active={resultIndex === safeActiveIndex}
+                              baseId={baseId}
+                              index={resultIndex}
+                              key={result.href}
+                              onChoose={chooseResult}
+                              onSelect={setActiveIndex}
+                              query={query}
+                              result={result}
+                            />
+                          );
+                        })}
+                      </section>
+                    ))}
                   </div>
+                )}
               </div>
+
+              <footer className="search-dialog__footer">
+                <span>
+                  <kbd>
+                    <ArrowUp aria-hidden="true" size={12} />
+                    <ArrowDown aria-hidden="true" size={12} />
+                  </kbd>
+                  Navegar
+                </span>
+                <span>
+                  <kbd>
+                    <CornerDownLeft aria-hidden="true" size={12} />
+                  </kbd>
+                  Abrir
+                </span>
+                <span>
+                  <kbd>Esc</kbd>
+                  Fechar
+                </span>
+              </footer>
             </dialog>,
             document.body,
           )

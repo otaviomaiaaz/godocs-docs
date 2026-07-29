@@ -10,14 +10,13 @@ import {
 } from "@/lib/docs/search";
 
 const index: SearchIndex = {
-  version: 1,
+  version: 2,
   entries: [
     createSearchEntry({
       title: "Configuração",
       description: "Ajustes disponíveis.",
       href: "/docs/configuracao",
       section: "Fundamentos",
-      headings: ["Preferências do ambiente"],
       keywords: ["preferências"],
       content: "Defina as opções necessárias.",
     }),
@@ -33,7 +32,6 @@ const index: SearchIndex = {
         "Conheça a plataforma e entenda como ela centraliza documentos.",
       href: "/docs/o-que-e-o-godocs",
       section: "Comece por aqui",
-      headings: ["Gestão eletrônica", "Principais recursos"],
       keywords: ["GoDocs", "GED", "documentos"],
       content:
         "O GoDocs é uma plataforma de Gestão Eletrônica de Documentos e Processos.",
@@ -42,7 +40,7 @@ const index: SearchIndex = {
 };
 
 const largeIndex: SearchIndex = {
-  version: 1,
+  version: 2,
   entries: Array.from({ length: 20 }, (_, position) =>
     createSearchEntry({
       title: `Configuração ${position}`,

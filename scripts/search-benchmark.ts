@@ -15,7 +15,7 @@ const representativeParagraph =
 
 const buildStartedAt = performance.now();
 const index: SearchIndex = {
-  version: 1,
+  version: 2,
   entries: Array.from({ length: DOCUMENT_COUNT }, (_, indexPosition) =>
     createSearchEntry({
       title: `Documento ${indexPosition + 1}`,

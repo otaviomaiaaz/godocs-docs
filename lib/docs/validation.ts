@@ -19,9 +19,17 @@ import type { DocRecord } from "@/lib/docs/schema";
 const ALLOWED_MDX_COMPONENTS = new Set([
   "Callout",
   "CodeBlock",
+  "ExpectedResult",
   "Figure",
+  "Info",
+  "KeyboardShortcut",
+  "Permissions",
+  "RelatedLinks",
+  "Requirements",
   "Step",
   "Steps",
+  "Tip",
+  "Warning",
 ]);
 const EXTERNAL_PROTOCOL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 const LOCAL_ASSET_EXTENSION =
@@ -125,6 +133,31 @@ function collectReferencesAndComponents(
           `componente MDX <${componentName}> não é permitido`,
         ),
       );
+    }
+
+    if (componentName === "Figure") {
+      const attributes = new Map(
+        node.attributes
+          .filter((attribute) => attribute.type === "mdxJsxAttribute")
+          .map((attribute) => [attribute.name, attribute.value]),
+      );
+
+      for (const requiredAttribute of ["src", "alt", "width", "height"]) {
+        if (!attributes.has(requiredAttribute)) {
+          issues.push(
+            issue(
+              filePath,
+              "component",
+              `<Figure> exige o atributo ${requiredAttribute}`,
+            ),
+          );
+        }
+      }
+
+      const figureSource = attributes.get("src");
+      if (typeof figureSource === "string") {
+        references.push({ kind: "image", url: figureSource });
+      }
     }
 
     if (componentName !== "img") return;
@@ -251,6 +284,20 @@ function validateLink(
         doc.filePath,
         "link",
         `link interno "${reference.url}" aponta para documento inexistente "${targetSlug}"`,
+      ),
+    );
+    return;
+  }
+
+  if (
+    doc.metadata.status === "published" &&
+    target.metadata.status !== "published"
+  ) {
+    issues.push(
+      issue(
+        doc.filePath,
+        "link",
+        `link interno "${reference.url}" aponta para documento não publicado "${targetSlug}"`,
       ),
     );
     return;
@@ -412,6 +459,30 @@ export async function validateContentDirectory(
   validateTaxonomy(documents, issues);
 
   for (const doc of documents) {
+    for (const relatedSlug of doc.metadata.related) {
+      const related = docsBySlug.get(relatedSlug);
+      if (!related) {
+        issues.push(
+          issue(
+            doc.filePath,
+            "link",
+            `related aponta para documento inexistente "${relatedSlug}"`,
+          ),
+        );
+      } else if (
+        doc.metadata.status === "published" &&
+        related.metadata.status !== "published"
+      ) {
+        issues.push(
+          issue(
+            doc.filePath,
+            "link",
+            `related aponta para documento não publicado "${relatedSlug}"`,
+          ),
+        );
+      }
+    }
+
     for (const reference of referencesByFile.get(doc.filePath) ?? []) {
       if (reference.kind === "image") {
         await validateAsset(

@@ -24,7 +24,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const searchIndex: SearchIndex = {
-  version: 1,
+  version: 2,
   entries: [
     createSearchEntry({
       title: "O que é o GoDocs?",
@@ -196,7 +196,7 @@ describe("fluxos interativos", () => {
 
     resolveFetch?.({
       ok: true,
-      json: async () => ({ version: 1, entries: [] }),
+      json: async () => ({ version: 2, entries: [] }),
     });
     expect(
       await screen.findByText("Nenhum conteúdo disponível para pesquisa."),
@@ -281,7 +281,7 @@ describe("fluxos interativos", () => {
     expect(document.activeElement).toBe(combobox);
     expect(dialog.contains(closeButton)).toBe(true);
 
-    fireEvent(dialog, new Event("cancel", { cancelable: true }));
+    fireEvent.keyDown(document, { key: "Escape" });
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.queryByRole("button", { name: "Fechar pesquisa" })).toBeNull();
@@ -307,7 +307,7 @@ describe("fluxos interativos", () => {
     });
     await user.click(retry);
 
-    await screen.findByText("Digite um termo para pesquisar.");
+    await screen.findByText("Comece com uma página sugerida");
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 

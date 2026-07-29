@@ -17,7 +17,8 @@ describe("SEO e indexação", () => {
         default: "GoDocs Docs",
         template: "%s | GoDocs Docs",
       },
-      description: "Guias, conceitos e instruções para utilizar o GoDocs.",
+      description:
+        "Encontre orientações para acessar, organizar documentos e utilizar os recursos do sistema.",
       alternates: {
         canonical: absoluteUrl("/"),
       },
@@ -67,14 +68,11 @@ describe("SEO e indexação", () => {
       absoluteUrl("/docs/funcionalidades/visao-geral"),
       absoluteUrl("/docs/funcionalidades/busca-inteligente"),
       absoluteUrl("/docs/funcionalidades/documentos"),
-      absoluteUrl("/docs/funcionalidades/favoritos"),
-      absoluteUrl("/docs/funcionalidades/workflows"),
-      absoluteUrl("/docs/funcionalidades/relatorios"),
     ]);
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
   });
 
-  it("gera estaticamente os oito documentos publicados", async () => {
+  it("gera estaticamente somente os cinco documentos publicados", async () => {
     const params = await generateStaticParams();
 
     expect(params).toEqual([
@@ -83,9 +81,6 @@ describe("SEO e indexação", () => {
       { slug: ["funcionalidades", "visao-geral"] },
       { slug: ["funcionalidades", "busca-inteligente"] },
       { slug: ["funcionalidades", "documentos"] },
-      { slug: ["funcionalidades", "favoritos"] },
-      { slug: ["funcionalidades", "workflows"] },
-      { slug: ["funcionalidades", "relatorios"] },
     ]);
   });
 

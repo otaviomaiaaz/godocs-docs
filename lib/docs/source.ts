@@ -57,6 +57,11 @@ export async function loadDocumentFile(filePath: string): Promise<DocRecord> {
       source: content,
       searchableText: parsed.searchableText,
       headings: parsed.headings,
+      sections: parsed.sections,
+      readingMinutes: Math.max(
+        1,
+        Math.ceil(parsed.searchableText.split(/\s+/).filter(Boolean).length / 200),
+      ),
       filePath,
     };
   } catch (error) {
@@ -105,7 +110,16 @@ export async function loadDocumentsFromDirectory(
   });
 }
 
-export const getAllDocs = cache(() => loadDocumentsFromDirectory(CONTENT_DIRECTORY));
+export async function loadPublishedDocumentsFromDirectory(
+  directory: string,
+): Promise<DocRecord[]> {
+  const docs = await loadDocumentsFromDirectory(directory);
+  return docs.filter((doc) => doc.metadata.status === "published");
+}
+
+export const getAllDocs = cache(() =>
+  loadPublishedDocumentsFromDirectory(CONTENT_DIRECTORY),
+);
 
 export const getDocBySlug = cache(async (slug: string) => {
   const docs = await getAllDocs();
