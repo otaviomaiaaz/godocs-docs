@@ -20,8 +20,15 @@ export function DocsHeader({ navigation }: DocsHeaderProps) {
   useEffect(() => {
     if (!isHome) return;
 
+    let previousScrolledState: boolean | undefined;
+
     function updateScrolledState() {
-      setIsScrolled(window.scrollY > 12);
+      const nextScrolledState = window.scrollY > 16;
+
+      if (nextScrolledState === previousScrolledState) return;
+
+      previousScrolledState = nextScrolledState;
+      setIsScrolled(nextScrolledState);
     }
 
     updateScrolledState();
