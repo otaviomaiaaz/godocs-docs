@@ -117,9 +117,14 @@ export async function loadPublishedDocumentsFromDirectory(
   return docs.filter((doc) => doc.metadata.status === "published");
 }
 
-export const getAllDocs = cache(() =>
-  loadPublishedDocumentsFromDirectory(CONTENT_DIRECTORY),
+export const getAllContentDocs = cache(() =>
+  loadDocumentsFromDirectory(CONTENT_DIRECTORY),
 );
+
+export const getAllDocs = cache(async () => {
+  const docs = await getAllContentDocs();
+  return docs.filter((doc) => doc.metadata.status === "published");
+});
 
 export const getDocBySlug = cache(async (slug: string) => {
   const docs = await getAllDocs();

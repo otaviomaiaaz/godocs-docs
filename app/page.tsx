@@ -1,60 +1,29 @@
-import {
-  HomeIntro,
-  type HomeGuide,
-} from "@/components/home-intro";
+import { HomeIntro, type HomeFeature } from "@/components/home-intro";
 import { buildNavigation } from "@/lib/docs/navigation";
-import { getAllDocs } from "@/lib/docs/source";
-
-const GUIDE_DEFINITIONS = [
-  {
-    slug: "funcionalidades/documentos",
-    heading: "Criando uma nova pasta",
-    title: "Criar uma pasta",
-  },
-  {
-    slug: "funcionalidades/documentos",
-    heading: "Adicionar documento",
-    title: "Adicionar um documento",
-  },
-  {
-    slug: "funcionalidades/documentos",
-    heading: "Mover pasta",
-    title: "Mover uma pasta",
-  },
-  {
-    slug: "funcionalidades/documentos",
-    heading: "Vincular a um grupo",
-    title: "Vincular uma pasta a um grupo",
-  },
-  {
-    slug: "funcionalidades/documentos",
-    heading: "Visualizar logs da pasta",
-    title: "Consultar logs da pasta",
-  },
-] as const;
+import { getAllContentDocs } from "@/lib/docs/source";
 
 export default async function HomePage() {
-  const docs = await getAllDocs();
-  const guides = GUIDE_DEFINITIONS.flatMap<HomeGuide>((definition) => {
-    const doc = docs.find((candidate) => candidate.slug === definition.slug);
-    const section = doc?.sections.find(
-      (candidate) => candidate.title === definition.heading,
-    );
+  const docs = await getAllContentDocs();
+  const publishedDocs = docs.filter(
+    (doc) => doc.metadata.status === "published",
+  );
+  const features = docs
+    .filter((doc) => doc.metadata.section?.id === "funcionalidades")
+    .map<HomeFeature>((doc) => ({
+      description:
+        doc.metadata.cardDescription ?? doc.metadata.description,
+      href:
+        doc.metadata.status === "published" ? doc.href : undefined,
+      order: doc.metadata.order,
+      slug: doc.slug,
+      status: doc.metadata.status,
+      title: doc.metadata.navTitle ?? doc.metadata.title,
+    }));
 
-    if (!doc || !section) return [];
-
-    const firstSentence =
-      section.text.split(/(?<=[.!?])\s+/)[0] || doc.metadata.description;
-
-    return [
-      {
-        id: `${doc.slug}:${section.id}`,
-        title: definition.title,
-        description: firstSentence,
-        href: `${doc.href}#${section.id}`,
-      },
-    ];
-  });
-
-  return <HomeIntro groups={buildNavigation(docs)} guides={guides} />;
+  return (
+    <HomeIntro
+      features={features}
+      groups={buildNavigation(publishedDocs)}
+    />
+  );
 }

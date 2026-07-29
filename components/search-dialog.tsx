@@ -161,7 +161,7 @@ function ResultOption({
   );
 }
 
-export function SearchDialog() {
+export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -287,10 +287,14 @@ export function SearchDialog() {
         !isEditableTarget(event.target)
       ) {
         event.preventDefault();
-        const headerTrigger = document.querySelector<HTMLElement>(
-          '[data-search-trigger="header"]',
-        );
-        openDialog(headerTrigger);
+        const preferredTrigger =
+          document.querySelector<HTMLElement>(
+            '[data-search-trigger="header"]',
+          ) ??
+          document.querySelector<HTMLElement>(
+            '[data-search-trigger="hero"]',
+          );
+        openDialog(preferredTrigger);
       }
     }
 
@@ -354,7 +358,7 @@ export function SearchDialog() {
 
   return (
     <>
-      <SearchLauncher />
+      {showLauncher ? <SearchLauncher /> : null}
 
       {isOpen
         ? createPortal(

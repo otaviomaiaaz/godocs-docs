@@ -17,9 +17,10 @@ import {
 } from "@/lib/docs/search";
 
 const push = vi.fn();
+const pathname = { value: "/" };
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/",
+  usePathname: () => pathname.value,
   useRouter: () => ({ push }),
 }));
 
@@ -69,6 +70,7 @@ function renderInSiteShell(component: React.ReactNode) {
 
 beforeEach(() => {
   push.mockReset();
+  pathname.value = "/";
   window.localStorage.clear();
   installMatchMedia();
   Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
@@ -403,7 +405,40 @@ describe("marca", () => {
     expect(screen.queryByText("Docs")).toBeNull();
   });
 
-  it("preserva busca, tema e menu móvel condicional no header", async () => {
+  it("mantém o header da home reduzido a marca e tema", async () => {
+    renderInSiteShell(
+      <DocsHeader
+        navigation={[
+          {
+            id: "comece-por-aqui",
+            title: "Comece por aqui",
+            description: "Conteúdos introdutórios.",
+            order: 10,
+            entryHref: "/docs/o-que-e-o-godocs",
+            items: [],
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "GoDocs — página inicial" }),
+    ).toBeTruthy();
+    expect(
+      await screen.findByRole("button", { name: "Ativar tema claro" }),
+    ).toBeTruthy();
+    expect(
+      screen.queryByRole("button", { name: "Pesquisar na documentação" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("button", {
+        name: "Abrir navegação da documentação",
+      }),
+    ).toBeNull();
+  });
+
+  it("preserva busca, tema e menu móvel condicional no header interno", async () => {
+    pathname.value = "/docs/o-que-e-o-godocs";
     renderInSiteShell(
       <DocsHeader
         navigation={[

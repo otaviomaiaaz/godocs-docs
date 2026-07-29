@@ -5,16 +5,40 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { HomeIntro } from "@/components/home-intro";
+import { HomeIntro, type HomeFeature } from "@/components/home-intro";
 import { buildNavigation } from "@/lib/docs/navigation";
-import { loadPublishedDocumentsFromDirectory } from "@/lib/docs/source";
+import { loadDocumentsFromDirectory } from "@/lib/docs/source";
 
 afterEach(cleanup);
 
 const contentDirectory = path.join(process.cwd(), "content", "docs");
 
+async function loadHomeData() {
+  const docs = await loadDocumentsFromDirectory(contentDirectory);
+  const publishedDocs = docs.filter(
+    (doc) => doc.metadata.status === "published",
+  );
+  const features = docs
+    .filter((doc) => doc.metadata.section?.id === "funcionalidades")
+    .map<HomeFeature>((doc) => ({
+      description:
+        doc.metadata.cardDescription ?? doc.metadata.description,
+      href:
+        doc.metadata.status === "published" ? doc.href : undefined,
+      order: doc.metadata.order,
+      slug: doc.slug,
+      status: doc.metadata.status,
+      title: doc.metadata.navTitle ?? doc.metadata.title,
+    }));
+
+  return {
+    features,
+    groups: buildNavigation(publishedDocs),
+  };
+}
+
 describe("home orientada ao conteúdo", () => {
-  it("mantém o estado vazio útil, com hero e busca global", () => {
+  it("mantém o estado vazio útil, com hero, busca global e FAQ compacto", () => {
     render(<HomeIntro groups={[]} />);
 
     expect(
@@ -28,18 +52,27 @@ describe("home orientada ao conteúdo", () => {
     expect(
       screen.getByRole("button", { name: "Pesquisar na documentação" }),
     ).toBeTruthy();
-    expect(screen.queryAllByRole("heading", { level: 2 })).toHaveLength(0);
-    expect(screen.queryByText("GODOCS DOCS")).toBeNull();
-    expect(screen.queryByText("Perguntas frequentes")).toBeNull();
+    expect(
+      screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent),
+    ).toEqual(["Perguntas frequentes"]);
+    expect(
+      screen.getByText(
+        "Conteúdo em preparação. As perguntas frequentes serão adicionadas em breve.",
+      ),
+    ).toBeTruthy();
   });
 
-  it("organiza somente páginas publicadas em jornada e objetivos", async () => {
-    const docs = await loadPublishedDocumentsFromDirectory(contentDirectory);
-    render(<HomeIntro groups={buildNavigation(docs)} />);
+  it("renderiza a trilha real e os seis recursos na ordem editorial", async () => {
+    const data = await loadHomeData();
+    render(<HomeIntro features={data.features} groups={data.groups} />);
 
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent),
-    ).toEqual(["Comece por aqui", "Encontre por objetivo"]);
+    ).toEqual([
+      "Comece por aqui",
+      "Conheça os recursos",
+      "Perguntas frequentes",
+    ]);
 
     const learningPath = document.querySelector(".learning-path");
     expect(learningPath).toBeTruthy();
@@ -49,88 +82,87 @@ describe("home orientada ao conteúdo", () => {
         .map((link) => link.getAttribute("href")),
     ).toEqual(["/docs/o-que-e-o-godocs", "/docs/primeiro-acesso"]);
 
+    const featureGrid = document.querySelector(".feature-grid");
+    expect(featureGrid).toBeTruthy();
+    expect(
+      within(featureGrid as HTMLElement)
+        .getAllByRole("heading", { level: 3 })
+        .map((heading) => heading.textContent),
+    ).toEqual([
+      "Visão Geral",
+      "Busca Inteligente",
+      "Documentos",
+      "Favoritos",
+      "Workflows",
+      "Relatórios",
+    ]);
+
     for (const [name, href] of [
       ["Visão Geral", "/docs/funcionalidades/visao-geral"],
       ["Busca Inteligente", "/docs/funcionalidades/busca-inteligente"],
       ["Documentos", "/docs/funcionalidades/documentos"],
     ] as const) {
       expect(
-        screen.getByRole("link", { name: new RegExp(name) }).getAttribute("href"),
+        within(featureGrid as HTMLElement)
+          .getByRole("link", { name: new RegExp(name) })
+          .getAttribute("href"),
       ).toBe(href);
     }
 
     for (const draftTitle of ["Favoritos", "Workflows", "Relatórios"]) {
-      expect(screen.queryByText(draftTitle)).toBeNull();
+      const card = within(featureGrid as HTMLElement).getByLabelText(
+        `${draftTitle}. Em breve`,
+      );
+      expect(card.tagName).toBe("ARTICLE");
+      expect(card.getAttribute("tabindex")).toBeNull();
     }
 
-    expect(screen.getByText("Organizar documentos")).toBeTruthy();
-    expect(screen.getByText("Encontrar informações")).toBeTruthy();
-    expect(screen.getByText("Acompanhar atividades")).toBeTruthy();
-    expect(screen.queryByText("Automatizar processos")).toBeNull();
+    expect(
+      within(featureGrid as HTMLElement).getAllByText("Em breve"),
+    ).toHaveLength(3);
+    expect(screen.queryByText("Guias mais acessados")).toBeNull();
+    expect(screen.queryByText("Organizar documentos")).toBeNull();
   });
 
-  it("publica guias editoriais apenas com destinos profundos reais", async () => {
-    const docs = await loadPublishedDocumentsFromDirectory(contentDirectory);
-    render(
-      <HomeIntro
-        groups={buildNavigation(docs)}
-        guides={[
-          {
-            id: "documentos:criar",
-            title: "Criar uma pasta",
-            description: "As pastas ajudam a organizar os documentos.",
-            href: "/docs/funcionalidades/documentos#criando-uma-nova-pasta",
-          },
-          {
-            id: "documentos:logs",
-            title: "Consultar logs da pasta",
-            description: "Os logs apresentam o histórico das ações realizadas.",
-            href: "/docs/funcionalidades/documentos#visualizar-logs-da-pasta",
-          },
-        ]}
-      />,
-    );
+  it("mantém FAQ sem perguntas fictícias e remove os guias por popularidade", async () => {
+    const data = await loadHomeData();
+    render(<HomeIntro features={data.features} groups={data.groups} />);
 
+    expect(screen.getByText("03 / DÚVIDAS")).toBeTruthy();
     expect(
-      screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent),
-    ).toEqual([
-      "Comece por aqui",
-      "Encontre por objetivo",
-      "Guias mais acessados",
-    ]);
-    expect(
-      screen.getByRole("link", { name: /Criar uma pasta/ }).getAttribute("href"),
-    ).toBe("/docs/funcionalidades/documentos#criando-uma-nova-pasta");
-    expect(
-      screen
-        .getByRole("link", { name: /Consultar logs da pasta/ })
-        .getAttribute("href"),
-    ).toBe(
-      "/docs/funcionalidades/documentos#visualizar-logs-da-pasta",
-    );
+      screen.getByText(
+        "Encontre respostas rápidas para as dúvidas mais comuns sobre o GoDocs.",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /pergunta/i })).toBeNull();
+    expect(screen.queryByText("Guias mais acessados")).toBeNull();
   });
 
-  it("mantém composição editorial responsiva e reduz movimento", async () => {
+  it("mantém composição responsiva, header contextual e redução de movimento", async () => {
     const css = await readFile(
       path.join(process.cwd(), "app", "globals.css"),
       "utf8",
     );
-    const evolvedCss = css.slice(css.indexOf("/* Product experience evolution */"));
+    const redesignCss = css.slice(css.indexOf("/* Home redesign v3 */"));
 
-    expect(evolvedCss).toMatch(
-      /\.home-editorial-section\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*250px\)\s*minmax\(0,\s*1fr\);/,
+    expect(redesignCss).toMatch(
+      /\.docs-header\[data-home="true"\]\s+\.docs-header__inner\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+auto;/,
     );
-    expect(evolvedCss).toMatch(
-      /\.objective-directory\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
+    expect(redesignCss).toMatch(
+      /\.learning-path\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
     );
-    expect(evolvedCss).toMatch(
-      /@media \(max-width: 767px\)[\s\S]*?\.home-editorial-section\s*\{[^}]*display:\s*block;/,
+    expect(redesignCss).toMatch(
+      /\.feature-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\);/,
     );
-    expect(evolvedCss).toMatch(
-      /@media \(max-width: 767px\)[\s\S]*?\.objective-directory,[\s\S]*?grid-template-columns:\s*1fr;/,
+    expect(redesignCss).toMatch(
+      /@media \(max-width: 1023px\)[\s\S]*?\.feature-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,
     );
-    expect(evolvedCss).toMatch(
+    expect(redesignCss).toMatch(
+      /@media \(max-width: 767px\)[\s\S]*?\.learning-path,[\s\S]*?\.feature-grid\s*\{[^}]*grid-template-columns:\s*1fr;/,
+    );
+    expect(redesignCss).toMatch(
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*?transform:\s*none;/,
     );
+    expect(redesignCss).not.toContain(".featured-guides");
   });
 });

@@ -2,16 +2,21 @@
 
 import {
   ArrowRight,
+  BarChart3,
   BookOpen,
+  CircleHelp,
   FileSearch,
   FolderOpen,
   GitBranch,
   LayoutDashboard,
   LogIn,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 
+import { Brand } from "@/components/brand";
+import { DocCard } from "@/components/doc-card";
 import { SearchLauncher } from "@/components/search-dialog";
 import type {
   DocNavigationGroup,
@@ -20,61 +25,33 @@ import type {
 import { SITE_DESCRIPTION } from "@/lib/site";
 
 type HomeIntroProps = {
+  features?: HomeFeature[];
   groups: DocNavigationGroup[];
-  guides?: HomeGuide[];
 };
 
 type LinkedNavigationItem = DocNavigationItem & { href: string };
 
-export type HomeGuide = {
-  id: string;
-  title: string;
+export type HomeFeature = {
   description: string;
-  href: string;
-};
-
-type ObjectiveDefinition = {
-  id: string;
+  href?: string;
+  order: number;
+  slug: string;
+  status: "published" | "draft";
   title: string;
-  description: string;
-  icon: LucideIcon;
-  slugs: string[];
 };
-
-const OBJECTIVES: readonly ObjectiveDefinition[] = [
-  {
-    id: "organizar",
-    title: "Organizar documentos",
-    description: "Estruture o acervo e mantenha os arquivos fáceis de consultar.",
-    icon: FolderOpen,
-    slugs: ["funcionalidades/documentos", "funcionalidades/favoritos"],
-  },
-  {
-    id: "encontrar",
-    title: "Encontrar informações",
-    description: "Localize conteúdos e refine a consulta ao acervo.",
-    icon: FileSearch,
-    slugs: ["funcionalidades/busca-inteligente", "funcionalidades/relatorios"],
-  },
-  {
-    id: "acompanhar",
-    title: "Acompanhar atividades",
-    description: "Consulte o panorama e os indicadores disponíveis no ambiente.",
-    icon: LayoutDashboard,
-    slugs: ["funcionalidades/visao-geral"],
-  },
-  {
-    id: "automatizar",
-    title: "Automatizar processos",
-    description: "Acompanhe fluxos de trabalho documentados.",
-    icon: GitBranch,
-    slugs: ["funcionalidades/workflows"],
-  },
-] as const;
 
 const START_ICONS: Readonly<Record<string, LucideIcon>> = {
   "o-que-e-o-godocs": BookOpen,
   "primeiro-acesso": LogIn,
+};
+
+const FEATURE_ICONS: Readonly<Record<string, LucideIcon>> = {
+  "funcionalidades/visao-geral": LayoutDashboard,
+  "funcionalidades/busca-inteligente": FileSearch,
+  "funcionalidades/documentos": FolderOpen,
+  "funcionalidades/favoritos": Star,
+  "funcionalidades/workflows": GitBranch,
+  "funcionalidades/relatorios": BarChart3,
 };
 
 function collectDocumentItems(
@@ -110,7 +87,7 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
   return (
     <section className="home-editorial-section">
       <SectionHeading
-        description="Uma sequência curta para entender o produto e entrar no ambiente."
+        description="Siga os primeiros passos para conhecer e acessar o GoDocs."
         eyebrow="01 / ORIENTAÇÃO"
         title="Comece por aqui"
       />
@@ -121,12 +98,14 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
 
           return (
             <li key={entry.id}>
-              <Link href={entry.href}>
-                <span aria-hidden="true" className="learning-path__number">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span aria-hidden="true" className="learning-path__icon">
-                  <Icon size={18} strokeWidth={1.7} />
+              <Link className="learning-path__card" href={entry.href}>
+                <span className="learning-path__topline">
+                  <span className="learning-path__step">
+                    ETAPA {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span aria-hidden="true" className="learning-path__icon">
+                    <Icon size={19} strokeWidth={1.7} />
+                  </span>
                 </span>
                 <span className="learning-path__body">
                   <strong>{entry.label}</strong>
@@ -136,6 +115,7 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
                   aria-hidden="true"
                   className="learning-path__arrow"
                   size={18}
+                  strokeWidth={1.8}
                 />
               </Link>
             </li>
@@ -146,126 +126,126 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
   );
 }
 
-function ObjectiveDirectory({ entries }: { entries: LinkedNavigationItem[] }) {
-  const publishedBySlug = new Map(entries.map((entry) => [entry.id, entry]));
-  const objectives = OBJECTIVES.map((objective) => ({
-    ...objective,
-    entries: objective.slugs
-      .map((slug) => publishedBySlug.get(slug))
-      .filter((entry): entry is LinkedNavigationItem => Boolean(entry)),
-  })).filter((objective) => objective.entries.length > 0);
-
-  if (objectives.length === 0) return null;
+function FeatureDirectory({ features }: { features: HomeFeature[] }) {
+  if (features.length === 0) return null;
 
   return (
     <section className="home-editorial-section">
       <SectionHeading
-        description="Escolha pelo que você precisa fazer, mesmo sem conhecer o nome do módulo."
+        description="Acesse as principais funcionalidades disponíveis no GoDocs."
         eyebrow="02 / FUNCIONALIDADES"
-        title="Encontre por objetivo"
+        title="Conheça os recursos"
       />
 
-      <div className="objective-directory">
-        {objectives.map((objective) => {
-          const Icon = objective.icon;
+      <ul className="feature-grid">
+        {[...features]
+          .sort((a, b) => a.order - b.order)
+          .map((feature) => {
+            const Icon = FEATURE_ICONS[feature.slug] ?? FolderOpen;
 
-          return (
-            <section className="objective-group" key={objective.id}>
-              <div className="objective-group__heading">
-                <Icon aria-hidden="true" size={19} strokeWidth={1.7} />
-                <div>
-                  <h3>{objective.title}</h3>
-                  <p>{objective.description}</p>
-                </div>
-              </div>
-              <ul>
-                {objective.entries.map((entry) => (
-                  <li key={entry.id}>
-                    <Link href={entry.href}>
-                      <span>
-                        <strong>{entry.label}</strong>
-                        <small>{entry.description}</small>
-                      </span>
-                      <ArrowRight aria-hidden="true" size={16} />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function GuidesSection({ guides }: { guides: HomeGuide[] }) {
-  if (guides.length === 0) return null;
-
-  return (
-    <section className="home-editorial-section">
-      <SectionHeading
-        description="Uma seleção editorial de procedimentos que ajudam nas tarefas recorrentes."
-        eyebrow="03 / PROCEDIMENTOS"
-        title="Guias mais acessados"
-      />
-
-      <ul className="featured-guides">
-        {guides.map((guide, index) => (
-          <li key={guide.id}>
-            <Link href={guide.href}>
-              <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <div>
-                <strong>{guide.title}</strong>
-                <small>{guide.description}</small>
-              </div>
-              <ArrowRight aria-hidden="true" size={16} />
-            </Link>
-          </li>
-        ))}
+            return (
+              <li key={feature.slug}>
+                {feature.status === "published" && feature.href ? (
+                  <DocCard
+                    description={feature.description}
+                    href={feature.href}
+                    icon={Icon}
+                    status="active"
+                    title={feature.title}
+                  />
+                ) : (
+                  <DocCard
+                    description={feature.description}
+                    icon={Icon}
+                    status="comingSoon"
+                    title={feature.title}
+                  />
+                )}
+              </li>
+            );
+          })}
       </ul>
     </section>
   );
 }
 
-export function HomeIntro({ groups, guides = [] }: HomeIntroProps) {
+function FrequentlyAskedQuestions() {
+  return (
+    <section className="home-editorial-section home-faq">
+      <SectionHeading
+        description="Encontre respostas rápidas para as dúvidas mais comuns sobre o GoDocs."
+        eyebrow="03 / DÚVIDAS"
+        title="Perguntas frequentes"
+      />
+      <div className="home-faq__empty">
+        <span aria-hidden="true" className="home-faq__icon">
+          <CircleHelp size={21} strokeWidth={1.7} />
+        </span>
+        <p>
+          Conteúdo em preparação. As perguntas frequentes serão adicionadas em
+          breve.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+export function HomeIntro({ features = [], groups }: HomeIntroProps) {
   const startEntries = collectDocumentItems(
     groups.find((group) => group.id === "comece-por-aqui")?.items ?? [],
   );
-  const featureEntries = collectDocumentItems(
-    groups.find((group) => group.id === "funcionalidades")?.items ?? [],
-  );
-  const hasPublishedContent = startEntries.length + featureEntries.length > 0;
+  const hasDocumentation = startEntries.length + features.length > 0;
 
   return (
     <main className="home" id="main-content">
       <section aria-labelledby="home-title" className="home-hero">
-        <div className="home-hero__marker" aria-hidden="true">
+        <div aria-hidden="true" className="home-hero__ambient">
           <span />
-          CENTRAL DE DOCUMENTAÇÃO
+          <span />
         </div>
+        <p className="home-hero__marker">
+          <span aria-hidden="true" />
+          CENTRAL DE DOCUMENTAÇÃO
+        </p>
         <h1 id="home-title">Documentação do GoDocs</h1>
-        <p>{SITE_DESCRIPTION}</p>
+        <p className="home-hero__description">{SITE_DESCRIPTION}</p>
         <div className="home-hero__search">
           <SearchLauncher variant="hero" />
-          <small>
-            Pesquise páginas, recursos e seções internas dos artigos.
-          </small>
+          <div className="home-hero__search-help">
+            <span>
+              Pesquise páginas, recursos e seções internas dos artigos.
+            </span>
+            <span className="home-hero__shortcut">
+              Atalho
+              <kbd>
+                <span className="shortcut-command">⌘ K</span>
+                <span className="shortcut-control">Ctrl K</span>
+              </kbd>
+            </span>
+          </div>
         </div>
       </section>
 
-      {hasPublishedContent ? (
+      {hasDocumentation ? (
         <div className="home-content">
           <LearningPath entries={startEntries} />
-          <ObjectiveDirectory entries={featureEntries} />
-          <GuidesSection guides={guides} />
+          <FeatureDirectory features={features} />
+          <FrequentlyAskedQuestions />
         </div>
       ) : (
-        <p className="home-empty">
-          Ainda não há documentos publicados. Use a busca para consultar novos
-          conteúdos quando estiverem disponíveis.
-        </p>
+        <div className="home-content">
+          <p className="home-empty">
+            Ainda não há documentos publicados. Novos conteúdos serão
+            publicados progressivamente.
+          </p>
+          <FrequentlyAskedQuestions />
+        </div>
       )}
+
+      <footer className="home-footer">
+        <Brand />
+        <p>Documentação do GoDocs</p>
+      </footer>
     </main>
   );
 }
