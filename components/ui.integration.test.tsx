@@ -1,6 +1,13 @@
 // @vitest-environment jsdom
 
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { StrictMode } from "react";
@@ -73,6 +80,11 @@ beforeEach(() => {
   pathname.value = "/";
   window.localStorage.clear();
   installMatchMedia();
+  Object.defineProperty(window, "scrollY", {
+    configurable: true,
+    value: 0,
+    writable: true,
+  });
   Object.defineProperty(HTMLDialogElement.prototype, "showModal", {
     configurable: true,
     value(this: HTMLDialogElement) {
@@ -174,6 +186,22 @@ describe("fluxos interativos", () => {
     await user.keyboard("{Enter}");
 
     expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
+  });
+
+  it("abre com Cmd+K", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => searchIndex,
+      })),
+    );
+    const user = userEvent.setup();
+
+    renderInSiteShell(<SearchDialog />);
+    await user.keyboard("{Meta>}k{/Meta}");
+
+    expect(await screen.findByRole("combobox")).toBeTruthy();
   });
 
   it("mantém compactos os estados de carregamento e índice vazio", async () => {
@@ -357,6 +385,81 @@ describe("fluxos interativos", () => {
     );
   });
 
+  it("fecha o drawer ao entrar no breakpoint desktop", async () => {
+    let viewportListener:
+      | ((event: MediaQueryListEvent) => void)
+      | undefined;
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      value: vi.fn((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addEventListener: vi.fn(
+          (
+            eventName: string,
+            listener: (event: MediaQueryListEvent) => void,
+          ) => {
+            if (
+              query === "(min-width: 1024px)" &&
+              eventName === "change"
+            ) {
+              viewportListener = listener;
+            }
+          },
+        ),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+    const user = userEvent.setup();
+
+    renderInSiteShell(
+      <MobileNavDrawer
+        groups={[
+          {
+            id: "guias",
+            title: "Guias",
+            description: "Orientações publicadas.",
+            order: 1,
+            entryHref: "/docs/guias",
+            items: [
+              {
+                id: "guias",
+                label: "Guias",
+                href: "/docs/guias",
+                children: [],
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Abrir navegação da documentação",
+      }),
+    );
+    expect(screen.getByRole("dialog", { name: "Navegação" })).toBeTruthy();
+    expect(viewportListener).toBeTypeOf("function");
+
+    await act(async () => {
+      viewportListener?.({ matches: true } as MediaQueryListEvent);
+    });
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("dialog", { name: "Navegação" }),
+      ).toBeNull(),
+    );
+    expect(
+      screen.queryByRole("button", { name: "Fechar navegação" }),
+    ).toBeNull();
+  });
+
   it("persiste e comunica a troca de tema", async () => {
     const user = userEvent.setup();
     renderInSiteShell(<ThemeToggle />);
@@ -435,6 +538,15 @@ describe("marca", () => {
         name: "Abrir navegação da documentação",
       }),
     ).toBeNull();
+
+    const header = document.querySelector(".docs-header");
+    expect(header?.getAttribute("data-scrolled")).toBeNull();
+
+    window.scrollY = 24;
+    fireEvent.scroll(window);
+    await waitFor(() =>
+      expect(header?.getAttribute("data-scrolled")).toBe("true"),
+    );
   });
 
   it("preserva busca, tema e menu móvel condicional no header interno", async () => {

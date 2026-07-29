@@ -99,24 +99,24 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
           return (
             <li key={entry.id}>
               <Link className="learning-path__card" href={entry.href}>
-                <span className="learning-path__topline">
-                  <span className="learning-path__step">
-                    ETAPA {String(index + 1).padStart(2, "0")}
-                  </span>
+                <span className="learning-path__step">
+                  ETAPA {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="learning-path__content">
                   <span aria-hidden="true" className="learning-path__icon">
                     <Icon size={19} strokeWidth={1.7} />
                   </span>
+                  <span className="learning-path__body">
+                    <strong>{entry.label}</strong>
+                    <small>{entry.description}</small>
+                  </span>
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="learning-path__arrow"
+                    size={18}
+                    strokeWidth={1.8}
+                  />
                 </span>
-                <span className="learning-path__body">
-                  <strong>{entry.label}</strong>
-                  <small>{entry.description}</small>
-                </span>
-                <ArrowRight
-                  aria-hidden="true"
-                  className="learning-path__arrow"
-                  size={18}
-                  strokeWidth={1.8}
-                />
               </Link>
             </li>
           );
@@ -214,13 +214,6 @@ export function HomeIntro({ features = [], groups }: HomeIntroProps) {
           <div className="home-hero__search-help">
             <span>
               Pesquise páginas, recursos e seções internas dos artigos.
-            </span>
-            <span className="home-hero__shortcut">
-              Atalho
-              <kbd>
-                <span className="shortcut-command">⌘ K</span>
-                <span className="shortcut-control">Ctrl K</span>
-              </kbd>
             </span>
           </div>
         </div>

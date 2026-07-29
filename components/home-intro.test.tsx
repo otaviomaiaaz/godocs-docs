@@ -39,7 +39,7 @@ async function loadHomeData() {
 
 describe("home orientada ao conteúdo", () => {
   it("mantém o estado vazio útil, com hero, busca global e FAQ compacto", () => {
-    render(<HomeIntro groups={[]} />);
+    const { container } = render(<HomeIntro groups={[]} />);
 
     expect(
       screen.getByText(/Ainda não há documentos publicados\./),
@@ -52,6 +52,12 @@ describe("home orientada ao conteúdo", () => {
     expect(
       screen.getByRole("button", { name: "Pesquisar na documentação" }),
     ).toBeTruthy();
+    expect(screen.queryByText("Atalho")).toBeNull();
+    expect(
+      container.querySelectorAll(
+        ".home-hero .search-trigger__shortcut",
+      ),
+    ).toHaveLength(1);
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent),
     ).toEqual(["Perguntas frequentes"]);
@@ -143,10 +149,16 @@ describe("home orientada ao conteúdo", () => {
       path.join(process.cwd(), "app", "globals.css"),
       "utf8",
     );
-    const redesignCss = css.slice(css.indexOf("/* Home redesign v3 */"));
+    const redesignCss = css.slice(css.indexOf("/* Home refinement v4 */"));
 
     expect(redesignCss).toMatch(
       /\.docs-header\[data-home="true"\]\s+\.docs-header__inner\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)\s+auto;/,
+    );
+    expect(redesignCss).toMatch(
+      /\.docs-header\[data-home="true"\]\s*\{[^}]*background:\s*transparent;/,
+    );
+    expect(redesignCss).toMatch(
+      /\.docs-header\[data-home="true"\]\[data-scrolled="true"\]/,
     );
     expect(redesignCss).toMatch(
       /\.learning-path\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\);/,

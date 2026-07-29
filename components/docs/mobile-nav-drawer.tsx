@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useCallback, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { NavigationTree } from "@/components/navigation-tree";
@@ -27,6 +27,19 @@ export function MobileNavDrawer({ groups }: MobileNavDrawerProps) {
     onClose: closeDrawer,
     triggerRef,
   });
+
+  useEffect(() => {
+    const desktopViewport = window.matchMedia("(min-width: 1024px)");
+
+    function handleViewportChange(event: MediaQueryListEvent) {
+      if (event.matches) closeDrawer();
+    }
+
+    desktopViewport.addEventListener("change", handleViewportChange);
+
+    return () =>
+      desktopViewport.removeEventListener("change", handleViewportChange);
+  }, [closeDrawer]);
 
   if (groups.length === 0) {
     return null;
