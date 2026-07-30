@@ -38,6 +38,7 @@ order: 10
 keywords:
   - termo opcional
 status: published
+availability: available
 updatedAt: 2026-07-29
 version: GoDocs 4
 permission: Acesso ao módulo de documentos
@@ -52,6 +53,7 @@ related:
 - `ancestors` descreve cada nível anterior de um slug aninhado com `segment`, label e ordem explícitos. A quantidade e os segmentos devem corresponder ao slug.
 - `keywords` é opcional e melhora a relevância da busca.
 - `status` aceita `published` ou `draft`. Apenas documentos publicados aparecem na aplicação e um documento publicado não pode apontar para um rascunho.
+- `availability` aceita `available` ou `coming-soon`. Use `coming-soon` somente quando a página publicada for um estado editorial em preparação que deve permanecer navegável e identificado na home.
 - `updatedAt` é opcional e usa `YYYY-MM-DD`; `version` e `permission` também são metadados editoriais opcionais.
 - `related` aceita slugs de outros documentos publicados e alimenta a navegação contextual ao fim do artigo.
 - `order` é um inteiro não negativo usado na navegação e na paginação.

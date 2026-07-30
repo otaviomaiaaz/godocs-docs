@@ -32,11 +32,11 @@ type HomeIntroProps = {
 type LinkedNavigationItem = DocNavigationItem & { href: string };
 
 export type HomeFeature = {
+  availability: "available" | "coming-soon";
   description: string;
-  href?: string;
+  href: string;
   order: number;
   slug: string;
-  status: "published" | "draft";
   title: string;
 };
 
@@ -145,22 +145,17 @@ function FeatureDirectory({ features }: { features: HomeFeature[] }) {
 
             return (
               <li key={feature.slug}>
-                {feature.status === "published" && feature.href ? (
-                  <DocCard
-                    description={feature.description}
-                    href={feature.href}
-                    icon={Icon}
-                    status="active"
-                    title={feature.title}
-                  />
-                ) : (
-                  <DocCard
-                    description={feature.description}
-                    icon={Icon}
-                    status="comingSoon"
-                    title={feature.title}
-                  />
-                )}
+                <DocCard
+                  description={feature.description}
+                  href={feature.href}
+                  icon={Icon}
+                  status={
+                    feature.availability === "coming-soon"
+                      ? "comingSoon"
+                      : "active"
+                  }
+                  title={feature.title}
+                />
               </li>
             );
           })}
@@ -203,10 +198,6 @@ export function HomeIntro({ features = [], groups }: HomeIntroProps) {
           <span />
           <span />
         </div>
-        <p className="home-hero__marker">
-          <span aria-hidden="true" />
-          CENTRAL DE DOCUMENTAÇÃO
-        </p>
         <h1 id="home-title">Documentação do GoDocs</h1>
         <p className="home-hero__description">{SITE_DESCRIPTION}</p>
         <div className="home-hero__search">
@@ -236,7 +227,7 @@ export function HomeIntro({ features = [], groups }: HomeIntroProps) {
       )}
 
       <footer className="home-footer">
-        <Brand />
+        <Brand logoSize="compact" />
         <p>Documentação do GoDocs</p>
       </footer>
     </main>

@@ -7,16 +7,15 @@ export default async function HomePage() {
   const publishedDocs = docs.filter(
     (doc) => doc.metadata.status === "published",
   );
-  const features = docs
+  const features = publishedDocs
     .filter((doc) => doc.metadata.section?.id === "funcionalidades")
     .map<HomeFeature>((doc) => ({
+      availability: doc.metadata.availability,
       description:
         doc.metadata.cardDescription ?? doc.metadata.description,
-      href:
-        doc.metadata.status === "published" ? doc.href : undefined,
+      href: doc.href,
       order: doc.metadata.order,
       slug: doc.slug,
-      status: doc.metadata.status,
       title: doc.metadata.navTitle ?? doc.metadata.title,
     }));
 

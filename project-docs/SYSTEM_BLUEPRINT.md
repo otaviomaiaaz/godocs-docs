@@ -487,6 +487,7 @@ description: Descrição curta da página.
 slug: caminho-da-pagina
 section: identificador-da-secao
 order: 10
+availability: available
 keywords:
   - termo
 ---
@@ -496,6 +497,7 @@ Regras:
 
 - `title`, `description`, `slug` e `order` são obrigatórios;
 - `section` é obrigatório quando houver categorias publicadas;
+- `availability` é opcional e diferencia conteúdo disponível de páginas publicadas em preparação, sem retirar essas páginas de rotas, navegação ou busca;
 - `keywords` é opcional;
 - slug não começa nem termina com `/`;
 - slugs duplicados falham de forma clara no build;

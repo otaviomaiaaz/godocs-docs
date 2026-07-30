@@ -59,6 +59,9 @@ export const docFrontmatterSchema = z
       .nonnegative("order deve ser positivo"),
     keywords: z.array(z.string().trim().min(1)).default([]),
     status: z.enum(["published", "draft"]).default("published"),
+    availability: z
+      .enum(["available", "coming-soon"])
+      .default("available"),
     updatedAt: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "updatedAt deve usar o formato YYYY-MM-DD")

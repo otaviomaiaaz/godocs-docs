@@ -16,13 +16,13 @@ type ActiveDocCardProps = DocCardCommonProps & {
 };
 
 type ComingSoonDocCardProps = DocCardCommonProps & {
-  href?: never;
+  href: string;
   status: "comingSoon";
 };
 
 export type DocCardProps = ActiveDocCardProps | ComingSoonDocCardProps;
 
-function handleActiveCardKeyDown(event: KeyboardEvent<HTMLAnchorElement>) {
+function handleCardKeyDown(event: KeyboardEvent<HTMLAnchorElement>) {
   if (event.key !== " " && event.key !== "Spacebar") return;
 
   event.preventDefault();
@@ -39,44 +39,33 @@ export function DocCard(props: DocCardProps) {
       <div className="doc-card__body">
         <div className="doc-card__title-row">
           <h3>{title}</h3>
-          {status === "active" ? (
+          <span className="doc-card__actions">
+            {status === "comingSoon" ? (
+              <span className="doc-card__indicator doc-card__indicator--badge">
+                Em breve
+              </span>
+            ) : null}
             <ArrowRight
               aria-hidden="true"
               className="doc-card__indicator doc-card__indicator--arrow"
               size={17}
               strokeWidth={1.7}
             />
-          ) : (
-            <span className="doc-card__indicator doc-card__indicator--badge">
-              Em breve
-            </span>
-          )}
+          </span>
         </div>
         <p>{description}</p>
       </div>
     </>
   );
 
-  if (status === "active") {
-    return (
-      <Link
-        className="doc-card doc-card--active"
-        data-status={status}
-        href={props.href}
-        onKeyDown={handleActiveCardKeyDown}
-      >
-        {content}
-      </Link>
-    );
-  }
-
   return (
-    <article
-      aria-label={`${title}. Em breve`}
-      className="doc-card doc-card--coming-soon"
+    <Link
+      className={`doc-card doc-card--${status === "active" ? "active" : "coming-soon"}`}
       data-status={status}
+      href={props.href}
+      onKeyDown={handleCardKeyDown}
     >
       {content}
-    </article>
+    </Link>
   );
 }

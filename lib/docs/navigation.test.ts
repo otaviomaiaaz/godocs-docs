@@ -13,11 +13,17 @@ const section = {
   order: 10,
 };
 
-type TestFrontmatter = Omit<DocFrontmatter, "status" | "related"> &
-  Partial<Pick<DocFrontmatter, "status" | "related">>;
+type TestFrontmatter = Omit<
+  DocFrontmatter,
+  "availability" | "status" | "related"
+> &
+  Partial<
+    Pick<DocFrontmatter, "availability" | "status" | "related">
+  >;
 
 function createDocument(input: TestFrontmatter): DocRecord {
   const metadata: DocFrontmatter = {
+    availability: "available",
     status: "published",
     related: [],
     ...input,

@@ -18,16 +18,15 @@ async function loadHomeData() {
   const publishedDocs = docs.filter(
     (doc) => doc.metadata.status === "published",
   );
-  const features = docs
+  const features = publishedDocs
     .filter((doc) => doc.metadata.section?.id === "funcionalidades")
     .map<HomeFeature>((doc) => ({
+      availability: doc.metadata.availability,
       description:
         doc.metadata.cardDescription ?? doc.metadata.description,
-      href:
-        doc.metadata.status === "published" ? doc.href : undefined,
+      href: doc.href,
       order: doc.metadata.order,
       slug: doc.slug,
-      status: doc.metadata.status,
       title: doc.metadata.navTitle ?? doc.metadata.title,
     }));
 
@@ -52,6 +51,7 @@ describe("home orientada ao conteúdo", () => {
     expect(
       screen.getByRole("button", { name: "Pesquisar na documentação" }),
     ).toBeTruthy();
+    expect(screen.queryByText("CENTRAL DE DOCUMENTAÇÃO")).toBeNull();
     expect(screen.queryByText("Atalho")).toBeNull();
     expect(
       container.querySelectorAll(
@@ -107,6 +107,9 @@ describe("home orientada ao conteúdo", () => {
       ["Visão Geral", "/docs/funcionalidades/visao-geral"],
       ["Busca Inteligente", "/docs/funcionalidades/busca-inteligente"],
       ["Documentos", "/docs/funcionalidades/documentos"],
+      ["Favoritos", "/docs/funcionalidades/favoritos"],
+      ["Workflows", "/docs/funcionalidades/workflows"],
+      ["Relatórios", "/docs/funcionalidades/relatorios"],
     ] as const) {
       expect(
         within(featureGrid as HTMLElement)
@@ -116,11 +119,14 @@ describe("home orientada ao conteúdo", () => {
     }
 
     for (const draftTitle of ["Favoritos", "Workflows", "Relatórios"]) {
-      const card = within(featureGrid as HTMLElement).getByLabelText(
-        `${draftTitle}. Em breve`,
+      const card = within(featureGrid as HTMLElement).getByRole(
+        "link",
+        { name: new RegExp(`${draftTitle}.*Em breve`) },
       );
-      expect(card.tagName).toBe("ARTICLE");
-      expect(card.getAttribute("tabindex")).toBeNull();
+      expect(card.getAttribute("data-status")).toBe("comingSoon");
+      expect(
+        card.querySelector(".doc-card__indicator--arrow"),
+      ).toBeTruthy();
     }
 
     expect(

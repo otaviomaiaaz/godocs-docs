@@ -1,7 +1,13 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  type MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import type { DocHeading } from "@/lib/docs/schema";
 
@@ -10,11 +16,29 @@ type TableOfContentsProps = {
   variant?: "desktop" | "mobile";
 };
 
+const ACTIVE_HEADING_OFFSET = 132;
+
 export function TableOfContents({
   headings,
   variant = "desktop",
 }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState(headings[0]?.id ?? "");
+  const navRef = useRef<HTMLElement>(null);
+  const activeParentId = useMemo(() => {
+    let parentId = "";
+
+    for (const heading of headings) {
+      if (heading.depth === 2) {
+        parentId = heading.id;
+      }
+
+      if (heading.id === activeId) {
+        return heading.depth === 3 ? parentId : "";
+      }
+    }
+
+    return "";
+  }, [activeId, headings]);
 
   useEffect(() => {
     const elements = headings
@@ -37,33 +61,102 @@ export function TableOfContents({
         }
 
         const passed = elements.filter(
-          (element) => element.getBoundingClientRect().top <= 132,
+          (element) =>
+            element.getBoundingClientRect().top <= ACTIVE_HEADING_OFFSET,
         );
         setActiveId(passed.at(-1)?.id ?? elements[0]?.id ?? "");
       });
     };
 
+    const updateFromHash = () => {
+      const hashId = decodeURIComponent(window.location.hash.slice(1));
+
+      if (elements.some((element) => element.id === hashId)) {
+        setActiveId(hashId);
+      }
+    };
+
+    const observer =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(updateActiveHeading, {
+            rootMargin: `-${ACTIVE_HEADING_OFFSET}px 0px -65% 0px`,
+            threshold: [0, 1],
+          });
+
+    elements.forEach((element) => observer?.observe(element));
+    updateFromHash();
     updateActiveHeading();
-    window.addEventListener("scroll", updateActiveHeading, { passive: true });
+    if (!observer) {
+      window.addEventListener("scroll", updateActiveHeading, {
+        passive: true,
+      });
+    }
     window.addEventListener("resize", updateActiveHeading);
+    window.addEventListener("hashchange", updateFromHash);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateActiveHeading);
+      observer?.disconnect();
+      if (!observer) {
+        window.removeEventListener("scroll", updateActiveHeading);
+      }
       window.removeEventListener("resize", updateActiveHeading);
+      window.removeEventListener("hashchange", updateFromHash);
     };
   }, [headings]);
+
+  useEffect(() => {
+    if (variant !== "desktop") return;
+
+    const nav = navRef.current;
+    const container = nav?.closest<HTMLElement>(".table-of-contents");
+    const activeLink = Array.from(
+      nav?.querySelectorAll<HTMLAnchorElement>("a[data-toc-id]") ?? [],
+    ).find((link) => link.dataset.tocId === activeId);
+
+    if (!container || !activeLink) return;
+
+    const containerBounds = container.getBoundingClientRect();
+    const linkBounds = activeLink.getBoundingClientRect();
+
+    if (linkBounds.top < containerBounds.top + 8) {
+      container.scrollTop -= containerBounds.top + 8 - linkBounds.top;
+    } else if (linkBounds.bottom > containerBounds.bottom - 8) {
+      container.scrollTop += linkBounds.bottom - containerBounds.bottom + 8;
+    }
+  }, [activeId, variant]);
+
+  function handleLinkClick(
+    event: MouseEvent<HTMLAnchorElement>,
+    headingId: string,
+  ) {
+    setActiveId(headingId);
+
+    if (variant === "mobile") {
+      const details = event.currentTarget.closest("details");
+
+      if (details) {
+        details.open = false;
+      }
+    }
+  }
 
   const links = (
     <ol>
       {headings.map((heading) => (
         <li
           className={heading.depth === 3 ? "is-nested" : undefined}
+          data-active-parent={
+            heading.id === activeParentId ? "true" : undefined
+          }
           key={heading.id}
         >
           <a
             aria-current={activeId === heading.id ? "location" : undefined}
+            data-toc-id={heading.id}
             href={`#${heading.id}`}
+            onClick={(event) => handleLinkClick(event, heading.id)}
           >
             {heading.title}
           </a>
@@ -79,14 +172,16 @@ export function TableOfContents({
           <span>Nesta página</span>
           <ChevronDown aria-hidden="true" size={17} />
         </summary>
-        <nav aria-label="Nesta página">{links}</nav>
+        <nav aria-label="Nesta página" ref={navRef}>
+          {links}
+        </nav>
       </details>
     );
   }
 
   return (
     <aside className="table-of-contents">
-      <nav aria-label="Nesta página">
+      <nav aria-label="Nesta página" ref={navRef}>
         <h2>Nesta página</h2>
         {links}
       </nav>

@@ -37,17 +37,19 @@ describe("DocCard", () => {
     expect(directChildren[0]?.classList.contains("doc-card__icon")).toBe(true);
     expect(directChildren[1]?.classList.contains("doc-card__body")).toBe(true);
     expect(
-      link.querySelector(".doc-card__title-row > .doc-card__indicator--arrow"),
+      link.querySelector(".doc-card__actions > .doc-card__indicator--arrow"),
     ).toBeTruthy();
     expect(
       link.querySelector(".doc-card__body > p")?.textContent,
     ).toBe("Explicação inicial.");
   });
 
-  it("renderiza o estado futuro sem link ou foco interativo", () => {
+  it("mantém o estado futuro como link completo com selo e seta", async () => {
+    const user = userEvent.setup();
     const { container } = render(
       <DocCard
         description="Conteúdo em preparação."
+        href="/docs/proximo-guia"
         icon={BookOpen}
         status="comingSoon"
         title="Próximo guia"
@@ -55,19 +57,29 @@ describe("DocCard", () => {
     );
 
     const card = container.querySelector(".doc-card");
+    const link = screen.getByRole("link", { name: /Próximo guia.*Em breve/ });
+    const activationSpy = vi.fn((event: Event) => event.preventDefault());
+    link.addEventListener("click", activationSpy);
+    link.focus();
 
-    expect(screen.queryByRole("link")).toBeNull();
-    expect(card?.tagName).toBe("ARTICLE");
-    expect(card?.getAttribute("aria-label")).toBe("Próximo guia. Em breve");
-    expect(card?.getAttribute("tabindex")).toBeNull();
+    await user.keyboard("{Enter}");
+    await user.keyboard(" ");
+
+    expect(activationSpy).toHaveBeenCalledTimes(2);
+    expect(card?.tagName).toBe("A");
+    expect(card?.getAttribute("href")).toBe("/docs/proximo-guia");
+    expect(card?.getAttribute("data-status")).toBe("comingSoon");
     expect(screen.getByText("Em breve")).toBeTruthy();
     expect(
       card?.querySelector(
-        ".doc-card__title-row > .doc-card__indicator--badge",
+        ".doc-card__actions > .doc-card__indicator--badge",
       ),
     ).toBeTruthy();
     expect(card?.querySelector(".doc-card__body > p")?.textContent).toBe(
       "Conteúdo em preparação.",
     );
+    expect(
+      card?.querySelector(".doc-card__indicator--arrow"),
+    ).toBeTruthy();
   });
 });

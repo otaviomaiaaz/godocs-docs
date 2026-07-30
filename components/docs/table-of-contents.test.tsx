@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { TableOfContents } from "@/components/docs/table-of-contents";
@@ -52,5 +53,51 @@ describe("TableOfContents", () => {
         ),
       ).toBe("location"),
     );
+  });
+
+  it("renderiza h3 aninhado, identifica o h2 pai e fecha o índice mobile", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <>
+        <h2 id="funcionalidades-da-pasta">Funcionalidades da pasta</h2>
+        <h3 id="adicionar-documento">Adicionar documento</h3>
+        <TableOfContents
+          headings={[
+            {
+              depth: 2,
+              id: "funcionalidades-da-pasta",
+              title: "Funcionalidades da pasta",
+            },
+            {
+              depth: 3,
+              id: "adicionar-documento",
+              title: "Adicionar documento",
+            },
+          ]}
+          variant="mobile"
+        />
+      </>,
+    );
+
+    const details = container.querySelector("details");
+    expect(details).toBeTruthy();
+    await user.click(screen.getByText("Nesta página"));
+    expect(details?.open).toBe(true);
+
+    const nestedLink = screen.getByRole("link", {
+      name: "Adicionar documento",
+    });
+    expect(nestedLink.closest("li")?.classList.contains("is-nested")).toBe(
+      true,
+    );
+    await user.click(nestedLink);
+
+    expect(details?.open).toBe(false);
+    expect(
+      screen
+        .getByRole("link", { name: "Funcionalidades da pasta" })
+        .closest("li")
+        ?.getAttribute("data-active-parent"),
+    ).toBe("true");
   });
 });

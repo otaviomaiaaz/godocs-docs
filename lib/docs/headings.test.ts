@@ -47,4 +47,20 @@ Siga estas etapas:
       "não deve conter H1",
     );
   });
+
+  it("mantém IDs previsíveis para acentos e títulos repetidos", () => {
+    const parsed = parseDocumentText(`
+## Configuração
+
+### Opções avançadas
+
+## Configuração
+`);
+
+    expect(parsed.headings).toEqual([
+      { depth: 2, id: "configuração", title: "Configuração" },
+      { depth: 3, id: "opções-avançadas", title: "Opções avançadas" },
+      { depth: 2, id: "configuração-1", title: "Configuração" },
+    ]);
+  });
 });
