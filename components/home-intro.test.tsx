@@ -118,20 +118,20 @@ describe("home orientada ao conteúdo", () => {
       ).toBe(href);
     }
 
-    for (const draftTitle of ["Favoritos", "Workflows", "Relatórios"]) {
+    for (const publishedTitle of ["Favoritos", "Workflows", "Relatórios"]) {
       const card = within(featureGrid as HTMLElement).getByRole(
         "link",
-        { name: new RegExp(`${draftTitle}.*Em breve`) },
+        { name: new RegExp(publishedTitle) },
       );
-      expect(card.getAttribute("data-status")).toBe("comingSoon");
+      expect(card.getAttribute("data-status")).toBe("active");
       expect(
         card.querySelector(".doc-card__indicator--arrow"),
       ).toBeTruthy();
     }
 
     expect(
-      within(featureGrid as HTMLElement).getAllByText("Em breve"),
-    ).toHaveLength(3);
+      within(featureGrid as HTMLElement).queryByText("Em breve"),
+    ).toBeNull();
     expect(screen.queryByText("Guias mais acessados")).toBeNull();
     expect(screen.queryByText("Organizar documentos")).toBeNull();
   });

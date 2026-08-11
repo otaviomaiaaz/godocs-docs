@@ -26,26 +26,117 @@ keywords:
   - proprietário
 ---
 
-## Visão geral
+A **Busca Inteligente** permite localizar documentos pelas informações presentes em seu conteúdo, sem que seja necessário saber o nome do arquivo ou em qual pasta ele está armazenado. Ao pesquisar uma palavra, número, assunto ou expressão, o GoDocs analisa o texto dos documentos e apresenta os arquivos relacionados à consulta.
 
-A Busca inteligente permite encontrar documentos do workspace rapidamente, usando IA semântica para interpretar o que está sendo procurado.
+Quando a inteligência artificial está ativa, a pesquisa também pode considerar o contexto e o significado do conteúdo. Isso facilita a localização de documentos mesmo quando os termos pesquisados não aparecem exatamente da mesma forma no arquivo.
 
-## Como funciona
+## Realizando uma pesquisa
 
-A busca é feita a partir de um campo de pesquisa central. Para refinar os resultados, o botão **Avançado** abre um painel com opções de filtro.
+<Steps>
 
-## Como utilizar
+<Step title="Acesse a Busca Inteligente">
 
-1. Digite o termo desejado no campo de busca.
-2. Se necessário, clique em **Avançado** para abrir o painel de filtros.
-3. Selecione os critérios desejados.
-4. Clique em **Aplicar filtros** para atualizar os resultados com base na seleção.
+Acesse a seção **Busca Inteligente**.
 
-O painel de filtros conta com os seguintes critérios:
+</Step>
 
-- **Ordenar por** — define a ordem de exibição dos resultados. A opção padrão é **Relevância**.
-- **Pastas** — restringe a busca a uma pasta específica do workspace. A opção **“Todas as pastas”** mantém a busca em todo o ambiente, e pastas com uma seta ao lado indicam que possuem subpastas.
-- **Tipos de documentos** — filtra os resultados considerando apenas um tipo específico de documento.
-- **Data** — filtra por período, com base na data de criação, usando os campos **De** e **Para**.
-- **Autor/Proprietário** — filtra os resultados pela pessoa responsável pelo documento.
-- **Aplicar filtros / Limpar filtros** — botões na parte inferior do painel. O primeiro confirma os critérios selecionados; o segundo remove todos os filtros aplicados.
+<Step title="Informe o que deseja encontrar">
+
+Clique no campo **Buscar nos documentos** e digite uma palavra ou expressão relacionada ao conteúdo que deseja encontrar.
+
+</Step>
+
+<Step title="Consulte os resultados">
+
+Aguarde enquanto o sistema analisa os documentos e apresenta os resultados.
+
+</Step>
+
+</Steps>
+
+A pesquisa pode utilizar nomes, números, assuntos ou outras informações presentes no texto dos arquivos. Consultas mais específicas ajudam a reduzir a quantidade de resultados e, quando necessário, os filtros podem ser utilizados para restringir ainda mais a pesquisa.
+
+## Refinando a pesquisa com filtros
+
+Os filtros ajudam a restringir a busca quando muitos documentos são encontrados ou quando você já conhece alguma característica do arquivo. Para acessá-los, clique em **Avançado**, no canto superior da página, ou em **Adicionar filtro**, abaixo do campo de pesquisa.
+
+- **Ordenar por:** define como os documentos encontrados serão organizados.
+  - **Relevância:** prioriza os documentos com maior correspondência com a pesquisa realizada.
+  - **Data (mais recente):** apresenta primeiro os documentos mais recentes.
+  - **Data (mais antigo):** apresenta primeiro os documentos mais antigos.
+  - **Nome (A–Z):** organiza os resultados em ordem alfabética pelo nome do documento.
+- **Pastas:** limita a pesquisa a uma pasta específica do workspace. Ao selecionar **Todas as pastas**, a busca considera toda a estrutura disponível. Quando necessário, navegue pelas pastas e selecione apenas o local em que deseja pesquisar.
+- **Tipos de documentos:** restringe os resultados a um tipo documental específico. A opção **Todos os tipos** mantém todos os tipos disponíveis na pesquisa. As demais opções podem variar conforme a configuração do ambiente.
+- **Data:** limita a pesquisa a um período. Primeiro, escolha qual data deverá ser considerada e depois utilize os campos **De** e **Para** para definir o intervalo.
+  - **Data de criação:** considera a data registrada pelo GoDocs como data de criação do documento.
+  - **Data de modificação:** considera a última modificação registrada no documento.
+- **Autor/Proprietário:** restringe os resultados de acordo com o autor ou proprietário associado ao documento. As opções exibidas dependem das informações cadastradas no ambiente.
+
+Após definir os critérios desejados, clique em **Aplicar filtros**. Os filtros utilizados serão exibidos na área **Filtros ativos**, abaixo do campo de pesquisa. Para remover os critérios selecionados, abra novamente o painel e clique em **Limpar filtros**.
+
+## Entendendo os resultados
+
+Após concluir a busca, o sistema informa a quantidade de documentos encontrados e o tempo utilizado para realizar a consulta.
+
+Cada resultado reúne informações que ajudam a identificar o arquivo antes de abri-lo, como:
+
+- nome do documento;
+- pasta em que está armazenado;
+- quantidade de páginas;
+- período desde a última atualização;
+- trecho do conteúdo relacionado à pesquisa;
+- tipo e nível de correspondência encontrado.
+
+O trecho exibido ajuda a entender por que o documento apareceu nos resultados. Quando outras partes do mesmo arquivo também estiverem relacionadas à pesquisa, a opção **trecho adicional** indica que existem mais ocorrências relevantes.
+
+### Correspondência da pesquisa
+
+Os marcadores exibidos nos resultados mostram de que forma cada documento foi relacionado à consulta:
+
+- **Texto:** o termo pesquisado foi encontrado diretamente no conteúdo textual do documento.
+- **Significado:** o documento foi relacionado à pesquisa pela análise semântica, considerando o significado e o contexto do conteúdo.
+
+Ao lado desses marcadores, o sistema também pode apresentar uma **porcentagem de correspondência**, que indica o nível de relação identificado entre a pesquisa e o documento.
+
+Quando a pesquisa utiliza análise textual e semântica em conjunto, a página apresenta a identificação **Híbrida — texto + semântica**. Dessa forma, um mesmo conjunto de resultados pode considerar tanto ocorrências diretas do texto quanto relações identificadas pelo significado do conteúdo.
+
+## Consultando os detalhes do documento
+
+Ao selecionar um resultado, um painel lateral é aberto com informações adicionais sobre o arquivo. Ele permite analisar melhor o documento encontrado antes de acessar seu conteúdo completo.
+
+### Match semântico
+
+Apresenta a porcentagem de correspondência entre a pesquisa realizada e o significado identificado no conteúdo do documento. Esse indicador ajuda a avaliar o quanto o resultado está relacionado ao que foi pesquisado.
+
+### Metadados
+
+A seção de metadados reúne informações básicas sobre o documento, como sua localização dentro das pastas, a quantidade de páginas e o período desde a última atualização. Esses dados ajudam a confirmar se o arquivo encontrado pertence ao local e ao contexto procurados.
+
+### Resumo gerado por IA
+
+Quando disponível, o painel apresenta um resumo do documento gerado por inteligência artificial. Esse conteúdo oferece uma visão rápida sobre o assunto do arquivo antes que ele seja aberto por completo.
+
+O resumo facilita a identificação do documento, mas a consulta ao arquivo original continua sendo necessária para verificar informações completas ou detalhadas.
+
+### Ações disponíveis
+
+Na parte inferior do painel, podem estar disponíveis as seguintes ações:
+
+- **Abrir documento:** acessa o arquivo completo no visualizador.
+- **Baixar:** salva uma cópia do documento no dispositivo.
+- **Compartilhar:** disponibiliza as opções de compartilhamento do arquivo.
+
+<Permissions>
+
+A disponibilidade dessas ações pode variar conforme as permissões do usuário.
+
+</Permissions>
+
+## Como a inteligência artificial participa da busca
+
+No canto superior da página, a indicação **IA ativa** informa que a inteligência artificial está sendo utilizada durante a pesquisa. Nesse modo, a busca pode combinar duas formas de análise:
+
+- **Busca textual:** procura o termo informado no conteúdo extraído dos documentos.
+- **Busca semântica:** considera o contexto e o significado relacionados ao que foi pesquisado.
+
+Quando essas duas formas são utilizadas em conjunto, os resultados são identificados como **Híbrida — texto + semântica**. A correspondência exibida em cada documento permite identificar se ele foi encontrado pelo texto, pelo significado ou pela combinação das duas análises.

@@ -43,9 +43,9 @@ describe("conteúdo publicado", () => {
     expect(doc?.href).toBe("/docs/o-que-e-o-godocs");
     expect(doc?.source).not.toMatch(/^# /m);
     expect(doc?.headings.map((heading) => heading.title)).toEqual([
-      "Para que serve o GoDocs?",
-      "Principais recursos",
-      "Para quem o GoDocs é indicado?",
+      "O que você pode fazer no GoDocs",
+      "Um sistema adaptado ao seu ambiente",
+      "Próximos passos",
     ]);
     expect(doc?.searchableText).toContain(
       "Gestão Eletrônica de Documentos e Processos",
@@ -87,7 +87,7 @@ describe("conteúdo publicado", () => {
     });
     expect(firstAccess?.href).toBe("/docs/primeiro-acesso");
     expect(firstAccess?.headings.map((heading) => heading.title)).toEqual([
-      "Crie sua conta e acesse o ambiente",
+      "Se tiver problemas no primeiro acesso",
     ]);
     expect(firstAccess?.source).toContain("<Steps>");
     expect(firstAccess?.source).toContain("<ExpectedResult>");
@@ -117,7 +117,7 @@ describe("conteúdo publicado", () => {
       "Meus Grupos de Acesso",
       "Tipo de documento",
       "Grupos que mais acessam",
-      "Como utilizar a Visão Geral",
+      "Como interpretar a Visão Geral",
     ]);
 
     expect(smartSearch?.metadata).toMatchObject({
@@ -133,9 +133,16 @@ describe("conteúdo publicado", () => {
       "/docs/funcionalidades/busca-inteligente",
     );
     expect(smartSearch?.headings.map((heading) => heading.title)).toEqual([
-      "Visão geral",
-      "Como funciona",
-      "Como utilizar",
+      "Realizando uma pesquisa",
+      "Refinando a pesquisa com filtros",
+      "Entendendo os resultados",
+      "Correspondência da pesquisa",
+      "Consultando os detalhes do documento",
+      "Match semântico",
+      "Metadados",
+      "Resumo gerado por IA",
+      "Ações disponíveis",
+      "Como a inteligência artificial participa da busca",
     ]);
 
     expect(documents?.metadata).toMatchObject({
@@ -150,62 +157,62 @@ describe("conteúdo publicado", () => {
     expect(documents?.href).toBe("/docs/funcionalidades/documentos");
     expect(documents?.headings.map((heading) => heading.title)).toEqual([
       "O que é a seção Documentos",
-      "Como utilizar a seção Documentos",
+      "Conceitos importantes",
+      "Organizando pastas e subpastas",
       "Criando uma nova pasta",
-      "Formas de visualização das pastas",
-      "Funcionalidades da pasta",
-      "Adicionar documento",
-      "Editar pasta",
-      "Mover pasta",
-      "Ver detalhes",
-      "Vincular a um grupo",
-      "Visualizar logs da pasta",
-      "Excluir pasta",
-    ]);
-    expect(documents?.headings.slice(4)).toEqual([
-      {
-        depth: 2,
-        id: "funcionalidades-da-pasta",
-        title: "Funcionalidades da pasta",
-      },
-      {
-        depth: 3,
-        id: "adicionar-documento",
-        title: "Adicionar documento",
-      },
-      { depth: 3, id: "editar-pasta", title: "Editar pasta" },
-      { depth: 3, id: "mover-pasta", title: "Mover pasta" },
-      { depth: 3, id: "ver-detalhes", title: "Ver detalhes" },
-      {
-        depth: 3,
-        id: "vincular-a-um-grupo",
-        title: "Vincular a um grupo",
-      },
-      {
-        depth: 3,
-        id: "visualizar-logs-da-pasta",
-        title: "Visualizar logs da pasta",
-      },
-      { depth: 3, id: "excluir-pasta", title: "Excluir pasta" },
+      "Criando uma subpasta",
+      "Formas de visualização",
+      "Gerenciando uma pasta",
+      "Adicionando documentos",
+      "Localizando e exibindo documentos",
+      "Filtros avançados",
+      "Exibição de metadados",
+      "Visualizando e gerenciando um documento",
+      "Visualizar",
+      "Detalhes do documento",
+      "Tags",
+      "Peças do documento",
+      "Páginas",
+      "Logs do documento",
+      "Anexar arquivo",
+      "Outras ações do documento",
+      "Favoritar",
+      "Excluir",
     ]);
 
-    for (const [doc, title, order] of [
-      [favorites, "Favoritos", 4],
-      [workflows, "Workflows", 5],
-      [reports, "Relatórios", 6],
+    for (const [doc, title, order, description, cardDescription] of [
+      [
+        favorites,
+        "Favoritos",
+        4,
+        "Aprenda a marcar, localizar, filtrar e acessar rapidamente documentos favoritos no GoDocs.",
+        "Acesse rapidamente os documentos que você marcou como favoritos.",
+      ],
+      [
+        workflows,
+        "Workflows",
+        5,
+        "Aprenda a criar, acompanhar e configurar workflows, cards, fases, formulários, membros e automações no GoDocs.",
+        "Crie e acompanhe processos organizados em workflows.",
+      ],
+      [
+        reports,
+        "Relatórios",
+        6,
+        "Consulte regras de temporalidade e dados indexados dos documentos nos relatórios do GoDocs.",
+        "Consulte temporalidades e dados indexados dos documentos.",
+      ],
     ] as const) {
       expect(doc?.metadata).toMatchObject({
         title,
-        availability: "coming-soon",
+        description,
+        cardDescription,
+        availability: "available",
         status: "published",
         order,
       });
-      expect(doc?.source).toContain(
-        '<Callout title="Documentação em preparação">',
-      );
-      expect(doc?.source).toContain(
-        "[Voltar para Funcionalidades](/docs/funcionalidades/visao-geral)",
-      );
+      expect(doc?.source).not.toContain("Em breve");
+      expect(doc?.source).not.toContain("Documentação em preparação");
     }
 
     for (const doc of [
@@ -221,7 +228,7 @@ describe("conteúdo publicado", () => {
     }
   });
 
-  it("integra os estados em preparação a rotas, navegação e busca públicas", async () => {
+  it("integra os oito artigos disponíveis a rotas, navegação e busca públicas", async () => {
     const allDocs = await loadDocumentsFromDirectory(contentDirectory);
     const publishedDocs = await loadPublishedDocs();
     const preparing = allDocs.filter(
@@ -229,22 +236,20 @@ describe("conteúdo publicado", () => {
     );
     const publicIndex = createSearchIndex(publishedDocs);
 
-    expect(preparing.map((doc) => doc.slug)).toEqual([
+    expect(preparing).toEqual([]);
+    expect(publishedDocs).toHaveLength(8);
+    for (const slug of [
       "funcionalidades/favoritos",
       "funcionalidades/workflows",
       "funcionalidades/relatorios",
-    ]);
-    expect(publishedDocs).toHaveLength(8);
-    expect(
-      preparing.every((doc) =>
+    ]) {
+      expect(
         publicIndex.entries.some(
           (entry) =>
-            entry.kind === "page" &&
-            entry.href === doc.href &&
-            entry.description.includes("está em preparação"),
+            entry.kind === "page" && entry.href === `/docs/${slug}`,
         ),
-      ),
-    ).toBe(true);
+      ).toBe(true);
+    }
   });
 
   it("deriva as duas seções e a ordem global sem repetir o prefixo da seção", async () => {
@@ -422,6 +427,11 @@ describe("conteúdo publicado", () => {
       result.documents.filter(
         (doc) => doc.metadata.availability === "coming-soon",
       ),
-    ).toHaveLength(3);
+    ).toHaveLength(0);
+    expect(
+      result.documents.filter(
+        (doc) => doc.metadata.availability === "available",
+      ),
+    ).toHaveLength(8);
   });
 });

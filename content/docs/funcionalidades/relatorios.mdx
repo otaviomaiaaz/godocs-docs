@@ -1,8 +1,8 @@
 ---
 title: Relatórios
 navTitle: Relatórios
-description: A documentação da seção Relatórios está em preparação.
-cardDescription: Consulte indicadores e informações consolidadas.
+description: Consulte regras de temporalidade e dados indexados dos documentos nos relatórios do GoDocs.
+cardDescription: Consulte temporalidades e dados indexados dos documentos.
 slug: funcionalidades/relatorios
 section:
   id: funcionalidades
@@ -15,18 +15,77 @@ ancestors:
     order: 1
 order: 6
 status: published
-availability: coming-soon
 keywords:
   - relatórios
-  - indicadores
-  - informações consolidadas
+  - temporalidades
+  - dados indexados
+  - metadados
+  - descarte
+  - exportação
 ---
 
-## Em breve
+A seção **Relatórios** reúne consultas que ajudam a analisar informações dos documentos armazenados no GoDocs. Nela, é possível consultar dados relacionados às **regras de temporalidade** aplicadas aos documentos e às informações registradas durante a **indexação**.
 
-<Callout title="Documentação em preparação">
-  O guia completo desta funcionalidade será publicado conforme seus recursos,
-  ações e fluxos forem documentados.
-</Callout>
+Ao acessar a seção, estão disponíveis dois relatórios, cada um voltado a um tipo de consulta:
 
-[Voltar para Funcionalidades](/docs/funcionalidades/visao-geral)
+- **Tabela de Temporalidades:** utilizada para consultar documentos relacionados às regras de temporalidade cadastradas no GoDocs e acompanhar informações de guarda e destinação.
+- **Relatório de dados indexados:** utilizado para consultar os dados associados aos documentos durante a indexação, incluindo sua localização, metadados e outras informações do registro.
+
+## Tabela de Temporalidades
+
+Nesta área, a **Tabela de Temporalidades** funciona como um relatório de consulta dos documentos relacionados às regras de temporalidade já cadastradas no GoDocs. Ela reúne informações que ajudam a acompanhar a classificação documental, o período de guarda e os dados associados à destinação de cada registro.
+
+A consulta pode ser refinada pelos seguintes filtros:
+
+- **Tabela:** seleciona a tabela de temporalidades utilizada como referência.
+- **Classificação:** restringe os resultados a uma classificação documental.
+- **Guarda permanente:** filtra os registros de acordo com essa condição.
+- **Ano de eliminação:** permite consultar registros relacionados a um determinado ano de eliminação.
+
+Após definir os critérios desejados, clique em **Gerar relatório**. Os resultados são apresentados em uma tabela com informações como:
+
+- tipo do documento;
+- número do arquivo;
+- lote;
+- remessa;
+- tempo de guarda;
+- ano de descarte;
+- guarda permanente;
+- indicação de descarte físico;
+- data limite.
+
+Essas informações permitem consultar, em conjunto, os dados de temporalidade associados aos documentos encontrados no relatório.
+
+Os registros também podem ser selecionados para utilizar a opção **Descartar**. Após a ação, o GoDocs exibe a mensagem **“Temporalidades excluídas com sucesso”**.
+
+Quando houver muitos resultados, utilize **Resultados por página** e os controles de paginação para navegar pela consulta. A tabela também pode ser movimentada horizontalmente para visualizar as demais informações.
+
+## Relatório de dados indexados
+
+O **Relatório de dados indexados** reúne informações associadas aos documentos durante o processo de indexação. Ele permite consultar, em uma única tabela, onde cada documento está localizado e os dados vinculados ao seu registro.
+
+Entre esses dados estão os **metadados**, que são as informações associadas ao documento para complementar sua identificação e organização dentro do GoDocs.
+
+A consulta pode ser refinada pelos filtros disponíveis:
+
+- **Pastas:** restringe os resultados às pastas selecionadas.
+- **Data:** aplica o critério de data disponível no relatório.
+
+Depois de selecionar os critérios desejados, clique em **Buscar** para carregar os resultados. Para remover os filtros aplicados e iniciar uma nova consulta, utilize **Limpar filtros**.
+
+Entre as informações apresentadas no relatório estão:
+
+- data de indexação;
+- pasta raiz e subpastas;
+- tipo do documento;
+- quantidade de páginas;
+- remessa;
+- arquivo;
+- metadados;
+- classificação e temporalidade;
+- data de criação;
+- data de atualização.
+
+Quando necessário, utilize **Exportar relatório** para exportar os dados disponíveis nessa área.
+
+Assim como na Tabela de Temporalidades, é possível controlar a quantidade de resultados exibidos por página, navegar entre as páginas da consulta e movimentar horizontalmente a tabela para visualizar todas as colunas.
