@@ -4,7 +4,7 @@
 
 Este repositório contém o **GoDocs Docs**, uma aplicação independente para documentar o GoDocs 4.
 
-O produto não integra o código, as APIs, a autenticação ou os serviços privados do GoDocs. Ainda assim, deve manter coerência visual com o mesmo ecossistema, sem se declarar oficial.
+O produto não integra o código, as APIs, a autenticação ou os serviços privados do GoDocs. O GoDocs Docs é o canal oficial de publicação e consulta da documentação do GoDocs para usuários finais e deve manter coerência visual com o mesmo ecossistema.
 
 A direção central é:
 
