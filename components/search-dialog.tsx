@@ -198,7 +198,14 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
   const hasUsefulQuery = hasUsefulSearchQuery(query);
   const safeActiveIndex =
     results.length > 0 ? Math.min(activeIndex, results.length - 1) : 0;
-  const activeResult = results[safeActiveIndex];
+  const isResultsListVisible =
+    indexState === "ready" &&
+    Boolean(index?.entries.length) &&
+    hasUsefulQuery &&
+    results.length > 0;
+  const activeResult = isResultsListVisible
+    ? results[safeActiveIndex]
+    : undefined;
   const activeOptionId = activeResult
     ? `${baseId}-option-${safeActiveIndex}`
     : undefined;
@@ -391,9 +398,9 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
                   <input
                     aria-activedescendant={activeOptionId}
                     aria-autocomplete="list"
-                    aria-controls={listboxId}
+                    aria-controls={isResultsListVisible ? listboxId : undefined}
                     aria-describedby={statusId}
-                    aria-expanded={isOpen}
+                    aria-expanded={isResultsListVisible}
                     autoComplete="off"
                     id={inputId}
                     onChange={(event) => {

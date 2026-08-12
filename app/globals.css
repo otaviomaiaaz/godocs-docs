@@ -225,7 +225,7 @@ a {
 .icon-button:hover {
   border-color: var(--accent-border);
   background: var(--surface-hover);
-  color: var(--accent-primary);
+  color: var(--accent-hover);
 }
 
 .icon-button:active {
@@ -1662,7 +1662,7 @@ body:has(dialog[open]) {
   border: 1px solid var(--accent-border);
   border-radius: 50%;
   background: var(--surface);
-  color: var(--accent-primary);
+  color: var(--accent-text);
   content: counter(step);
   font-size: 12px;
   font-weight: 700;

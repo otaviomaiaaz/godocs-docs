@@ -75,6 +75,22 @@ function renderInSiteShell(component: React.ReactNode) {
   return render(component, { container: siteShell });
 }
 
+function expectComboboxPopupState(
+  combobox: HTMLElement,
+  expanded: boolean,
+) {
+  const controls = combobox.getAttribute("aria-controls");
+
+  expect(combobox.getAttribute("aria-expanded")).toBe(String(expanded));
+
+  if (expanded) {
+    expect(controls).toBeTruthy();
+    expect(document.getElementById(controls ?? "")).toBeTruthy();
+  } else {
+    expect(controls).toBeNull();
+  }
+}
+
 beforeEach(() => {
   push.mockReset();
   pathname.value = "/";
@@ -140,8 +156,8 @@ describe("fluxos interativos", () => {
     );
     expect((await axe.run(dialog)).violations).toEqual([]);
     expect(combobox.getAttribute("aria-autocomplete")).toBe("list");
-    expect(combobox.getAttribute("aria-expanded")).toBe("true");
-    expect(combobox.getAttribute("aria-controls")).toBeTruthy();
+    await screen.findByText("Comece com uma página sugerida");
+    expectComboboxPopupState(combobox, false);
 
     expect(screen.queryByText("PESQUISA LOCAL")).toBeNull();
     expect(screen.queryByText("navegar")).toBeNull();
@@ -149,6 +165,7 @@ describe("fluxos interativos", () => {
     await user.type(combobox, "GoDocs");
     expect(dialog.getAttribute("data-query-empty")).toBe("false");
     const option = await screen.findByRole("option", { name: /O que é o GoDocs/ });
+    expectComboboxPopupState(combobox, true);
     expect(combobox.getAttribute("aria-activedescendant")).toBe(option.id);
     expect(screen.getByRole("status").textContent).toContain("1 resultado");
 
@@ -222,7 +239,9 @@ describe("fluxos interativos", () => {
     await user.click(
       screen.getByRole("button", { name: "Pesquisar na documentação" }),
     );
+    const combobox = await screen.findByRole("combobox");
     expect(screen.getByText("Carregando índice de pesquisa...")).toBeTruthy();
+    expectComboboxPopupState(combobox, false);
 
     resolveFetch?.({
       ok: true,
@@ -231,6 +250,40 @@ describe("fluxos interativos", () => {
     expect(
       await screen.findByText("Nenhum conteúdo disponível para pesquisa."),
     ).toBeTruthy();
+    expectComboboxPopupState(combobox, false);
+  });
+
+  it("mantém o popup do combobox fechado para consulta curta e sem resultados", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => searchIndex,
+      })),
+    );
+    const user = userEvent.setup();
+
+    renderInSiteShell(<SearchDialog />);
+    await user.click(
+      screen.getByRole("button", { name: "Pesquisar na documentação" }),
+    );
+
+    const combobox = await screen.findByRole("combobox");
+    await screen.findByText("Comece com uma página sugerida");
+    expectComboboxPopupState(combobox, false);
+
+    await user.type(combobox, "a");
+    expect(
+      await screen.findByText("Digite ao menos dois caracteres para pesquisar."),
+    ).toBeTruthy();
+    expectComboboxPopupState(combobox, false);
+
+    await user.clear(combobox);
+    await user.type(combobox, "inexistente");
+    expect(
+      await screen.findByText('Nenhum resultado encontrado para “inexistente”.'),
+    ).toBeTruthy();
+    expectComboboxPopupState(combobox, false);
   });
 
   it("foca o campo de forma estável e preserva a navegação nativa por Tab", async () => {
@@ -335,9 +388,11 @@ describe("fluxos interativos", () => {
     const retry = await screen.findByRole("button", {
       name: "Tentar novamente",
     });
+    expectComboboxPopupState(screen.getByRole("combobox"), false);
     await user.click(retry);
 
     await screen.findByText("Comece com uma página sugerida");
+    expectComboboxPopupState(screen.getByRole("combobox"), false);
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
