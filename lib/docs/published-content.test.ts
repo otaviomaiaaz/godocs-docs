@@ -87,6 +87,14 @@ describe("conteúdo publicado", () => {
     });
     expect(firstAccess?.href).toBe("/docs/primeiro-acesso");
     expect(firstAccess?.headings.map((heading) => heading.title)).toEqual([
+      "Localize o e-mail de convite",
+      "Abra o convite",
+      "Crie sua conta",
+      "Preencha seus dados",
+      "Crie sua senha",
+      "Faça login no GoDocs",
+      "Selecione o ambiente que deseja acessar",
+      "Entre no GoDocs",
       "Se tiver problemas no primeiro acesso",
     ]);
     expect(firstAccess?.source).toContain("<Steps>");
@@ -134,6 +142,9 @@ describe("conteúdo publicado", () => {
     );
     expect(smartSearch?.headings.map((heading) => heading.title)).toEqual([
       "Realizando uma pesquisa",
+      "Acesse a Busca Inteligente",
+      "Informe o que deseja encontrar",
+      "Consulte os resultados",
       "Refinando a pesquisa com filtros",
       "Entendendo os resultados",
       "Correspondência da pesquisa",
@@ -238,6 +249,15 @@ describe("conteúdo publicado", () => {
 
     expect(preparing).toEqual([]);
     expect(publishedDocs).toHaveLength(8);
+    expect(publicIndex.entries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: "section",
+          title: "Crie sua conta",
+          href: "/docs/primeiro-acesso#crie-sua-conta",
+        }),
+      ]),
+    );
     for (const slug of [
       "funcionalidades/favoritos",
       "funcionalidades/workflows",

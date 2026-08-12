@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Brand } from "@/components/brand";
 import { MobileNavDrawer } from "@/components/docs/mobile-nav-drawer";
 import { DocsHeader } from "@/components/docs-header";
+import { NavigationTree } from "@/components/navigation-tree";
 import { SearchDialog } from "@/components/search-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -389,11 +390,62 @@ describe("fluxos interativos", () => {
       name: "Tentar novamente",
     });
     expectComboboxPopupState(screen.getByRole("combobox"), false);
-    await user.click(retry);
+    retry.focus();
+    expect(document.activeElement).toBe(retry);
+    await user.keyboard("{Enter}");
 
     await screen.findByText("Comece com uma página sugerida");
     expectComboboxPopupState(screen.getByRole("combobox"), false);
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("expande e recolhe ramos da navegação por teclado", async () => {
+    const user = userEvent.setup();
+
+    renderInSiteShell(
+      <nav aria-label="Navegação da documentação">
+        <NavigationTree
+          groups={[
+            {
+              id: "funcionalidades",
+              title: "Funcionalidades",
+              description: "Funcionalidades publicadas.",
+              order: 1,
+              items: [
+                {
+                  id: "funcionalidades",
+                  label: "Funcionalidades",
+                  children: [
+                    {
+                      id: "funcionalidades/documentos",
+                      label: "Documentos",
+                      href: "/docs/funcionalidades/documentos",
+                      children: [],
+                    },
+                  ],
+                },
+              ],
+            },
+          ]}
+        />
+      </nav>,
+    );
+
+    const expand = screen.getByRole("button", {
+      name: "Expandir Funcionalidades",
+    });
+    expand.focus();
+    expect(document.activeElement).toBe(expand);
+
+    await user.keyboard("{Enter}");
+    expect(expand.getAttribute("aria-expanded")).toBe("true");
+    expect(
+      screen.getByRole("link", { name: "Documentos" }),
+    ).toBeTruthy();
+
+    await user.keyboard(" ");
+    expect(expand.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
   });
 
   it("mantém o drawer modal, fecha por teclado e não introduz violações axe", async () => {
@@ -432,6 +484,8 @@ describe("fluxos interativos", () => {
       false,
     );
     expect((await axe.run(dialog)).violations).toEqual([]);
+    expect(screen.getByRole("list", { name: "Guias" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "Guias" })).toBeNull();
 
     fireEvent(dialog, new Event("cancel", { cancelable: true }));
     await waitFor(() => expect(document.activeElement).toBe(trigger));

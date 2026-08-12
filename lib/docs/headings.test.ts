@@ -63,4 +63,35 @@ Siga estas etapas:
       { depth: 2, id: "configuração-1", title: "Configuração" },
     ]);
   });
+
+  it("integra Steps e headings aninhados à navegação e às seções", () => {
+    const parsed = parseDocumentText(`
+<Steps>
+  <Step headingLevel="2" id="crie-sua-conta" title="Crie sua conta">
+    Texto introdutório.
+
+    ### Preencha seus dados
+
+    Informe os dados solicitados.
+  </Step>
+</Steps>
+
+## Solução de problemas
+`);
+
+    expect(parsed.headings).toEqual([
+      { depth: 2, id: "crie-sua-conta", title: "Crie sua conta" },
+      { depth: 3, id: "preencha-seus-dados", title: "Preencha seus dados" },
+      {
+        depth: 2,
+        id: "solução-de-problemas",
+        title: "Solução de problemas",
+      },
+    ]);
+    expect(parsed.sections[0]).toMatchObject({
+      id: "crie-sua-conta",
+      text: "Texto introdutório. Preencha seus dados Informe os dados solicitados.",
+    });
+    expect(parsed.searchableText).toContain("Crie sua conta");
+  });
 });

@@ -9,7 +9,7 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
   if (groups.length === 0) return null;
 
   return (
-    <aside className="docs-sidebar">
+    <aside aria-label="Navegação lateral" className="docs-sidebar">
       <nav aria-label="Navegação da documentação">
         <NavigationTree groups={groups} />
       </nav>

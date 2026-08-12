@@ -106,7 +106,7 @@ keywords:
 <Callout variant="info">Revise as opções disponíveis.</Callout>
 
 <Steps>
-  <Step title="Abrir">Consulte a página.</Step>
+  <Step headingLevel="3" id="abrir" title="Abrir">Consulte a página.</Step>
 </Steps>
 `,
     );

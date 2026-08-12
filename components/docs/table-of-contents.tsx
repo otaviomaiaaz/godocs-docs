@@ -180,7 +180,7 @@ export function TableOfContents({
   }
 
   return (
-    <aside className="table-of-contents">
+    <aside aria-label="Sumário desta página" className="table-of-contents">
       <nav aria-label="Nesta página" ref={navRef}>
         <h2>Nesta página</h2>
         {links}

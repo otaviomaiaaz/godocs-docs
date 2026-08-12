@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import type {
   DocNavigationGroup,
@@ -88,26 +88,33 @@ function NavigationItem({
 
 export function NavigationTree({ groups, onNavigate }: NavigationTreeProps) {
   const pathname = usePathname();
+  const baseId = useId();
 
   return (
     <div className="navigation-tree">
-      {groups.map((group) => (
-        <section className="navigation-tree__group" key={group.id}>
-          {group.title ? (
-            <h2 className="navigation-tree__group-title">{group.title}</h2>
-          ) : null}
-          <ul className="navigation-tree__list">
-            {group.items.map((item) => (
-              <NavigationItem
-                item={item}
-                key={item.id}
-                onNavigate={onNavigate}
-                pathname={pathname}
-              />
-            ))}
-          </ul>
-        </section>
-      ))}
+      {groups.map((group) => {
+        const titleId = group.title ? `${baseId}-${group.id}-title` : undefined;
+
+        return (
+          <div className="navigation-tree__group" key={group.id}>
+            {group.title ? (
+              <div className="navigation-tree__group-title" id={titleId}>
+                {group.title}
+              </div>
+            ) : null}
+            <ul aria-labelledby={titleId} className="navigation-tree__list">
+              {group.items.map((item) => (
+                <NavigationItem
+                  item={item}
+                  key={item.id}
+                  onNavigate={onNavigate}
+                  pathname={pathname}
+                />
+              ))}
+            </ul>
+          </div>
+        );
+      })}
     </div>
   );
 }

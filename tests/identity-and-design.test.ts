@@ -163,6 +163,19 @@ function resolveCssColor(css: string, selector: string, property: string): strin
     : value.toLowerCase();
 }
 
+function resolveComponentColor(
+  css: string,
+  themeSelector: string,
+  componentSelector: string,
+  property: string,
+): string {
+  const value = cssProperty(css, componentSelector, property);
+  const reference = value.match(/^var\((--[^)]+)\)$/);
+  return reference?.[1]
+    ? resolveCssColor(css, themeSelector, reference[1])
+    : value.toLowerCase();
+}
+
 function relativeLuminance(hex: string): number {
   const channels = [1, 3, 5].map(
     (index) => Number.parseInt(hex.slice(index, index + 2), 16) / 255,
@@ -450,7 +463,6 @@ describe("identidade e prevenção de regressões visuais", () => {
     for (const selector of [
       ".icon-button",
       ".search-trigger",
-      ".home-section__expand",
       ".search-field",
       ".article-pagination__link",
     ]) {
@@ -463,6 +475,76 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(cssRuleBlock(css, ".docs-header")).toContain("var(--divider)");
     expect(cssRuleBlock(css, ".search-dialog")).toContain(
       "var(--surface-border)",
+    );
+  });
+
+  it("protege contrastes documentais e de interação nos dois temas", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+
+    for (const themeSelector of [":root", 'html[data-theme="light"]']) {
+      const stepForeground = resolveComponentColor(
+        css,
+        themeSelector,
+        ".step::before",
+        "color",
+      );
+      const stepBackground = resolveComponentColor(
+        css,
+        themeSelector,
+        ".step::before",
+        "background",
+      );
+      const hoverForeground = resolveComponentColor(
+        css,
+        themeSelector,
+        ".icon-button:hover",
+        "color",
+      );
+      const hoverBackground = resolveComponentColor(
+        css,
+        themeSelector,
+        ".icon-button:hover",
+        "background",
+      );
+      const focusRing = resolveCssColor(css, themeSelector, "--focus-ring");
+      const surface = resolveCssColor(css, themeSelector, "--surface");
+
+      expect(contrastRatio(stepForeground, stepBackground)).toBeGreaterThanOrEqual(
+        4.5,
+      );
+      expect(
+        contrastRatio(hoverForeground, hoverBackground),
+      ).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(focusRing, surface)).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("mantém os controles compactos latentes no alvo mínimo do projeto", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+
+    expect(cssProperty(css, ".search-retry", "min-height")).toBe("44px");
+    expect(cssProperty(css, ".navigation-tree__expand", "width")).toBe("44px");
+    expect(cssProperty(css, ".navigation-tree__expand", "height")).toBe("44px");
+    expect(
+      cssProperty(css, ".code-block figcaption button", "min-height"),
+    ).toBe("44px");
+    expect(cssRuleBlock(css, ".search-retry:hover")).toContain(
+      "var(--accent-hover)",
+    );
+    expect(cssRuleBlock(css, ".navigation-tree__expand:hover")).toContain(
+      "var(--surface-hover)",
+    );
+    expect(cssRuleBlock(css, ".code-block figcaption button:hover")).toContain(
+      "var(--surface-hover)",
+    );
+    expect(cssRuleBlock(css, ":focus-visible")).toContain(
+      "outline: 2px solid var(--focus-ring)",
     );
   });
 
@@ -498,9 +580,9 @@ describe("identidade e prevenção de regressões visuais", () => {
       "border-radius: var(--radius-md)",
     );
     expect(cssRuleBlock(css, ".doc-card")).not.toContain("max-width");
-    expect(cssRuleBlock(css, ".home-section__pages--start .doc-card")).toContain(
-      "min-height: 116px",
-    );
+    const homeFeatureCard = cssRuleBlock(css, ".feature-grid .doc-card");
+    expect(homeFeatureCard).toContain("min-height: 108px");
+    expect(homeFeatureCard).toContain("padding: 16px 18px");
     const cardDescription = cssRuleBlock(css, ".doc-card__body p");
     expect(cardDescription).toContain("height: auto");
     expect(cardDescription).toContain("overflow: visible");

@@ -48,13 +48,13 @@ export function Callout({
   const label = title ?? calloutLabels[variant];
 
   return (
-    <aside aria-label={label} className="callout" data-variant={variant}>
+    <div aria-label={label} className="callout" data-variant={variant} role="note">
       <Icon aria-hidden="true" size={19} />
       <div>
         {title ? <strong>{title}</strong> : null}
         {children}
       </div>
-    </aside>
+    </div>
   );
 }
 
@@ -104,19 +104,40 @@ export function Steps({ children }: { children: ReactNode }) {
   return <ol className="steps">{children}</ol>;
 }
 
+type StepHeadingLevel = 2 | 3 | 4;
+
+const stepHeadingTags = {
+  2: "h2",
+  3: "h3",
+  4: "h4",
+} as const;
+
 export function Step({
   children,
+  headingLevel,
+  id,
   result,
   title,
 }: {
   children: ReactNode;
+  headingLevel: StepHeadingLevel | `${StepHeadingLevel}`;
+  id: string;
   result?: ReactNode;
   title: string;
 }) {
+  const normalizedHeadingLevel = Number(headingLevel) as StepHeadingLevel;
+  const Heading = stepHeadingTags[normalizedHeadingLevel];
+
+  if (!Heading) {
+    throw new Error("Step aceita headingLevel 2, 3 ou 4.");
+  }
+
   return (
     <li className="step">
       <div>
-        <strong>{title}</strong>
+        <Heading className="step__title" id={id}>
+          {title}
+        </Heading>
         <div className="step__content">{children}</div>
         {result ? (
           <div className="step__result">
