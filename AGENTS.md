@@ -18,14 +18,14 @@ Antes de implementar qualquer tarefa:
 
 1. leia este `AGENTS.md`;
 2. siga a solicitação atual do usuário como instrução principal da tarefa;
-3. consulte `project_docs/SYSTEM_BLUEPRINT.md` quando a tarefa envolver arquitetura, interface, experiência ou comportamento estrutural do produto;
-4. inspecione `project_docs/references/` quando a tarefa afetar interface ou identidade visual.
+3. consulte `project-docs/SYSTEM_BLUEPRINT.md` quando a tarefa envolver arquitetura, interface, experiência ou comportamento estrutural do produto;
+4. inspecione `project-docs/references/` quando a tarefa afetar interface ou identidade visual.
 
-Em caso de conflito, siga esta ordem: solicitação atual do usuário, este arquivo, `project_docs/SYSTEM_BLUEPRINT.md` e referências visuais.
+Em caso de conflito, siga esta ordem: solicitação atual do usuário, este arquivo, `project-docs/SYSTEM_BLUEPRINT.md` e referências visuais.
 
-`project_docs/PROJECT_PROMPT.md` é um documento histórico da implementação inicial e não deve ser tratado como instrução ativa, salvo quando o usuário solicitar explicitamente sua consulta.
+`project-docs/PROJECT_PROMPT.md` é um documento histórico da implementação inicial e não deve ser tratado como instrução ativa, salvo quando o usuário solicitar explicitamente sua consulta.
 
-`project_docs/daily_stats.md` é uma memória de acompanhamento do projeto e não faz parte da leitura obrigatória para tarefas de desenvolvimento, salvo quando o usuário solicitar uma atualização, auditoria de progresso ou retomada de contexto.
+`project-docs/daily_stats.md` é uma memória de acompanhamento do projeto e não faz parte da leitura obrigatória para tarefas de desenvolvimento, salvo quando o usuário solicitar uma atualização, auditoria de progresso ou retomada de contexto.
 
 ## 3. Invariantes do produto
 
@@ -36,11 +36,11 @@ Em caso de conflito, siga esta ordem: solicitação atual do usuário, este arqu
 - Conteúdo documental é baseado em arquivos Markdown/MDX, sem banco de dados ou CMS no MVP.
 - Navegação, sumário e busca devem derivar da mesma fonte de conteúdo.
 - Tema claro, tema escuro, responsividade e acessibilidade são requisitos, não opcionais.
-- Arquivos em `project_docs/references/` são somente leitura: não edite, renomeie, mova ou exclua.
+- Arquivos em `project-docs/references/` são somente leitura: não edite, renomeie, mova ou exclua.
 
 ## 4. Uso das referências visuais
 
-Use `project_docs/references/GoDocs/` para orientar:
+Use `project-docs/references/GoDocs/` para orientar:
 
 - wordmark e relação entre branco e laranja;
 - paleta, superfícies e contraste;
@@ -48,7 +48,7 @@ Use `project_docs/references/GoDocs/` para orientar:
 - tipografia corporativa e ícones lineares;
 - estados ativos e controles de tema.
 
-Use `project_docs/references/AbacatePay - Mintlify/` para orientar:
+Use `project-docs/references/AbacatePay - Mintlify/` para orientar:
 
 - estrutura de documentação;
 - header e busca central;
@@ -62,7 +62,7 @@ Não copie da AbacatePay o verde, a marca, o conteúdo, a navegação específic
 ## 5. Princípios de engenharia
 
 - Mantenha o código da aplicação e seus arquivos de configuração na raiz do repositório.
-- Use `project_docs/` apenas para memória, especificações internas e referências do projeto.
+- Use `project-docs/` apenas para memória, especificações internas e referências do projeto.
 - Mantenha `AGENTS.md` na raiz do repositório como fonte permanente de instruções para o agente.
 - Examine o repositório antes de alterar arquivos.
 - Preserve a stack e as convenções existentes quando adequadas.
@@ -84,7 +84,7 @@ Não copie da AbacatePay o verde, a marca, o conteúdo, a navegação específic
 - Ao receber documentação, preserve seu significado e organize-a para leitura.
 - Não afirme comportamentos do GoDocs sem evidência fornecida pelo usuário ou pelas fontes do projeto.
 - Slugs devem ser estáveis, legíveis e compatíveis com URL.
-- Metadados devem seguir o contrato definido em `project_docs/SYSTEM_BLUEPRINT.md`.
+- Metadados devem seguir o contrato definido em `project-docs/SYSTEM_BLUEPRINT.md`.
 
 ## 7. Design e acessibilidade
 

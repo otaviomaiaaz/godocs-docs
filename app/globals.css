@@ -56,7 +56,7 @@
   --page-padding-desktop: 32px;
   --page-padding-tablet: 24px;
   --page-padding-mobile: 20px;
-  --type-home-title: clamp(1.75rem, 1.64rem + 0.48vw, 2.125rem);
+  --type-home-title: clamp(2.2rem, 1.94rem + 1vw, 2.85rem);
   --type-article-title: clamp(1.6875rem, 1.57rem + 0.52vw, 2rem);
   --type-lead: clamp(0.9375rem, 0.92rem + 0.1vw, 1rem);
   --type-h2: clamp(1.3125rem, 1.26rem + 0.2vw, 1.4375rem);
@@ -1919,6 +1919,53 @@ body:has(dialog[open]) {
   list-style: none;
 }
 
+.article-toc-mobile ol[hidden] {
+  display: none;
+}
+
+.article-toc-mobile__group-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.article-toc-mobile__group-toggle {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 6px 0 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.article-toc-mobile__group-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.article-toc-mobile__group-toggle svg {
+  flex: 0 0 auto;
+  transition: transform var(--duration-fast) var(--ease);
+}
+
+.article-toc-mobile__group-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.article-toc-mobile .article-toc-mobile__subsections {
+  margin: 2px 0 4px;
+}
+
 .article-toc-mobile li.is-nested {
   padding-left: 14px;
 }
@@ -1943,7 +1990,8 @@ body:has(dialog[open]) {
   color: var(--accent-text);
 }
 
-.article-toc-mobile li[data-active-parent="true"] > a {
+.article-toc-mobile li[data-active-parent="true"] > a,
+.article-toc-mobile li[data-active-parent="true"] > .article-toc-mobile__group-row > a {
   color: var(--text-primary);
   font-weight: 600;
 }
@@ -2308,7 +2356,7 @@ body:has(dialog[open]) {
   max-width: none;
   margin: 0 0 9px;
   color: var(--text-primary);
-  font-size: clamp(2.2rem, 1.94rem + 1vw, 2.85rem);
+  font-size: var(--type-home-title);
   font-weight: 690;
   letter-spacing: -0.052em;
   line-height: 1.08;
@@ -2710,6 +2758,7 @@ body:has(dialog[open]) {
     --home-section-exit: 36px;
     --home-section-heading-gap: 20px;
     --home-grid-gap: 12px;
+    --type-home-title: clamp(1.95rem, 9.2vw, 2.35rem);
   }
 
   .docs-header[data-home="true"] .docs-header__inner {
@@ -2742,7 +2791,6 @@ body:has(dialog[open]) {
 
   .home-hero h1 {
     margin-top: 0;
-    font-size: clamp(1.95rem, 9.2vw, 2.35rem);
   }
 
   .home-hero__description {
