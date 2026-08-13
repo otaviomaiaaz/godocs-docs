@@ -176,11 +176,9 @@ export function TableOfContents({
     elements.forEach((element) => observer?.observe(element));
     updateFromHash(true);
     updateActiveHeading();
-    if (!observer) {
-      window.addEventListener("scroll", updateActiveHeading, {
-        passive: true,
-      });
-    }
+    window.addEventListener("scroll", updateActiveHeading, {
+      passive: true,
+    });
     window.addEventListener("resize", updateActiveHeading);
     window.addEventListener("hashchange", handleHashChange);
 
@@ -188,9 +186,7 @@ export function TableOfContents({
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(hashFrame);
       observer?.disconnect();
-      if (!observer) {
-        window.removeEventListener("scroll", updateActiveHeading);
-      }
+      window.removeEventListener("scroll", updateActiveHeading);
       window.removeEventListener("resize", updateActiveHeading);
       window.removeEventListener("hashchange", handleHashChange);
     };

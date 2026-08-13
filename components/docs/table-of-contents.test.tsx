@@ -92,6 +92,19 @@ function mockHeadingPositions(positions: Map<string, number>) {
     });
 }
 
+function installSilentIntersectionObserver() {
+  class SilentIntersectionObserver {
+    disconnect() {}
+    observe() {}
+    takeRecords() {
+      return [];
+    }
+    unobserve() {}
+  }
+
+  vi.stubGlobal("IntersectionObserver", SilentIntersectionObserver);
+}
+
 describe("TableOfContents", () => {
   beforeEach(() => {
     vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
@@ -132,6 +145,75 @@ describe("TableOfContents", () => {
       ).toBe("location"),
     );
   });
+
+  it.each([
+    {
+      hash: "#duvida-6",
+      scenario: "hash direto estabilizado no limite inferior",
+    },
+    { hash: "", scenario: "scroll manual até o limite inferior" },
+  ])(
+    "mantém o último heading ativo com IntersectionObserver em $scenario",
+    async ({ hash }) => {
+      installSilentIntersectionObserver();
+      setScrollState({
+        innerHeight: 844,
+        scrollHeight: 10_000,
+        scrollY: 500,
+      });
+      document.documentElement.style.scrollPaddingTop = "92px";
+      window.history.replaceState(null, "", `/${hash}`);
+      const positions = new Map(
+        longHeadings.map((heading, index) => [
+          heading.id,
+          index < longHeadings.length - 1 ? 100 : 305.91,
+        ]),
+      );
+      mockHeadingPositions(positions);
+      const { container } = render(
+        <>
+          {renderArticleHeadings(longHeadings)}
+          <TableOfContents headings={longHeadings} variant="mobile" />
+        </>,
+      );
+
+      await waitFor(() =>
+        expect(
+          container
+            .querySelector('a[data-toc-id="duvida-5"]')
+            ?.getAttribute("aria-current"),
+        ).toBe("location"),
+      );
+
+      setScrollState({
+        innerHeight: 844,
+        scrollHeight: 10_000,
+        scrollY: 9_156,
+      });
+      window.dispatchEvent(new Event("scroll"));
+
+      await waitFor(() =>
+        expect(
+          container
+            .querySelector('a[data-toc-id="duvida-6"]')
+            ?.getAttribute("aria-current"),
+        ).toBe("location"),
+      );
+      expect(window.location.hash).toBe(hash);
+      expect(
+        container
+          .querySelector('a[data-toc-id="duvida-5"]')
+          ?.getAttribute("aria-current"),
+      ).toBeNull();
+      expect(
+        screen
+          .getByRole("button", {
+            name: "Ocultar subseções de Dúvidas e situações comuns",
+          })
+          .getAttribute("aria-expanded"),
+      ).toBe("true");
+    },
+  );
 
   it("renderiza h3 aninhado, identifica o h2 pai e fecha o índice mobile", async () => {
     const user = userEvent.setup();
