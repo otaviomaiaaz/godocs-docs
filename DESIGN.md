@@ -226,7 +226,7 @@ O bloco `colors` do front matter representa a paleta-base suportada pelo Design 
 | `--danger` | `#ff6467` | `#b42318` |
 | `--info` | `#4c8dff` | `#4c8dff` (herdado) |
 
-Composições por `color-mix()` permanecem contextuais e não se tornam novos tokens globais. O item ativo da navegação mistura `--accent-subtle` a `64%` com transparente; painéis editoriais misturam `--surface` a `68%` com transparente; callouts combinam a cor funcional a `36%` com `--border` na borda e a `8%` com `--surface` no fundo; cards “Em breve” misturam `--surface` a `88%` com `--background`.
+Composições por `color-mix()` permanecem contextuais e não se tornam novos tokens globais. O item ativo da navegação mistura `--accent-subtle` a `64%` com transparente; painéis editoriais misturam `--surface` a `68%` com transparente; callouts combinam a cor funcional a `36%` com `--border` na borda e a `8%` com `--surface` no fundo; cards “Em breve” misturam `--surface` a `88%` com transparente.
 
 ### Named Rules
 
@@ -301,7 +301,7 @@ Sombras ficam restritas a sobreposição real ou resposta pontual: diálogo e dr
 
 O sistema possui três durações reutilizadas: `--duration-fast` (`120ms`) para cor, borda e ícones; `--duration-base` (`180ms`) para transições comuns, diálogo, drawer e backdrop; e `--duration-interaction` (`200ms`) para respostas compostas de cards. A curva compartilhada é `--ease: cubic-bezier(0.2, 0.8, 0.2, 1)`.
 
-- **Hover / Active:** cards podem subir `1px` na home; setas e ícones se deslocam entre `2px` e `3px`. Estados pressionados removem ou reduzem esse deslocamento sem alterar o layout.
+- **Hover / Active:** cards da home podem subir entre `1px` e `2px`, conforme o componente; setas e ícones se deslocam entre `2px` e `3px`. Estados pressionados removem ou reduzem esse deslocamento sem alterar o layout.
 - **Focus:** outline de `2px`, offset de `3px` e halo são aplicados imediatamente; borda, fundo e cor seguem a duração do controle quando possuem transição.
 - **Overlays:** backdrop usa fade; o diálogo entra de `translateY(-10px) scale(0.985)` e o drawer de `translateX(-20px)`, ambos em `180ms`.
 - **Movimento reduzido:** `prefers-reduced-motion: reduce` reduz globalmente transições e animações a `0.01ms`, limita a repetição a uma vez e remove explicitamente animações e transforms de revelação, cards e setas.
@@ -365,7 +365,7 @@ Os componentes são **contidos e orientadores**: esclarecem hierarquia, navegaç
 
 - **Shape:** canto de `12px`, borda fina, superfície plana e padding de `16px 18px` na home.
 - **Hierarchy:** ícone laranja de `34px`, título firme, descrição secundária e seta discreta.
-- **State:** hover altera borda e tonalidade, move no máximo `1px` e usa sombra curta; `prefers-reduced-motion` remove a transformação.
+- **State:** hover altera borda e tonalidade, move no máximo `2px` e usa sombra curta; `prefers-reduced-motion` remove a transformação.
 - **Coming Soon:** quando um documento publicado usa `availability: coming-soon`, o card continua sendo um `Link` com `href` obrigatório para a rota real do documento, badge e redução tonal; a disponibilidade não desativa rota, navegação ou busca.
 
 ### Navigation
