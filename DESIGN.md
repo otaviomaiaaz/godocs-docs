@@ -275,6 +275,16 @@ Em até `1279px`, o sumário lateral cede lugar ao sumário móvel. Em até `102
 
 **The Reading Column Rule.** A navegação pode expandir ou recolher, mas a coluna documental permanece controlada e central.
 
+### Hero Atmosphere
+
+**The Essential Technical Atmosphere Rule.** O hero pode utilizar ambientação estrutural e focal discreta quando ela reforça a Sala de Referência GoDocs por meio de organização, clareza, caráter técnico, acolhimento e confiança. Essa ambientação permanece atrás do conteúdo, em baixa intensidade e subordinada ao título, à descrição e à busca; ela não transforma a home em landing page, dashboard ou apresentação promocional.
+
+A exceção é governada e restrita ao hero. Ela exige tokens semânticos existentes, contraste e legibilidade preservados, ausência de interceptação de interação, comportamento estático e adaptação responsiva nos temas claro e escuro. Conforme a Two Reading Rooms Rule, os temas podem produzir intensidades perceptivas diferentes, mas mantêm os mesmos papéis: estrutura ambiental comunica caráter técnico, foco ambiental apoia a hierarquia e o conteúdo continua protagonista.
+
+**Nota de implementação:** a expressão atual desse princípio combina uma grade técnica bidirecional estática com campos radiais focais discretos no eixo do título, da descrição e da busca. A grade oferece ambientação técnica estrutural e os campos radiais oferecem ambientação focal secundária. Essa combinação registra o estado implementado, não uma receita única ou permanente; substituições futuras exigem nova decisão consciente de design e atualização coordenada deste documento com a implementação.
+
+Essa exceção não autoriza decoração genérica nem sua reprodução em cards, artigos, sidebar ou outros componentes. Partículas, blobs, novos anéis, campos pontilhados ornamentais, elipses sem função, glassmorphism, glow promocional, blur decorativo excessivo, efeitos 3D, parallax, animações ornamentais e gradientes promocionais permanecem fora do sistema. Qualquer expansão futura da ambientação exige uma nova decisão explícita de design.
+
 ## Elevation & Depth
 
 **Estratificação discreta** é a filosofia de profundidade. Bordas, divisores e pequenas variações entre fundo, superfície, superfície interativa e superfície elevada fazem a maior parte da separação. Cards e blocos de conteúdo permanecem planos em repouso.
@@ -406,6 +416,6 @@ Os componentes são **contidos e orientadores**: esclarecem hierarquia, navegaç
 - **Don't** transforme a documentação em dashboard administrativo ou página promocional.
 - **Don't** use verde ou cores funcionais como substitutas da identidade laranja.
 - **Don't** aplique sombra persistente a cards, blocos de conteúdo ou superfícies comuns.
-- **Don't** introduza decoração, gradientes, glassmorphism ou animação sem função de orientação.
+- **Don't** introduza decoração gratuita, gradientes, glassmorphism ou animação sem função de orientação; a ambientação estrutural e focal do hero é permitida somente nos termos da exceção governada em Hero Atmosphere e não autoriza o mesmo tratamento em outras superfícies.
 - **Don't** copie marca, conteúdo, navegação ou CTAs das referências Mintlify/AbacatePay.
 - **Don't** altere o significado factual da documentação durante melhorias visuais sem uma solicitação editorial explícita.

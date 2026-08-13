@@ -194,10 +194,7 @@ export function HomeIntro({ features = [], groups }: HomeIntroProps) {
   return (
     <main className="home" id="main-content">
       <section aria-labelledby="home-title" className="home-hero">
-        <div aria-hidden="true" className="home-hero__ambient">
-          <span />
-          <span />
-        </div>
+        <div aria-hidden="true" className="home-hero__ambient" />
         <h1 id="home-title">Documentação do GoDocs</h1>
         <p className="home-hero__description">{SITE_DESCRIPTION}</p>
         <div className="home-hero__search">

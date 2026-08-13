@@ -2269,23 +2269,6 @@ body:has(dialog[open]) {
   pointer-events: none;
 }
 
-.home::after {
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: -2;
-  height: 430px;
-  background-image: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--accent-border) 25%, transparent) 1px,
-    transparent 1.2px
-  );
-  background-size: 22px 22px;
-  content: "";
-  mask-image: radial-gradient(ellipse 42% 70% at 80% 0, black, transparent);
-  opacity: 0.28;
-  pointer-events: none;
-}
-
 .home-hero {
   position: relative;
   width: min(100%, 820px);
@@ -2319,34 +2302,6 @@ body:has(dialog[open]) {
   );
   content: "";
   transform: translateX(-50%);
-}
-
-.home-hero__ambient > span {
-  position: absolute;
-  left: 50%;
-  width: min(940px, 94vw);
-  height: 190px;
-  border: 1px solid color-mix(in srgb, var(--accent-border) 18%, transparent);
-  border-radius: 50%;
-  opacity: 0.25;
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 20%,
-    black 80%,
-    transparent
-  );
-  transform: translateX(-50%);
-}
-
-.home-hero__ambient > span:first-child {
-  bottom: -126px;
-}
-
-.home-hero__ambient > span:last-child {
-  bottom: -148px;
-  width: min(1120px, 108vw);
-  opacity: 0.12;
 }
 
 .home-hero h1 {
@@ -2783,10 +2738,6 @@ body:has(dialog[open]) {
   .home-hero__ambient {
     right: -80px;
     left: -80px;
-  }
-
-  .home-hero__ambient > span {
-    display: none;
   }
 
   .home-hero h1 {
