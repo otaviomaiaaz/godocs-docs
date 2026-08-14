@@ -2,13 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 13 de agosto de 2026, 10:17 (UTC−03:00)  
-> **Estado geral:** aplicação implementada, publicada e em evolução contínua; oito documentos estão versionados na `main`, a documentação de **Configurações** segue como próxima frente editorial e a auditoria visual avançou para uma nova consolidação do hero e do Design System.  
-> **Fase atual:** expansão da documentação funcional + refinamento de design, acessibilidade e manutenção da interface.  
-> **Commit mais recente verificado:** `ec96743` — `Melhoria de interface 3` — 13/08/2026.  
-> **Deploy do commit mais recente:** Vercel `success`, verificado pelo status associado ao commit.  
-> **Próxima ação principal:** concluir a documentação de **Configurações**, sincronizar `Memória.md` e este `daily_stats.md` com o repositório e continuar a auditoria Impeccable a partir do estado pós-`ec96743`.
-
+> **Última atualização:** 14 de agosto de 2026, 09:44 (UTC−03:00)  
+> **Estado geral:** aplicação implementada e publicada; oito documentos permanecem versionados na `main`; a auditoria Impeccable foi formalmente encerrada, o baseline funcional está com 100/100 testes aprovados e o sidecar `.impeccable/design.json` foi sincronizado com o `DESIGN.md`.  
+> **Fase atual:** expansão da documentação funcional sobre um baseline de interface auditado e estabilizado.  
+> **Commit mais recente verificado:** `700998c` — `Sincroniza Impeccable com o Design System` — 14/08/2026.  
+> **Deploy do commit mais recente:** Vercel `success`, verificado pelo status associado ao commit `700998c`.  
+> **Próxima ação principal:** concluir a documentação de **Configurações** e manter os arquivos operacionais de contexto atualizados; a auditoria de design não possui bloqueio técnico pendente.
 ---
 
 ## 1. Função deste arquivo
@@ -62,10 +61,10 @@ BRANCH
 main
 
 ÚLTIMO COMMIT
-ec96743 — Melhoria de interface 3
+700998c — Sincroniza Impeccable com o Design System
 
 VERCEL
-success para ec96743
+success para 700998c
 
 DOCUMENTOS PUBLICADOS
 8
@@ -74,10 +73,10 @@ FRENTE EDITORIAL
 Configurações
 
 FRENTE DE DESIGN
-Auditoria Impeccable + consolidação do hero e do DESIGN.md
+Auditoria Impeccable encerrada + baseline estabilizado + sidecar sincronizado
 
 MEMÓRIA UNIVERSAL
-Memória.md
+Memória.md (ainda não versionado em project-docs/ na main)
 
 ESTADO OPERACIONAL
 daily_stats.md
@@ -110,20 +109,37 @@ Estado verificado:
 ### Último commit verificado
 
 ```text
-ec96743517cb8407dc1bcb4ad321059ed322349c
-Melhoria de interface 3
-13/08/2026
+700998c6ed655b6ba085b7220890af8e51fd92a2
+Sincroniza Impeccable com o Design System
+14/08/2026
+```
+
+O commit altera somente:
+
+```text
+.impeccable/design.json
 ```
 
 ### Deploy
 
-O status associado ao commit `ec96743` está confirmado como:
+O status associado ao commit `700998c` está confirmado como:
 
 ```text
 Vercel: success
 ```
 
-Isso confirma que o Vercel processou o commit com sucesso.
+Isso confirma que o Vercel processou o commit mais recente com sucesso.
+
+### Estado local verificado ao final da sincronização
+
+Após o commit e o push do sidecar:
+
+```text
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+```
 
 ---
 
@@ -168,6 +184,50 @@ Principais efeitos:
 - `home-hero__ambient` foi simplificado para uma única camada estrutural;
 - a implementação e o `DESIGN.md` ficaram mais alinhados.
 
+### `a5f8534` — Atualização de memória e design do sistema
+
+Principais efeitos verificados:
+
+- ajustes pontuais no `DESIGN.md`;
+- refinamentos no `PRODUCT.md`;
+- reorganização ampla de `project-docs/daily_stats.md` para sua função operacional atual;
+- nenhuma criação de `project-docs/Memória.md` foi verificada na `main`.
+
+### `23e2a32` — Revisão de auditoria
+
+Principais efeitos:
+
+- correções de fechamento concentradas no TOC, no estado ativo, no token tipográfico da home e na governança de caminhos;
+- TOC móvel de artigos longos passou a usar divulgação progressiva sem reduzir os touch targets de 44 px;
+- Workflows preservou os 24 destinos e passou a mostrar 7 destinos inicialmente;
+- `.home-hero h1` passou a consumir `--type-home-title` como fonte canônica;
+- referências operacionais `project_docs/` no `AGENTS.md` foram corrigidas para `project-docs/`;
+- cobertura automatizada do TOC foi ampliada.
+
+### `fc384cc` — Revisão de auditoria final
+
+Principais efeitos:
+
+- correção do caso residual de `aria-current` no último heading de artigos longos;
+- o listener passivo de `scroll` passou a coexistir com `IntersectionObserver`, garantindo reavaliação da regra de fim do documento;
+- dois testes de regressão foram adicionados para o último heading no limite inferior;
+- suíte final passou de 98 para **100 testes**, todos aprovados;
+- N1 foi considerado resolvido;
+- a auditoria deixou de possuir bloqueio técnico pendente.
+
+### `700998c` — Sincroniza Impeccable com o Design System
+
+Principais efeitos:
+
+- somente `.impeccable/design.json` foi alterado;
+- sidecar foi regenerado para refletir o `DESIGN.md` atual;
+- foram adicionadas rampas tonais OKLCH às 20 cores existentes;
+- overview e regras narrativas foram sincronizados, incluindo **The Essential Technical Atmosphere Rule**;
+- o exemplo de Icon Button foi alinhado ao token semântico `--accent-hover`;
+- o breakpoint `mobile-compact: 341px` foi preservado após confirmação de correspondência com regras reais `@media (max-width: 340px)` da implementação;
+- `DESIGN.md` permaneceu inalterado durante a sincronização;
+- JSON/schema e `git diff --check` foram aprovados.
+
 ### Consequência operacional
 
 O antigo item pendente:
@@ -181,6 +241,8 @@ está **resolvido**.
 A decisão atual é:
 
 > A ambientação estrutural e focal discreta pode existir no hero quando subordinada ao conteúdo e obedecendo às regras definidas em `DESIGN.md`.
+
+Além disso, a auditoria Impeccable que gerou os lotes de correção e fechamento está **formalmente encerrada**. Novas mudanças visuais devem ser tratadas como uma nova frente de evolução, e não como continuação automática dessa auditoria.
 
 ---
 
@@ -246,20 +308,42 @@ Regra: não inferir funções de Configurações apenas pelo nome da área. Util
 
 ### 6.2 Auditoria Impeccable
 
-A auditoria já passou por múltiplos lotes.
+**Estado:** encerrada.
 
-Estado atual:
+A auditoria passou por lotes de correção, reauditoria, lotes de fechamento, revalidação focal e um lote final para o caso residual de `aria-current`.
 
-- limpeza importante de CSS já executada;
-- cobertura de acessibilidade ampliada;
-- parte dos touch targets corrigida;
-- hero e `DESIGN.md` alinhados em `ec96743`;
-- contraste e acessibilidade global ainda precisam de revalidação sobre a implementação atual;
-- TOC mobile de páginas longas continua no radar.
+Estado final confirmado:
+
+- achado #5 do TOC móvel: resolvido;
+- N1 — estado ativo / `aria-current`: resolvido;
+- N2 — token `--type-home-title`: resolvido;
+- N3 — caminhos do `AGENTS.md`: resolvido;
+- nenhuma regressão relevante permaneceu aberta;
+- suíte final: **14 arquivos / 100 testes / 100 aprovados / 0 falhas**;
+- `pnpm content:validate`: aprovado para 8 documentos;
+- typecheck: aprovado;
+- lint: 0 erros do produto; warnings conhecidos restritos a `.agents/skills/impeccable`;
+- build: aprovado com 24 páginas estáticas;
+- console do produto: sem erros ou warnings observados na validação final;
+- overflow horizontal: ausente nos breakpoints inspecionados;
+- `git diff --check`: aprovado.
+
+Indicadores finais do TOC de Workflows em `390×844`:
+
+- 24 destinos totais;
+- 7 destinos inicialmente visíveis;
+- 17 destinos progressivos;
+- altura inicial aberta de 384 px;
+- 45,50% da viewport;
+- touch targets mínimos de 44 px preservados.
+
+Após o encerramento funcional, `.impeccable/design.json` foi sincronizado separadamente com o `DESIGN.md` e versionado no commit `700998c`.
+
+Não existe, no estado verificado, bloqueio técnico remanescente da auditoria.
 
 ### 6.3 Governança de memória
 
-Foi definida uma organização nova:
+Foi definida uma organização:
 
 ```text
 conversas
@@ -274,6 +358,8 @@ Memória.md + daily_stats.md
 ```
 
 O objetivo é reduzir dependência das conversas antigas.
+
+Na `main` verificada em 14/08/2026, `project-docs/Memória.md` ainda não está versionado. O `daily_stats.md` já existe em `project-docs/` e esta atualização consolida o encerramento da auditoria.
 
 ---
 
@@ -301,7 +387,7 @@ godocs-docs/
 
 ### Estado atual da `main`
 
-Na verificação de 13/08/2026, `project-docs/` ainda contém:
+Na verificação de 14/08/2026, `project-docs/` contém:
 
 ```text
 PROJECT_PROMPT.md
@@ -310,9 +396,11 @@ daily_stats.md
 references/
 ```
 
-O novo `Memória.md` ainda precisa ser incorporado ao repositório.
+O `Memória.md` ainda não está versionado em `project-docs/`.
 
-O `daily_stats.md` versionado na `main` também ainda corresponde a uma versão antiga e precisa ser substituído pela versão operacional atual.
+O `daily_stats.md` foi incorporado à `main` em sua forma operacional no commit `a5f8534`; esta revisão de 14/08 atualiza o estado após o encerramento da auditoria e a sincronização do Impeccable.
+
+As referências operacionais do `AGENTS.md` usam atualmente o caminho correto `project-docs/`. A ocorrência histórica de `project_docs` registrada anteriormente no próprio `daily_stats.md` não é uma instrução operacional.
 
 ---
 
@@ -321,9 +409,10 @@ O `daily_stats.md` versionado na `main` também ainda corresponde a uma versão 
 ### P1 — Governança
 
 - [ ] Versionar `Memória.md` em `project-docs/`.
-- [ ] Substituir o `project-docs/daily_stats.md` antigo por esta versão atualizada.
-- [ ] Corrigir referências `project_docs/` → `project-docs/` no `AGENTS.md`.
+- [x] Substituir a antiga versão ampla de `project-docs/daily_stats.md` pelo formato operacional atual.
+- [x] Corrigir referências `project_docs/` → `project-docs/` no `AGENTS.md`.
 - [ ] Revalidar README e documentos históricos para evitar estados editoriais antigos tratados como atuais.
+- [ ] Versionar esta atualização do `daily_stats.md` após revisão/aprovação.
 
 ### P1 — Design e acessibilidade
 
@@ -331,12 +420,15 @@ O `daily_stats.md` versionado na `main` também ainda corresponde a uma versão 
 - [x] Simplificar a decoração do hero e remover elementos ornamentais excedentes.
 - [x] Realizar uma grande limpeza inicial de CSS legado.
 - [x] Ampliar testes de acessibilidade de artigos.
-- [x] Corrigir parte dos touch targets para 44 px.
-- [ ] Revalidar contraste no tema claro após as mudanças recentes.
-- [ ] Revalidar touch targets remanescentes.
-- [ ] Revisar TOC mobile de páginas longas, principalmente Workflows.
-- [ ] Verificar se ainda existem seletores mortos, overrides ou duplicações em `globals.css`.
-- [ ] Ampliar auditoria de páginas completas nos dois temas e principais breakpoints.
+- [x] Corrigir e revalidar touch targets de 44 px nos componentes auditados.
+- [x] Revalidar contraste dos pontos identificados pela auditoria.
+- [x] Revisar o TOC mobile de páginas longas, principalmente Workflows.
+- [x] Revalidar o achado de CSS legado/duplicações sem reintrodução relevante.
+- [x] Ampliar a cobertura automatizada de páginas completas e cenários de acessibilidade.
+- [x] Corrigir o estado ativo / `aria-current` no último heading sem espaço inferior suficiente.
+- [x] Sincronizar `.impeccable/design.json` com o `DESIGN.md` após o encerramento da auditoria.
+
+**Estado:** não há débito de design/acessibilidade remanescente identificado como bloqueador pela auditoria encerrada. Novos achados devem ser tratados como nova análise, regressão ou nova frente de evolução.
 
 ### P1 — Editorial
 
@@ -355,7 +447,7 @@ O `daily_stats.md` versionado na `main` também ainda corresponde a uma versão 
 
 ## 9. Stack e validação
 
-Stack principal verificada:
+Stack principal registrada:
 
 ```text
 Next.js 16.2.11
@@ -395,7 +487,47 @@ Para alterações visuais, validar também:
 - console;
 - reduced motion quando aplicável.
 
-Não registrar resultados antigos de testes como se fossem validações da versão atual.
+### Baseline funcional validado no encerramento da auditoria
+
+No lote final de `fc384cc`:
+
+```text
+Arquivos de teste: 14
+Testes: 100
+Aprovados: 100
+Falhas: 0
+
+content:validate: aprovado — 8 documentos
+typecheck: aprovado
+lint: 0 erros
+build: aprovado — 24 páginas estáticas
+console: sem erros/warnings observados
+overflow horizontal: não reproduzido nos breakpoints inspecionados
+git diff --check: aprovado
+```
+
+O lint registrou 151 warnings preexistentes restritos aos scripts internos em `.agents/skills/impeccable`; eles não foram classificados como falha do produto.
+
+A primeira execução de testes em ambiente restrito encontrou `spawn EPERM`; a repetição pelo mecanismo permitido passou integralmente. O aviso de `HTMLCanvasElement.getContext()` pertence ao JSDOM auxiliar e não afetou os testes.
+
+### Validação da sincronização do sidecar
+
+O commit `700998c` altera apenas `.impeccable/design.json`.
+
+Na tarefa de sincronização foram confirmados:
+
+- JSON válido;
+- schema v2;
+- 20 cores com 20 rampas tonais válidas;
+- narrativa comparada com `DESIGN.md`;
+- `DESIGN.md` preservado;
+- correção do exemplo de Icon Button para `--accent-hover`;
+- validade do breakpoint `mobile-compact: 341px`;
+- `git diff --check` aprovado.
+
+A suíte funcional completa de 100 testes pertence ao baseline imediatamente anterior; não foi registrada como reexecutada após a alteração exclusiva do sidecar.
+
+Não registrar resultados antigos de testes como se fossem validações de uma versão futura diferente.
 
 ---
 
@@ -472,43 +604,38 @@ A versão pública só muda depois da sincronização com o repositório e do de
 
 ### 1. Finalizar Configurações
 
-É a principal frente editorial.
+É a principal frente editorial registrada.
 
-### 2. Sincronizar a memória do projeto
+Continuar somente com informações sustentadas pelas evidências disponíveis, consolidar o texto e, após aprovação, transformar o conteúdo em MDX.
 
-Adicionar ao repositório:
+### 2. Sincronizar a memória universal do projeto
+
+`project-docs/Memória.md` continua ausente da `main` verificada.
+
+Quando a versão consolidada estiver aprovada e disponível para versionamento, adicionar:
 
 ```text
 project-docs/Memória.md
 ```
 
-e substituir:
+Não reconstruir esse arquivo por inferência caso a versão canônica não esteja disponível.
 
-```text
-project-docs/daily_stats.md
-```
+### 3. Versionar esta atualização operacional
 
-pela versão atual.
+Após revisar este `daily_stats.md`, substituir a versão do repositório e criar um commit descritivo.
 
-### 3. Atualizar governança
+### 4. Tratar novas melhorias visuais como nova fase
 
-Corrigir `AGENTS.md` e verificar referências antigas em documentos internos.
+A auditoria Impeccable atual está encerrada.
 
-### 4. Continuar a auditoria de design
+Não reabrir automaticamente os achados antigos. Qualquer nova evolução visual deve partir do baseline auditado e ser tratada como nova iniciativa, preservando:
 
-Partir do estado pós-`ec96743`.
-
-Não repetir automaticamente recomendações de lotes anteriores sem revalidar o código atual.
-
-Prioridades:
-
-- contraste;
-- acessibilidade global;
-- mobile;
-- TOC;
+- `DESIGN.md` como fonte visual canônica;
+- acessibilidade;
 - touch targets;
-- CSS remanescente;
-- temas claro e escuro.
+- comportamento do TOC;
+- temas claro e escuro;
+- ausência de regressões.
 
 ### 5. Manter GitHub e Vercel sincronizados
 
@@ -529,12 +656,18 @@ Após cada marco material:
 | 12/08/2026 | Impeccable | Auditoria de design avançou por lotes |
 | 12/08/2026 | `b595458` | Semântica e estados da busca refinados |
 | 12/08/2026 | `d9b9278` | Grande limpeza de CSS, testes e acessibilidade ampliados |
-| 12/08/2026 | Memória universal | `Memória.md` consolidado como contexto universal |
+| 12/08/2026 | Memória universal | `Memória.md` consolidado como contexto universal fora da `main`; versionamento continua pendente |
 | 12/08/2026 | Codex | Alternância entre duas contas Plus validada |
 | 13/08/2026 | Governança | Conversas passam a ser tratadas como ambiente temporário de trabalho |
 | 13/08/2026 | `ec96743` | Hero e `DESIGN.md` alinhados; ambientação governada e simplificada |
 | 13/08/2026 | Vercel | `success` confirmado para `ec96743` |
-| 13/08/2026 | Daily Stats | Arquivo reduzido e reorganizado para função estritamente operacional |
+| 13/08/2026 | `a5f8534` | `DESIGN.md`, `PRODUCT.md` e `daily_stats.md` atualizados |
+| 13/08/2026 | `23e2a32` | Lotes de fechamento consolidados: TOC progressivo, token tipográfico e caminhos operacionais |
+| 13/08/2026 | `fc384cc` | Caso residual de `aria-current` corrigido; suíte final 100/100 |
+| 14/08/2026 | Auditoria Impeccable | Auditoria formalmente encerrada, sem bloqueio técnico remanescente |
+| 14/08/2026 | `700998c` | `.impeccable/design.json` sincronizado com o Design System |
+| 14/08/2026 | Vercel | `success` confirmado para `700998c` |
+| 14/08/2026 | Git | `main` sincronizada com `origin/main` e working tree limpo após o push de `700998c` |
 
 ---
 
@@ -594,4 +727,4 @@ Ao iniciar uma nova sessão:
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` está no commit `ec96743` — **Melhoria de interface 3**, com status Vercel `success`. A coleção continua com oito documentos publicados. **Configurações** permanece como próxima frente editorial. A decisão sobre a ambientação do hero foi resolvida e incorporada ao `DESIGN.md`; a implementação foi simplificada para eliminar elementos ornamentais excedentes. O próximo passo estrutural é versionar o novo `Memória.md`, substituir o `daily_stats.md` antigo no repositório e continuar a auditoria a partir do estado atual.
+**Estado ao encerrar esta atualização:** a branch `main` está no commit `700998c` — **Sincroniza Impeccable com o Design System**, com status Vercel `success` confirmado. A coleção permanece com oito documentos publicados e **Configurações** continua como frente editorial registrada. A auditoria Impeccable foi formalmente encerrada após a correção do caso residual de `aria-current`, com baseline funcional de **100/100 testes aprovados**, build de 24 páginas e sem bloqueio técnico remanescente identificado. O `DESIGN.md` permanece como fonte visual canônica e `.impeccable/design.json` está sincronizado com ele. `project-docs/Memória.md` ainda não está versionado na `main`. O próximo passo principal é concluir Configurações e manter os arquivos de contexto operacional atualizados.
