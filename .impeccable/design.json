@@ -1,108 +1,128 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-11T15:34:52.7145417Z",
+  "generatedAt": "2026-08-14T12:19:29.1851768Z",
   "title": "Design System: GoDocs Docs",
   "extensions": {
     "colorMeta": {
       "laranja-guia": {
         "role": "primary",
         "displayName": "Laranja Guia",
-        "canonical": "#ff7600"
+        "canonical": "#ff7600",
+        "tonalRamp": ["oklch(15% 0.192 49)", "oklch(26% 0.192 49)", "oklch(37% 0.192 49)", "oklch(48% 0.192 49)", "oklch(59% 0.192 49)", "oklch(70% 0.192 49)", "oklch(82% 0.192 49)", "oklch(95% 0.192 49)"]
       },
       "laranja-marca": {
         "role": "primary",
         "displayName": "Laranja de Marca",
-        "canonical": "#ff8c42"
+        "canonical": "#ff8c42",
+        "tonalRamp": ["oklch(15% 0.164 50.4)", "oklch(26% 0.164 50.4)", "oklch(37% 0.164 50.4)", "oklch(48% 0.164 50.4)", "oklch(59% 0.164 50.4)", "oklch(70% 0.164 50.4)", "oklch(82% 0.164 50.4)", "oklch(95% 0.164 50.4)"]
       },
       "laranja-guia-contraste": {
         "role": "primary",
         "displayName": "Laranja Guia de Contraste",
-        "canonical": "#a84b00"
+        "canonical": "#a84b00",
+        "tonalRamp": ["oklch(15% 0.141 48.8)", "oklch(26% 0.141 48.8)", "oklch(37% 0.141 48.8)", "oklch(48% 0.141 48.8)", "oklch(59% 0.141 48.8)", "oklch(70% 0.141 48.8)", "oklch(82% 0.141 48.8)", "oklch(95% 0.141 48.8)"]
       },
       "laranja-suave-tema-escuro": {
         "role": "primary",
         "displayName": "Laranja Suave do Tema Escuro",
-        "canonical": "#472f21"
+        "canonical": "#472f21",
+        "tonalRamp": ["oklch(15% 0.042 51)", "oklch(26% 0.042 51)", "oklch(37% 0.042 51)", "oklch(48% 0.042 51)", "oklch(59% 0.042 51)", "oklch(70% 0.042 51)", "oklch(82% 0.042 51)", "oklch(95% 0.042 51)"]
       },
       "laranja-suave-tema-claro": {
         "role": "primary",
         "displayName": "Laranja Suave do Tema Claro",
-        "canonical": "#fff0e6"
+        "canonical": "#fff0e6",
+        "tonalRamp": ["oklch(15% 0.021 56.1)", "oklch(26% 0.021 56.1)", "oklch(37% 0.021 56.1)", "oklch(48% 0.021 56.1)", "oklch(59% 0.021 56.1)", "oklch(70% 0.021 56.1)", "oklch(82% 0.021 56.1)", "oklch(95% 0.021 56.1)"]
       },
       "grafite-institucional": {
         "role": "neutral",
         "displayName": "Grafite Institucional",
-        "canonical": "#232222"
+        "canonical": "#232222",
+        "tonalRamp": ["oklch(15% 0.002 17.3)", "oklch(26% 0.002 17.3)", "oklch(37% 0.002 17.3)", "oklch(48% 0.002 17.3)", "oklch(59% 0.002 17.3)", "oklch(70% 0.002 17.3)", "oklch(82% 0.002 17.3)", "oklch(95% 0.002 17.3)"]
       },
       "grafite-superficie": {
         "role": "neutral",
         "displayName": "Superfície Grafite",
-        "canonical": "#2a2a2a"
+        "canonical": "#2a2a2a",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(59% 0 0)", "oklch(70% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]
       },
       "grafite-elevado": {
         "role": "neutral",
         "displayName": "Grafite Elevado",
-        "canonical": "#313237"
+        "canonical": "#313237",
+        "tonalRamp": ["oklch(15% 0.009 276.9)", "oklch(26% 0.009 276.9)", "oklch(37% 0.009 276.9)", "oklch(48% 0.009 276.9)", "oklch(59% 0.009 276.9)", "oklch(70% 0.009 276.9)", "oklch(82% 0.009 276.9)", "oklch(95% 0.009 276.9)"]
       },
       "grafite-borda": {
         "role": "neutral",
         "displayName": "Borda Grafite",
-        "canonical": "#4d4d4d"
+        "canonical": "#4d4d4d",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(59% 0 0)", "oklch(70% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]
       },
       "branco-leitura": {
         "role": "neutral",
         "displayName": "Branco de Leitura",
-        "canonical": "#ffffff"
+        "canonical": "#ffffff",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(59% 0 0)", "oklch(70% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]
       },
       "cinza-leitura": {
         "role": "neutral",
         "displayName": "Cinza de Leitura",
-        "canonical": "#c4c4c4"
+        "canonical": "#c4c4c4",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(59% 0 0)", "oklch(70% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]
       },
       "papel-tecnico": {
         "role": "neutral",
         "displayName": "Papel Técnico",
-        "canonical": "#f7f7f6"
+        "canonical": "#f7f7f6",
+        "tonalRamp": ["oklch(15% 0.001 106.4)", "oklch(26% 0.001 106.4)", "oklch(37% 0.001 106.4)", "oklch(48% 0.001 106.4)", "oklch(59% 0.001 106.4)", "oklch(70% 0.001 106.4)", "oklch(82% 0.001 106.4)", "oklch(95% 0.001 106.4)"]
       },
       "papel-interativo": {
         "role": "neutral",
         "displayName": "Papel Interativo",
-        "canonical": "#f0f0ee"
+        "canonical": "#f0f0ee",
+        "tonalRamp": ["oklch(15% 0.003 106.4)", "oklch(26% 0.003 106.4)", "oklch(37% 0.003 106.4)", "oklch(48% 0.003 106.4)", "oklch(59% 0.003 106.4)", "oklch(70% 0.003 106.4)", "oklch(82% 0.003 106.4)", "oklch(95% 0.003 106.4)"]
       },
       "papel-borda": {
         "role": "neutral",
         "displayName": "Borda de Papel",
-        "canonical": "#bdbdb8"
+        "canonical": "#bdbdb8",
+        "tonalRamp": ["oklch(15% 0.007 106.6)", "oklch(26% 0.007 106.6)", "oklch(37% 0.007 106.6)", "oklch(48% 0.007 106.6)", "oklch(59% 0.007 106.6)", "oklch(70% 0.007 106.6)", "oklch(82% 0.007 106.6)", "oklch(95% 0.007 106.6)"]
       },
       "tinta-principal": {
         "role": "neutral",
         "displayName": "Tinta Principal",
-        "canonical": "#1a1a1a"
+        "canonical": "#1a1a1a",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(37% 0 0)", "oklch(48% 0 0)", "oklch(59% 0 0)", "oklch(70% 0 0)", "oklch(82% 0 0)", "oklch(95% 0 0)"]
       },
       "tinta-secundaria": {
         "role": "neutral",
         "displayName": "Tinta Secundária",
-        "canonical": "#4f5459"
+        "canonical": "#4f5459",
+        "tonalRamp": ["oklch(15% 0.01 248.1)", "oklch(26% 0.01 248.1)", "oklch(37% 0.01 248.1)", "oklch(48% 0.01 248.1)", "oklch(59% 0.01 248.1)", "oklch(70% 0.01 248.1)", "oklch(82% 0.01 248.1)", "oklch(95% 0.01 248.1)"]
       },
       "sucesso": {
         "role": "tertiary",
         "displayName": "Sucesso",
-        "canonical": "#2fbf71"
+        "canonical": "#2fbf71",
+        "tonalRamp": ["oklch(15% 0.164 154.1)", "oklch(26% 0.164 154.1)", "oklch(37% 0.164 154.1)", "oklch(48% 0.164 154.1)", "oklch(59% 0.164 154.1)", "oklch(70% 0.164 154.1)", "oklch(82% 0.164 154.1)", "oklch(95% 0.164 154.1)"]
       },
       "aviso": {
         "role": "tertiary",
         "displayName": "Aviso",
-        "canonical": "#f5a524"
+        "canonical": "#f5a524",
+        "tonalRamp": ["oklch(15% 0.158 72.3)", "oklch(26% 0.158 72.3)", "oklch(37% 0.158 72.3)", "oklch(48% 0.158 72.3)", "oklch(59% 0.158 72.3)", "oklch(70% 0.158 72.3)", "oklch(82% 0.158 72.3)", "oklch(95% 0.158 72.3)"]
       },
       "perigo": {
         "role": "tertiary",
         "displayName": "Perigo",
-        "canonical": "#ff6467"
+        "canonical": "#ff6467",
+        "tonalRamp": ["oklch(15% 0.189 22.2)", "oklch(26% 0.189 22.2)", "oklch(37% 0.189 22.2)", "oklch(48% 0.189 22.2)", "oklch(59% 0.189 22.2)", "oklch(70% 0.189 22.2)", "oklch(82% 0.189 22.2)", "oklch(95% 0.189 22.2)"]
       },
       "informacao": {
         "role": "tertiary",
         "displayName": "Informação",
-        "canonical": "#4c8dff"
+        "canonical": "#4c8dff",
+        "tonalRamp": ["oklch(15% 0.182 260.7)", "oklch(26% 0.182 260.7)", "oklch(37% 0.182 260.7)", "oklch(48% 0.182 260.7)", "oklch(59% 0.182 260.7)", "oklch(70% 0.182 260.7)", "oklch(82% 0.182 260.7)", "oklch(95% 0.182 260.7)"]
       }
     },
     "typographyMeta": {
@@ -140,7 +160,7 @@
       "refersTo": "icon-button",
       "description": "Controle quadrado para tema, fechar e navegação móvel.",
       "html": "<button class=\"ds-icon-button\" aria-label=\"Alternar tema\"><svg aria-hidden=\"true\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"/></svg></button>",
-      "css": ".ds-icon-button{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;padding:0;border:1px solid var(--control-border);border-radius:var(--radius-md);background:var(--surface);color:var(--text-secondary);cursor:pointer;transition:color var(--duration-fast) var(--ease),border-color var(--duration-fast) var(--ease),background-color var(--duration-fast) var(--ease)}.ds-icon-button:hover{border-color:var(--accent-border);background:var(--surface-hover);color:var(--accent-primary)}.ds-icon-button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px;box-shadow:0 0 0 3px var(--focus-shadow)}.ds-icon-button:active{background:var(--surface-interactive);color:var(--accent-pressed)}"
+      "css": ".ds-icon-button{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;padding:0;border:1px solid var(--control-border);border-radius:var(--radius-md);background:var(--surface);color:var(--text-secondary);cursor:pointer;transition:color var(--duration-fast) var(--ease),border-color var(--duration-fast) var(--ease),background-color var(--duration-fast) var(--ease)}.ds-icon-button:hover{border-color:var(--accent-border);background:var(--surface-hover);color:var(--accent-hover)}.ds-icon-button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px;box-shadow:0 0 0 3px var(--focus-shadow)}.ds-icon-button:active{background:var(--surface-interactive);color:var(--accent-pressed)}"
     },
     {
       "name": "Header Search Trigger",
@@ -208,7 +228,7 @@
   ],
   "narrative": {
     "northStar": "A Sala de Referência GoDocs",
-    "overview": "A Sala de Referência GoDocs é um espaço oficial, organizado e confiável para encontrar, compreender e aplicar informações sobre o produto. A interface transmite tranquilidade e proximidade sem perder precisão: cada superfície, controle e estado existe para sustentar o aprendizado e a consulta, nunca para transformar a documentação em promoção.\n\nA atmosfera é clara e acolhedora, com densidade confortável para leitura prolongada. O sistema combina a identidade laranja do GoDocs com neutros grafite no tema escuro e o Papel Técnico no tema claro. A implementação permanece reconhecível como documentação moderna, sem assumir aparência de dashboard administrativo, landing page ou composição excessivamente decorativa.",
+    "overview": "A Sala de Referência GoDocs é um espaço oficial, organizado e confiável para encontrar, compreender e aplicar informações sobre o produto. A interface transmite tranquilidade e proximidade sem perder precisão: cada superfície, controle e estado existe para sustentar o aprendizado e a consulta, nunca para transformar a documentação em promoção.\n\nA atmosfera é clara e acolhedora, com densidade confortável para leitura prolongada. O sistema combina a identidade laranja do GoDocs com neutros grafite no tema escuro e o Papel Técnico no tema claro. A experiência deve permanecer reconhecível como documentação moderna, sem assumir aparência de dashboard administrativo, landing page ou composição excessivamente decorativa.",
     "keyCharacteristics": [
       "Conteúdo e busca ocupam o centro da experiência.",
       "Laranja orienta foco, estado atual, links e ícones sem dominar grandes superfícies.",
@@ -223,6 +243,7 @@
       { "name": "The Long-Read Rule", "body": "Títulos podem ser densos e compactos; o corpo documental permanece aberto, com coluna controlada e entrelinha ampla.", "section": "typography" },
       { "name": "The One-Family Rule", "body": "A hierarquia nasce de tamanho, peso, tracking e ritmo, não da introdução de novas famílias tipográficas.", "section": "typography" },
       { "name": "The Reading Column Rule", "body": "A navegação pode expandir ou recolher, mas a coluna documental permanece controlada e central.", "section": "layout" },
+      { "name": "The Essential Technical Atmosphere Rule", "body": "O hero pode utilizar ambientação estrutural e focal discreta quando ela reforça a Sala de Referência GoDocs por meio de organização, clareza, caráter técnico, acolhimento e confiança. Essa ambientação permanece atrás do conteúdo, em baixa intensidade e subordinada ao título, à descrição e à busca; ela não transforma a home em landing page, dashboard ou apresentação promocional.", "section": "layout" },
       { "name": "The Flat-by-Default Rule", "body": "Uma superfície comum não flutua; sombra exige sobreposição ou interação real.", "section": "elevation" },
       { "name": "The Functional Motion Rule", "body": "Movimento comunica entrada, resposta ou continuidade; não adiciona decoração autônoma e não é necessário para compreender estado ou conteúdo.", "section": "elevation" },
       { "name": "The Moderate Corners Rule", "body": "Cantos suavizam a interface sem transformá-la em uma coleção de cápsulas ou superfícies excessivamente arredondadas.", "section": "shapes" }
@@ -239,7 +260,7 @@
       "Don't transforme a documentação em dashboard administrativo ou página promocional.",
       "Don't use verde ou cores funcionais como substitutas da identidade laranja.",
       "Don't aplique sombra persistente a cards, blocos de conteúdo ou superfícies comuns.",
-      "Don't introduza decoração, gradientes, glassmorphism ou animação sem função de orientação.",
+      "Don't introduza decoração gratuita, gradientes, glassmorphism ou animação sem função de orientação; a ambientação estrutural e focal do hero é permitida somente nos termos da exceção governada em Hero Atmosphere e não autoriza o mesmo tratamento em outras superfícies.",
       "Don't copie marca, conteúdo, navegação ou CTAs das referências Mintlify/AbacatePay.",
       "Don't altere o significado factual da documentação durante melhorias visuais sem uma solicitação editorial explícita."
     ]
