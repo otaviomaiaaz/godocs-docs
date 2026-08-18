@@ -3,11 +3,11 @@
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
 > **Última atualização:** 18 de agosto de 2026 (UTC−03:00)<br>
-> **Estado geral:** Lote 1 — Fundação da Nova Arquitetura implementado localmente e validado; pronto para revisão, sem commit ou push. A coleção possui 9 documentos, incluindo o novo hub de Funcionalidades, e os 8 artigos anteriores preservam o corpo editorial.<br>
-> **Fase atual:** Lote 1 pronto para revisão; Lotes 2 e 3 ainda não iniciados.<br>
+> **Estado geral:** Lotes 1 e 2 da Nova Arquitetura implementados localmente, sem commit ou push. A coleção possui 14 documentos; Documentos é um hub com cinco páginas-filhas e 30 deep links históricos compatíveis.<br>
+> **Fase atual:** Lote 2 pronto para revisão técnica; Lote 3 — Workflows é o próximo passo.<br>
 > **Commit mais recente verificado:** `587069f` — `Contrato da nova arquitetura` — 18/08/2026.<br>
 > **Deploy do commit mais recente:** não revalidado nesta tarefa; a última confirmação registrada é Vercel `success` para `700998c`.<br>
-> **Próxima ação principal:** revisar e versionar o Lote 1; somente depois iniciar o Lote 2 com solicitação própria.
+> **Próxima ação principal:** revisar e versionar os Lotes 1 e 2; somente depois iniciar o Lote 3 com solicitação própria.
 ---
 
 ## 1. Função deste arquivo
@@ -67,13 +67,13 @@ VERCEL
 não revalidado nesta estabilização
 
 DOCUMENTOS PUBLICADOS
-9
+14
 
 FRENTE EDITORIAL
 Configurações
 
 FRENTE DE DESIGN E ARQUITETURA
-Lote 1 implementado e validado localmente; Lotes 2 e 3 não iniciados
+Lotes 1 e 2 implementados localmente; Lote 3 — Workflows pendente
 
 MEMÓRIA UNIVERSAL
 Memória.md (ainda não versionado em project-docs/ na main)
@@ -241,7 +241,7 @@ Além disso, a auditoria Impeccable que gerou os lotes de correção e fechament
 
 ## 5. Conteúdo publicado
 
-Existem **9 documentos MDX** na coleção atual.
+Existem **14 documentos MDX** na coleção atual.
 
 ### Comece por aqui
 
@@ -256,6 +256,11 @@ content/docs/primeiro-acesso.mdx
 content/docs/funcionalidades/index.mdx
 content/docs/funcionalidades/visao-geral.mdx
 content/docs/funcionalidades/documentos.mdx
+content/docs/funcionalidades/documentos/pastas.mdx
+content/docs/funcionalidades/documentos/adicionar-documentos.mdx
+content/docs/funcionalidades/documentos/filtros-e-metadados.mdx
+content/docs/funcionalidades/documentos/gerenciar-documentos.mdx
+content/docs/funcionalidades/documentos/logs-e-acoes.mdx
 content/docs/funcionalidades/favoritos.mdx
 content/docs/funcionalidades/workflows.mdx
 content/docs/funcionalidades/busca-inteligente.mdx
@@ -270,7 +275,12 @@ content/docs/funcionalidades/relatorios.mdx
 | Primeiro Acesso | Publicado |
 | Funcionalidades | Publicado — hub explícito |
 | Visão Geral | Publicado |
-| Documentos | Publicado |
+| Documentos | Publicado — hub editorial |
+| Organizar pastas e subpastas | Publicado |
+| Adicionar documentos | Publicado |
+| Localizar, filtrar e consultar metadados | Publicado |
+| Visualizar e gerenciar documentos | Publicado |
+| Logs e ações | Publicado |
 | Favoritos | Publicado |
 | Workflows | Publicado |
 | Busca Inteligente | Publicado |
@@ -383,6 +393,16 @@ O objetivo é reduzir dependência das conversas antigas.
 Na `main` verificada em 14/08/2026, `project-docs/Memória.md` ainda não está versionado. O `daily_stats.md` já existe em `project-docs/` e esta atualização consolida o encerramento da auditoria.
 
 ---
+
+### 6.5 Lote 2 — Documentos
+
+O Lote 2 foi implementado localmente sobre `cc5f6e1`, sem commit ou push. `/docs/funcionalidades/documentos` agora é um hub editorial e suas cinco páginas-filhas publicadas organizam o conteúdo por intenção: pastas, adição, filtros e metadados, gerenciamento e logs e ações. Nenhum conteúdo de Workflows foi alterado.
+
+Os 30 aliases históricos de Documentos resolvem para os destinos canônicos; os 49 aliases de Workflows continuam apontando para a mesma URL e fragmento. A navegação, breadcrumbs, paginação, busca, sitemap, canonical e imagens sociais derivam das 14 páginas publicadas. A Home preserva os seis cards de funcionalidades de primeiro nível.
+
+Baseline da busca após o lote: 14 documentos, 141 entradas, 14 páginas, 127 seções, payload bruto de 276.568 bytes e gzip de 35.862 bytes. As consultas `pastas`, `adicionar documento`, `metadados`, `logs da pasta` e `visualizar documento` priorizam as respectivas filhas. Não houve ajuste de algoritmo, pesos, snippets ou limite de resultados.
+
+Validações técnicas executadas: `pnpm content:validate`, lint (0 erros; 151 avisos preexistentes em `.agents`), typecheck, 165 testes, build, benchmark e `git diff --check`. A inspeção visual automatizada do navegador local ficou bloqueada pela restrição do ambiente antes de abrir uma página; o servidor de produção respondeu `200` para o hub.
 
 ## 7. Arquivos de contexto e governança
 
@@ -694,6 +714,7 @@ Após cada marco material:
 | 18/08/2026 | Baseline do redesign | Referências normalizadas, falso positivo de identidade corrigido e validação técnica verde; pronto para revisão e versionamento |
 | 18/08/2026 | Lote 0 e Lote 0.1 | Contrato da nova arquitetura aprovado e consolidado em `REDESIGN_ARCHITECTURE.md`; próximo passo é o Lote 1 |
 | 18/08/2026 | Lote 1 | Fundação técnica implementada e validada localmente; sem commit, push ou decomposição editorial |
+| 18/08/2026 | Lote 2 | Documentos decomposto em hub e cinco filhas; 30 aliases preservados, 49 anchors de Workflows intactos e validação técnica verde; sem commit ou push |
 
 ---
 
@@ -753,4 +774,4 @@ Ao iniciar uma nova sessão:
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` permanece em `587069f` — **Contrato da nova arquitetura**, com o Lote 1 implementado apenas no working tree e pronto para revisão. A coleção possui 9 documentos publicados; o novo documento é o hub `/docs/funcionalidades`. Os corpos de Workflows e Documentos não foram alterados nem decompostos, e seus 79 anchors permanecem válidos nas URLs atuais. As validações técnicas e renderizadas do Lote 1 passaram; não houve commit, push ou deploy.
+**Estado ao encerrar esta atualização:** a branch `main` permanece em `cc5f6e1` — **Redesign - Implementação do Lote 1**, com os Lotes 1 e 2 implementados apenas no working tree e prontos para revisão. A coleção possui 14 documentos publicados; `/docs/funcionalidades/documentos` é hub de cinco filhas. Os 30 anchors históricos de Documentos apontam para seus destinos canônicos e os 49 anchors de Workflows permanecem inalterados. `content:validate`, lint, typecheck, testes, build, benchmark e `git diff --check` foram executados neste lote; não houve commit, push ou deploy.

@@ -11,7 +11,7 @@ export default async function HomePage() {
     .filter(
       (doc) =>
         doc.metadata.section?.id === "funcionalidades" &&
-        doc.metadata.pageType !== "hub",
+        doc.metadata.ancestors.length === 1,
     )
     .map<HomeFeature>((doc) => ({
       availability: doc.metadata.availability,

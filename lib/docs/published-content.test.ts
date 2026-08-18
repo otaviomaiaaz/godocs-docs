@@ -55,7 +55,7 @@ describe("conteúdo publicado", () => {
     );
   });
 
-  it("publica o hub e os oito artigos existentes com frontmatter, rotas e sumários aprovados", async () => {
+  it("publica o hub e os treze artigos com frontmatter, rotas e sumários aprovados", async () => {
     const docs = await loadPublishedDocs();
     const firstAccess = docs.find(
       (candidate) => candidate.slug === "primeiro-acesso",
@@ -81,7 +81,7 @@ describe("conteúdo publicado", () => {
     const reports = docs.find(
       (candidate) => candidate.slug === "funcionalidades/relatorios",
     );
-    expect(docs).toHaveLength(9);
+    expect(docs).toHaveLength(14);
     expect(functionalities?.metadata).toMatchObject({
       title: "Funcionalidades",
       slug: "funcionalidades",
@@ -179,6 +179,7 @@ describe("conteúdo publicado", () => {
     expect(documents?.metadata).toMatchObject({
       title: "Documentos",
       cardDescription: "Organize e consulte seus documentos.",
+      pageType: "hub",
       section: {
         id: "funcionalidades",
         order: 20,
@@ -189,26 +190,38 @@ describe("conteúdo publicado", () => {
     expect(documents?.headings.map((heading) => heading.title)).toEqual([
       "O que é a seção Documentos",
       "Conceitos importantes",
-      "Organizando pastas e subpastas",
-      "Criando uma nova pasta",
-      "Criando uma subpasta",
-      "Formas de visualização",
-      "Gerenciando uma pasta",
-      "Adicionando documentos",
-      "Localizando e exibindo documentos",
-      "Filtros avançados",
-      "Exibição de metadados",
-      "Visualizando e gerenciando um documento",
-      "Visualizar",
-      "Detalhes do documento",
-      "Tags",
-      "Peças do documento",
-      "Páginas",
-      "Logs do documento",
-      "Anexar arquivo",
-      "Outras ações do documento",
-      "Favoritar",
-      "Excluir",
+    ]);
+
+    expect(
+      docs
+        .filter((doc) => doc.slug.startsWith("funcionalidades/documentos/"))
+        .map((doc) => [doc.slug, doc.metadata.title, doc.metadata.pageType]),
+    ).toEqual([
+      [
+        "funcionalidades/documentos/pastas",
+        "Organizar pastas e subpastas",
+        "task",
+      ],
+      [
+        "funcionalidades/documentos/adicionar-documentos",
+        "Adicionar documentos",
+        "task",
+      ],
+      [
+        "funcionalidades/documentos/filtros-e-metadados",
+        "Localizar, filtrar e consultar metadados",
+        "task",
+      ],
+      [
+        "funcionalidades/documentos/gerenciar-documentos",
+        "Visualizar e gerenciar documentos",
+        "reference",
+      ],
+      [
+        "funcionalidades/documentos/logs-e-acoes",
+        "Logs e ações",
+        "reference",
+      ],
     ]);
 
     for (const [doc, title, order, description, cardDescription] of [
@@ -259,7 +272,7 @@ describe("conteúdo publicado", () => {
     }
   });
 
-  it("integra os nove documentos disponíveis a rotas, navegação e busca públicas", async () => {
+  it("integra os quatorze documentos disponíveis a rotas, navegação e busca públicas", async () => {
     const allDocs = await loadDocumentsFromDirectory(contentDirectory);
     const publishedDocs = await loadPublishedDocs();
     const preparing = allDocs.filter(
@@ -268,7 +281,7 @@ describe("conteúdo publicado", () => {
     const publicIndex = createSearchIndex(publishedDocs);
 
     expect(preparing).toEqual([]);
-    expect(publishedDocs).toHaveLength(9);
+    expect(publishedDocs).toHaveLength(14);
     expect(publicIndex.entries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -280,6 +293,11 @@ describe("conteúdo publicado", () => {
     );
     for (const slug of [
       "funcionalidades",
+      "funcionalidades/documentos/pastas",
+      "funcionalidades/documentos/adicionar-documentos",
+      "funcionalidades/documentos/filtros-e-metadados",
+      "funcionalidades/documentos/gerenciar-documentos",
+      "funcionalidades/documentos/logs-e-acoes",
       "funcionalidades/favoritos",
       "funcionalidades/workflows",
       "funcionalidades/relatorios",
@@ -333,6 +351,29 @@ describe("conteúdo publicado", () => {
       {
         label: "Documentos",
         href: "/docs/funcionalidades/documentos",
+        pageType: "hub",
+        children: [
+          {
+            label: "Organizar pastas e subpastas",
+            href: "/docs/funcionalidades/documentos/pastas",
+          },
+          {
+            label: "Adicionar documentos",
+            href: "/docs/funcionalidades/documentos/adicionar-documentos",
+          },
+          {
+            label: "Localizar, filtrar e consultar metadados",
+            href: "/docs/funcionalidades/documentos/filtros-e-metadados",
+          },
+          {
+            label: "Visualizar e gerenciar documentos",
+            href: "/docs/funcionalidades/documentos/gerenciar-documentos",
+          },
+          {
+            label: "Logs e ações",
+            href: "/docs/funcionalidades/documentos/logs-e-acoes",
+          },
+        ],
       },
       {
         label: "Favoritos",
@@ -354,10 +395,15 @@ describe("conteúdo publicado", () => {
       "o-que-e-o-godocs",
       "primeiro-acesso",
       "funcionalidades",
+      "funcionalidades/documentos/pastas",
       "funcionalidades/visao-geral",
+      "funcionalidades/documentos/adicionar-documentos",
       "funcionalidades/busca-inteligente",
       "funcionalidades/documentos",
+      "funcionalidades/documentos/filtros-e-metadados",
       "funcionalidades/favoritos",
+      "funcionalidades/documentos/gerenciar-documentos",
+      "funcionalidades/documentos/logs-e-acoes",
       "funcionalidades/workflows",
       "funcionalidades/relatorios",
     ]);
@@ -376,6 +422,18 @@ describe("conteúdo publicado", () => {
       previous: { slug: "funcionalidades" },
       next: { slug: "funcionalidades/busca-inteligente" },
     });
+    expect(getAdjacentDocs(docs, "funcionalidades/documentos")).toMatchObject({
+      next: { slug: "funcionalidades/documentos/pastas" },
+    });
+    expect(
+      getAdjacentDocs(docs, "funcionalidades/documentos/pastas"),
+    ).toMatchObject({
+      previous: { slug: "funcionalidades/documentos" },
+      next: { slug: "funcionalidades/documentos/adicionar-documentos" },
+    });
+    expect(
+      getAdjacentDocs(docs, "funcionalidades/documentos/logs-e-acoes").next,
+    ).toBeUndefined();
     expect(getAdjacentDocs(docs, "funcionalidades/relatorios")).toMatchObject({
       previous: { slug: "funcionalidades/workflows" },
     });
@@ -454,6 +512,39 @@ describe("conteúdo publicado", () => {
         },
       ]);
     }
+
+    for (const [slug, label] of [
+      ["funcionalidades/documentos/pastas", "Organizar pastas e subpastas"],
+      ["funcionalidades/documentos/adicionar-documentos", "Adicionar documentos"],
+      [
+        "funcionalidades/documentos/filtros-e-metadados",
+        "Localizar, filtrar e consultar metadados",
+      ],
+      [
+        "funcionalidades/documentos/gerenciar-documentos",
+        "Visualizar e gerenciar documentos",
+      ],
+      ["funcionalidades/documentos/logs-e-acoes", "Logs e ações"],
+    ] as const) {
+      const doc = docs.find((candidate) => candidate.slug === slug);
+
+      expect(doc && buildBreadcrumbs(doc, docs)).toEqual([
+        {
+          id: "section:funcionalidades",
+          label: "Funcionalidades",
+          href: "/docs/funcionalidades",
+        },
+        {
+          id: "path:funcionalidades/documentos",
+          label: "Documentos",
+          href: "/docs/funcionalidades/documentos",
+        },
+        {
+          id: `path:${slug}`,
+          label,
+        },
+      ]);
+    }
   });
 
   it.each([
@@ -467,13 +558,16 @@ describe("conteúdo publicado", () => {
     ["grupos de acesso", "funcionalidades/visao-geral"],
     ["busca inteligente", "funcionalidades/busca-inteligente"],
     ["IA semântica", "funcionalidades/busca-inteligente"],
-    ["filtros", "funcionalidades/busca-inteligente"],
+    ["filtros", "funcionalidades/documentos/filtros-e-metadados"],
     ["relevância", "funcionalidades/busca-inteligente"],
     ["autor", "funcionalidades/busca-inteligente"],
     ["proprietário", "funcionalidades/busca-inteligente"],
-    ["nova pasta", "funcionalidades/documentos"],
-    ["vincular a um grupo", "funcionalidades/documentos"],
-    ["logs da pasta", "funcionalidades/documentos"],
+    ["nova pasta", "funcionalidades/documentos/pastas"],
+    ["vincular a um grupo", "funcionalidades/documentos/pastas"],
+    ["adicionar documento", "funcionalidades/documentos/adicionar-documentos"],
+    ["metadados", "funcionalidades/documentos/filtros-e-metadados"],
+    ["logs da pasta", "funcionalidades/documentos/logs-e-acoes"],
+    ["visualizar documento", "funcionalidades/documentos/gerenciar-documentos"],
     ["favoritos", "funcionalidades/favoritos"],
     ["workflows", "funcionalidades/workflows"],
     ["relatórios", "funcionalidades/relatorios"],
@@ -490,10 +584,10 @@ describe("conteúdo publicado", () => {
     });
 
     expect(result.issues).toEqual([]);
-    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(9);
+    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(14);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "published"),
-    ).toHaveLength(9);
+    ).toHaveLength(14);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "draft"),
     ).toHaveLength(0);
@@ -506,6 +600,6 @@ describe("conteúdo publicado", () => {
       result.documents.filter(
         (doc) => doc.metadata.availability === "available",
       ),
-    ).toHaveLength(9);
+    ).toHaveLength(14);
   });
 });

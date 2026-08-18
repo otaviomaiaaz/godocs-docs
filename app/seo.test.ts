@@ -87,27 +87,43 @@ describe("SEO e indexação", () => {
       absoluteUrl("/docs/o-que-e-o-godocs"),
       absoluteUrl("/docs/primeiro-acesso"),
       absoluteUrl("/docs/funcionalidades"),
+      absoluteUrl("/docs/funcionalidades/documentos/pastas"),
       absoluteUrl("/docs/funcionalidades/visao-geral"),
+      absoluteUrl("/docs/funcionalidades/documentos/adicionar-documentos"),
       absoluteUrl("/docs/funcionalidades/busca-inteligente"),
       absoluteUrl("/docs/funcionalidades/documentos"),
+      absoluteUrl("/docs/funcionalidades/documentos/filtros-e-metadados"),
       absoluteUrl("/docs/funcionalidades/favoritos"),
+      absoluteUrl("/docs/funcionalidades/documentos/gerenciar-documentos"),
+      absoluteUrl("/docs/funcionalidades/documentos/logs-e-acoes"),
       absoluteUrl("/docs/funcionalidades/workflows"),
       absoluteUrl("/docs/funcionalidades/relatorios"),
     ]);
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
   });
 
-  it("gera estaticamente os nove documentos publicados", async () => {
+  it("gera estaticamente os quatorze documentos publicados", async () => {
     const params = await generateStaticParams();
 
     expect(params).toEqual([
       { slug: ["o-que-e-o-godocs"] },
       { slug: ["primeiro-acesso"] },
       { slug: ["funcionalidades"] },
+      { slug: ["funcionalidades", "documentos", "pastas"] },
       { slug: ["funcionalidades", "visao-geral"] },
+      {
+        slug: ["funcionalidades", "documentos", "adicionar-documentos"],
+      },
       { slug: ["funcionalidades", "busca-inteligente"] },
       { slug: ["funcionalidades", "documentos"] },
+      {
+        slug: ["funcionalidades", "documentos", "filtros-e-metadados"],
+      },
       { slug: ["funcionalidades", "favoritos"] },
+      {
+        slug: ["funcionalidades", "documentos", "gerenciar-documentos"],
+      },
+      { slug: ["funcionalidades", "documentos", "logs-e-acoes"] },
       { slug: ["funcionalidades", "workflows"] },
       { slug: ["funcionalidades", "relatorios"] },
     ]);

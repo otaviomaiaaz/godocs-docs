@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lote 1 implementado localmente e pronto para revisão; Lotes 2–9 pendentes
+> **Implementação:** Lotes 1 e 2 implementados localmente e prontos para revisão; Lotes 3–9 pendentes
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -60,7 +60,7 @@ Home → hub de domínio → página de tarefa ou referência → relacionados/p
 ### Documentos
 
 - URL preservada: `/docs/funcionalidades/documentos`.
-- A página atual será transformada progressivamente em hub de Documentos.
+- Implementado como hub editorial com cinco páginas-filhas aprovadas e compatibilidade dos 30 anchors históricos.
 
 ### Workflows
 
@@ -274,7 +274,7 @@ Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
 
 Lote 1 — Fundação — implementado localmente, pronto para revisão
-Lote 2 — Documentos
+Lote 2 — Documentos — implementado localmente, pronto para revisão
 Lote 3 — Workflows
 Lote 4 — Busca
 Lote 5 — Descoberta e consolidação

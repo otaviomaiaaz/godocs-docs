@@ -31,6 +31,32 @@ describe("compatibilidade de anchors", () => {
     expect(validateAnchorCompatibilityManifest(docs)).toEqual([]);
   });
 
+  it.each(
+    anchorCompatibilityManifest.filter(
+      (entry) => entry.from.slug === "funcionalidades/documentos",
+    ),
+  )("resolve o alias histórico de Documentos %#", (entry) => {
+    expect(
+      resolveCompatibleAnchor(entry.from.slug, entry.from.fragment),
+    ).toEqual(entry.to);
+  });
+
+  it("mantém os 49 aliases de Workflows na URL e fragmento atuais", () => {
+    const workflowAliases = anchorCompatibilityManifest.filter(
+      (entry) => entry.from.slug === "funcionalidades/workflows",
+    );
+
+    expect(workflowAliases).toHaveLength(49);
+    expect(workflowAliases.every((entry) => entry.from.slug === entry.to.slug)).toBe(
+      true,
+    );
+    expect(
+      workflowAliases.every(
+        (entry) => entry.from.fragment === entry.to.fragment,
+      ),
+    ).toBe(true);
+  });
+
   it("resolve alias entre páginas sem alterar o manifesto público", () => {
     const fixture: readonly AnchorCompatibilityEntry[] = [
       {
