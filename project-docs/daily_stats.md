@@ -2,12 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 14 de agosto de 2026, 09:44 (UTC−03:00)  
-> **Estado geral:** aplicação implementada e publicada; oito documentos permanecem versionados na `main`; a auditoria Impeccable foi formalmente encerrada, o baseline funcional está com 100/100 testes aprovados e o sidecar `.impeccable/design.json` foi sincronizado com o `DESIGN.md`.  
-> **Fase atual:** expansão da documentação funcional sobre um baseline de interface auditado e estabilizado.  
-> **Commit mais recente verificado:** `700998c` — `Sincroniza Impeccable com o Design System` — 14/08/2026.  
-> **Deploy do commit mais recente:** Vercel `success`, verificado pelo status associado ao commit `700998c`.  
-> **Próxima ação principal:** concluir a documentação de **Configurações** e manter os arquivos operacionais de contexto atualizados; a auditoria de design não possui bloqueio técnico pendente.
+> **Última atualização:** 18 de agosto de 2026 (UTC−03:00)<br>
+> **Estado geral:** baseline do redesign estabilizado localmente; os 8 documentos publicados permanecem inalterados, as referências estratégicas estão prontas para versionamento e a validação técnica está verde.<br>
+> **Fase atual:** preparação controlada para a Auditoria Estratégica de Redesign com Impeccable.<br>
+> **Commit mais recente verificado:** `07dfed7` — `Atualiza estado operacional do projeto` — 14/08/2026.<br>
+> **Deploy do commit mais recente:** não revalidado nesta estabilização; a última confirmação registrada é Vercel `success` para `700998c`.<br>
+> **Próxima ação principal:** revisar e versionar a estabilização; em seguida, iniciar uma tarefa separada de Auditoria Estratégica de Redesign com Impeccable.
 ---
 
 ## 1. Função deste arquivo
@@ -61,10 +61,10 @@ BRANCH
 main
 
 ÚLTIMO COMMIT
-700998c — Sincroniza Impeccable com o Design System
+07dfed7 — Atualiza estado operacional do projeto
 
 VERCEL
-success para 700998c
+não revalidado nesta estabilização
 
 DOCUMENTOS PUBLICADOS
 8
@@ -73,7 +73,7 @@ FRENTE EDITORIAL
 Configurações
 
 FRENTE DE DESIGN
-Auditoria Impeccable encerrada + baseline estabilizado + sidecar sincronizado
+baseline do redesign estabilizado; Auditoria Estratégica de Redesign pendente
 
 MEMÓRIA UNIVERSAL
 Memória.md (ainda não versionado em project-docs/ na main)
@@ -109,37 +109,30 @@ Estado verificado:
 ### Último commit verificado
 
 ```text
-700998c6ed655b6ba085b7220890af8e51fd92a2
-Sincroniza Impeccable com o Design System
+07dfed73b3eeb6275d73ad67f0cbdb80cb636112
+Atualiza estado operacional do projeto
 14/08/2026
 ```
 
-O commit altera somente:
+O commit atualiza apenas:
 
 ```text
-.impeccable/design.json
+project-docs/daily_stats.md
 ```
 
 ### Deploy
 
-O status associado ao commit `700998c` está confirmado como:
+O deploy associado a `07dfed7` não foi revalidado nesta estabilização. A última confirmação registrada permanece:
 
 ```text
-Vercel: success
+Vercel: success para 700998c
 ```
 
-Isso confirma que o Vercel processou o commit mais recente com sucesso.
+Não inferir o estado do deploy de um commit posterior sem nova verificação no provedor.
 
-### Estado local verificado ao final da sincronização
+### Estado local verificado na estabilização
 
-Após o commit e o push do sidecar:
-
-```text
-On branch main
-Your branch is up to date with 'origin/main'.
-
-nothing to commit, working tree clean
-```
+Não houve commit nem push nesta tarefa. O working tree contém apenas as alterações esperadas da estabilização: referências de redesign, fronteira do teste de identidade e este registro operacional.
 
 ---
 
@@ -341,7 +334,15 @@ Após o encerramento funcional, `.impeccable/design.json` foi sincronizado separ
 
 Não existe, no estado verificado, bloqueio técnico remanescente da auditoria.
 
-### 6.3 Governança de memória
+### 6.3 Estabilização do baseline do redesign
+
+Em 18/08/2026, a estrutura `project-docs/references/redesign/` foi normalizada e preparada para versionamento com benchmarks de Confluence, Mintlify (Stripe e AbacatePay) e Landing Page do GoDocs 4. O README estratégico foi preservado.
+
+O falso positivo de identidade foi corrigido ao restringir a validação à copy pública (`app/`, `components/`, `content/docs/`, `lib/site.ts` e `lib/social-image.tsx`), mantendo a documentação interna fora desse escopo. A suíte passou com **14 arquivos / 101 testes / 101 aprovados / 0 falhas**; conteúdo, lint, typecheck, build de 24 páginas e `git diff --check` também foram aprovados.
+
+O baseline editorial continua com 8 documentos publicados; as métricas que motivam a próxima auditoria permanecem Workflows ≈ 20 min e Documentos ≈ 11 min. O próximo marco é versionar esta estabilização e, depois, abrir uma Auditoria Estratégica de Redesign com Impeccable.
+
+### 6.4 Governança de memória
 
 Foi definida uma organização:
 
@@ -626,7 +627,7 @@ Após revisar este `daily_stats.md`, substituir a versão do repositório e cria
 
 ### 4. Tratar novas melhorias visuais como nova fase
 
-A auditoria Impeccable atual está encerrada.
+A próxima evolução visual deve ocorrer em uma tarefa separada de **Auditoria Estratégica de Redesign com Impeccable**, iniciada somente após a revisão e o versionamento desta estabilização.
 
 Não reabrir automaticamente os achados antigos. Qualquer nova evolução visual deve partir do baseline auditado e ser tratada como nova iniciativa, preservando:
 
@@ -668,6 +669,7 @@ Após cada marco material:
 | 14/08/2026 | `700998c` | `.impeccable/design.json` sincronizado com o Design System |
 | 14/08/2026 | Vercel | `success` confirmado para `700998c` |
 | 14/08/2026 | Git | `main` sincronizada com `origin/main` e working tree limpo após o push de `700998c` |
+| 18/08/2026 | Baseline do redesign | Referências normalizadas, falso positivo de identidade corrigido e validação técnica verde; pronto para revisão e versionamento |
 
 ---
 
@@ -727,4 +729,4 @@ Ao iniciar uma nova sessão:
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` está no commit `700998c` — **Sincroniza Impeccable com o Design System**, com status Vercel `success` confirmado. A coleção permanece com oito documentos publicados e **Configurações** continua como frente editorial registrada. A auditoria Impeccable foi formalmente encerrada após a correção do caso residual de `aria-current`, com baseline funcional de **100/100 testes aprovados**, build de 24 páginas e sem bloqueio técnico remanescente identificado. O `DESIGN.md` permanece como fonte visual canônica e `.impeccable/design.json` está sincronizado com ele. `project-docs/Memória.md` ainda não está versionado na `main`. O próximo passo principal é concluir Configurações e manter os arquivos de contexto operacional atualizados.
+**Estado ao encerrar esta atualização:** a branch `main` permanece no commit `07dfed7` — **Atualiza estado operacional do projeto** — sem commit ou push desta estabilização. A coleção permanece com 8 documentos publicados; Workflows e Documentos têm, respectivamente, cerca de 20 e 11 minutos de leitura. As referências de redesign estão preparadas para versionamento, o falso positivo da suíte foi removido pela delimitação conceitual entre copy pública e documentação interna, e a validação atual passou com **14 arquivos / 101 testes / 101 aprovados / 0 falhas**, conteúdo válido, lint e typecheck aprovados, build de 24 páginas e `git diff --check` aprovado. `DESIGN.md` e `.impeccable/design.json` permanecem intactos. Após revisar e versionar o diff, o próximo passo é uma Auditoria Estratégica de Redesign com Impeccable.

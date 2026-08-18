@@ -10,10 +10,13 @@ import { GET as getShareImage } from "@/app/share-image/[...slug]/route";
 
 const projectRoot = process.cwd();
 const excludedDirectories = new Set([".git", ".next", "node_modules"]);
+const publicCopyDirectories = ["app", "components", "content/docs"];
+const publicCopyFiles = ["lib/site.ts", "lib/social-image.tsx"];
 const searchableExtensions = new Set([
   ".css",
   ".json",
   ".md",
+  ".mdx",
   ".svg",
   ".ts",
   ".tsx",
@@ -212,7 +215,8 @@ async function findSearchableFiles(directory: string): Promise<string[]> {
           : findSearchableFiles(path.join(directory, entry.name));
       }
 
-      return searchableExtensions.has(path.extname(entry.name))
+      return searchableExtensions.has(path.extname(entry.name)) &&
+        !/\.(?:test|spec)\.[cm]?[jt]sx?$/.test(entry.name)
         ? [path.join(directory, entry.name)]
         : [];
     }),
@@ -221,9 +225,22 @@ async function findSearchableFiles(directory: string): Promise<string[]> {
   return nestedFiles.flat();
 }
 
+async function findPublicCopyFiles(): Promise<string[]> {
+  const directoryFiles = await Promise.all(
+    publicCopyDirectories.map((directory) =>
+      findSearchableFiles(path.join(projectRoot, directory)),
+    ),
+  );
+
+  return [
+    ...directoryFiles.flat(),
+    ...publicCopyFiles.map((file) => path.join(projectRoot, file)),
+  ];
+}
+
 describe("identidade e prevenção de regressões visuais", () => {
   it("não mantém a alegação institucional nem referências ao recorte defeituoso", async () => {
-    const files = await findSearchableFiles(projectRoot);
+    const files = await findPublicCopyFiles();
     const officialClaim = ["documentação", "oficial"].join(" ");
     const defectiveAsset = ["godocs", "logo.png"].join("-");
     const violations: string[] = [];
@@ -241,6 +258,34 @@ describe("identidade e prevenção de regressões visuais", () => {
     }
 
     expect(violations).toEqual([]);
+  });
+
+  it("restringe a proteção de identidade às superfícies de copy pública", async () => {
+    const files = await findPublicCopyFiles();
+    const relativeFiles = files.map((file) =>
+      path.relative(projectRoot, file).split(path.sep).join("/"),
+    );
+
+    expect(relativeFiles).toEqual(
+      expect.arrayContaining([
+        "app/layout.tsx",
+        "components/home-intro.tsx",
+        "content/docs/o-que-e-o-godocs.mdx",
+        "lib/site.ts",
+        "lib/social-image.tsx",
+      ]),
+    );
+    expect(
+      relativeFiles.some((file) => file.startsWith("project-docs")),
+    ).toBe(false);
+    expect(
+      relativeFiles.every(
+        (file) =>
+          publicCopyDirectories.some(
+            (directory) => file === directory || file.startsWith(`${directory}/`),
+          ) || publicCopyFiles.includes(file),
+      ),
+    ).toBe(true);
   });
 
   it("usa o raster oficial, preserva a mão e deriva apenas docs no tema claro", async () => {
