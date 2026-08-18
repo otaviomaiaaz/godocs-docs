@@ -58,6 +58,7 @@ describe("validação documental", () => {
   id: guias
   label: Guias
   description: Orientações publicadas.
+  entrySlug: guias
   order: 10`;
 
     await writeFile(
@@ -72,6 +73,7 @@ describe("validação documental", () => {
 title: Guias
 description: Página de entrada dos guias.
 slug: guias
+pageType: hub
 ${section}
 order: 1
 ---
@@ -91,6 +93,7 @@ title: Configuração detalhada
 navTitle: Configuração
 description: Orientações de configuração.
 slug: guias/configuracao
+pageType: task
 ${section}
 ancestors:
   - segment: guias
@@ -130,6 +133,7 @@ keywords:
 title: Destino
 description: Documento de destino.
 slug: destino
+pageType: reference
 order: 1
 ---
 
@@ -145,6 +149,7 @@ Texto.
 title: Links
 description: Documento com referências inválidas.
 slug: links
+pageType: reference
 order: 2
 ---
 
@@ -163,6 +168,7 @@ order: 2
       `---
 title: Sem descrição
 slug: frontmatter
+pageType: reference
 order: 3
 ---
 `,
@@ -174,6 +180,7 @@ order: 3
 title: H1 duplicado
 description: Documento inválido.
 slug: h1
+pageType: reference
 order: 4
 ---
 
@@ -187,6 +194,7 @@ order: 4
 title: Duplicado A
 description: Primeiro.
 slug: duplicado
+pageType: reference
 order: 5
 ---
 `,
@@ -198,6 +206,7 @@ order: 5
 title: Duplicado B
 description: Segundo.
 slug: duplicado
+pageType: reference
 order: 6
 ---
 `,
@@ -225,5 +234,256 @@ order: 6
         (entry) => entry.filePath.length > 0 && entry.message.length > 0,
       ),
     ).toBe(true);
+  });
+
+  it("aceita fragments H2, H3, H4 e aliases sem mascarar fragment inexistente", async () => {
+    const workspace = await createWorkspace();
+
+    await writeDocument(
+      workspace.contentDirectory,
+      "destino.mdx",
+      `---
+title: Destino
+description: Documento de destino.
+slug: destino
+pageType: reference
+order: 1
+---
+
+## Nível dois
+
+### Nível três
+
+#### Nível quatro
+`,
+    );
+    await writeDocument(
+      workspace.contentDirectory,
+      "origem.mdx",
+      `---
+title: Origem
+description: Documento com fragments.
+slug: origem
+pageType: reference
+order: 2
+---
+
+[H2](/docs/destino#nível-dois)
+[H3](/docs/destino#nível-três)
+[H4](/docs/destino#nível-quatro)
+[Alias](/docs/destino#nome-antigo)
+[Inválido](/docs/destino#nao-existe)
+`,
+    );
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      compatibilityManifest: [
+        {
+          from: { slug: "destino", fragment: "nome-antigo" },
+          to: { slug: "destino", fragment: "nível-quatro" },
+        },
+      ],
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+    const fragmentIssues = result.issues.filter(
+      (entry) => entry.category === "fragment",
+    );
+
+    expect(fragmentIssues).toHaveLength(1);
+    expect(fragmentIssues[0]?.message).toContain("#nao-existe");
+  });
+
+  it("rejeita ancestor sem página real para manter breadcrumbs navegáveis", async () => {
+    const workspace = await createWorkspace();
+
+    await writeDocument(
+      workspace.contentDirectory,
+      "filha.mdx",
+      `---
+title: Filha
+description: Página filha.
+slug: guias/filha
+pageType: task
+section:
+  id: guias
+  label: Guias
+  description: Guias publicados.
+  entrySlug: guias/filha
+  order: 1
+ancestors:
+  - segment: guias
+    label: Guias
+    order: 1
+order: 1
+---
+
+## Conteúdo
+`,
+    );
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "taxonomy",
+          message: expect.stringContaining(
+            'ancestor "guias" não corresponde a uma página real',
+          ),
+        }),
+      ]),
+    );
+  });
+
+  it("rejeita entrySlug conflitante entre documentos da mesma seção", async () => {
+    const workspace = await createWorkspace();
+
+    await writeDocument(
+      workspace.contentDirectory,
+      "guias.mdx",
+      `---
+title: Guias
+description: Página de entrada.
+slug: guias
+pageType: hub
+section:
+  id: guias
+  label: Guias
+  description: Orientações publicadas.
+  entrySlug: guias
+  order: 10
+order: 1
+---
+
+## Início
+`,
+    );
+    await writeDocument(
+      workspace.contentDirectory,
+      "outra.mdx",
+      `---
+title: Outra página
+description: Documento da mesma seção.
+slug: guias/outra
+pageType: task
+section:
+  id: guias
+  label: Guias
+  description: Orientações publicadas.
+  entrySlug: guias/outra
+  order: 10
+ancestors:
+  - segment: guias
+    label: Guias
+    order: 1
+order: 99
+---
+
+## Conteúdo
+`,
+    );
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "taxonomy",
+          message: expect.stringContaining(
+            'section "guias" diverge',
+          ),
+        }),
+      ]),
+    );
+  });
+
+  it("rejeita entrySlug que não aponta para documento existente", async () => {
+    const workspace = await createWorkspace();
+
+    await writeDocument(
+      workspace.contentDirectory,
+      "guias.mdx",
+      `---
+title: Guias
+description: Página de entrada.
+slug: guias
+pageType: hub
+section:
+  id: guias
+  label: Guias
+  description: Orientações publicadas.
+  entrySlug: destino-ausente
+  order: 10
+order: 1
+---
+
+## Início
+`,
+    );
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "taxonomy",
+          message: expect.stringContaining(
+            'section "guias" aponta para destino inexistente "destino-ausente"',
+          ),
+        }),
+      ]),
+    );
+  });
+
+  it("rejeita entrySlug que aponta para documento não publicado", async () => {
+    const workspace = await createWorkspace();
+
+    await writeDocument(
+      workspace.contentDirectory,
+      "guias.mdx",
+      `---
+title: Guias
+description: Página de entrada.
+slug: guias
+pageType: hub
+section:
+  id: guias
+  label: Guias
+  description: Orientações publicadas.
+  entrySlug: guias
+  order: 10
+order: 1
+status: draft
+---
+
+## Início
+`,
+    );
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "taxonomy",
+          message: expect.stringContaining(
+            'section "guias" aponta para documento não publicado: "guias"',
+          ),
+        }),
+      ]),
+    );
   });
 });

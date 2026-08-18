@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import { validateContentDirectory } from "../lib/docs/validation";
+import { anchorCompatibilityManifest } from "../lib/docs/compatibility";
 
 const workspaceDirectory = process.cwd();
 const defaultContentDirectory =
@@ -13,6 +14,10 @@ const contentDirectory = path.resolve(
 
 async function main() {
   const result = await validateContentDirectory(contentDirectory, {
+    compatibilityManifest:
+      contentDirectory === path.resolve(defaultContentDirectory)
+        ? anchorCompatibilityManifest
+        : [],
     workspaceDirectory,
   });
 

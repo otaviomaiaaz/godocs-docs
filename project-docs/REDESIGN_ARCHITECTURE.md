@@ -2,8 +2,8 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** ainda não concluída  
-> **Commit-base verificado:** `0e86d92` — `Estabiliza baseline do redesign`  
+> **Implementação:** Lote 1 implementado localmente e pronto para revisão; Lotes 2–9 pendentes
+> **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
 ## 1. Finalidade e escopo
@@ -119,7 +119,7 @@ Esses slugs são contratos públicos futuros e devem ser preservados depois da c
 
 ## 5. `pageType` aprovado
 
-O Lote 1 introduzirá explicitamente:
+O Lote 1 introduziu explicitamente no modelo documental:
 
 ```yaml
 pageType: hub
@@ -273,7 +273,7 @@ Regra principal:
 Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
 
-Lote 1 — Fundação
+Lote 1 — Fundação — implementado localmente, pronto para revisão
 Lote 2 — Documentos
 Lote 3 — Workflows
 Lote 4 — Busca

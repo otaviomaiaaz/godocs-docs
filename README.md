@@ -24,11 +24,13 @@ Todo documento precisa começar com este contrato de frontmatter:
 title: Título da página
 description: Descrição curta da página.
 slug: guias/caminho-da-pagina
+pageType: task
 navTitle: Título curto
 section:
   id: guias
   label: Guias
   description: Orientações publicadas.
+  entrySlug: guias
   order: 10
 ancestors:
   - segment: guias
@@ -47,8 +49,9 @@ related:
 ---
 ```
 
-- `title`, `description`, `slug` e `order` são obrigatórios.
-- `section` agrupa páginas e define `id`, label visível, descrição e ordem sem derivar texto do slug.
+- `title`, `description`, `slug`, `pageType` e `order` são obrigatórios.
+- `pageType` aceita somente `hub`, `task` ou `reference` e registra a função editorial sem impor estilo visual.
+- `section` agrupa páginas e define `id`, label visível, descrição, `entrySlug` explícito e ordem sem derivar texto do slug ou do primeiro `order`.
 - `navTitle` é opcional e fornece um título curto para navegação; o artigo continua usando `title`.
 - `ancestors` descreve cada nível anterior de um slug aninhado com `segment`, label e ordem explícitos. A quantidade e os segmentos devem corresponder ao slug.
 - `keywords` é opcional e melhora a relevância da busca.
@@ -88,10 +91,11 @@ Execute a verificação completa antes de publicar alterações:
 ```bash
 pnpm audit:prod
 pnpm content:validate
+pnpm search:benchmark
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
 ```
 
-`content:validate` compila MD/MDX e verifica frontmatter, taxonomia, componentes permitidos, links internos, fragmentos e assets locais. O build deve continuar funcionando quando `content/docs/` contém apenas o arquivo `.gitkeep`.
+`content:validate` compila MD/MDX e verifica frontmatter, taxonomia, componentes permitidos, links internos, fragments H2/H3/H4, aliases de compatibilidade e assets locais. `search:benchmark` registra de forma determinística documentos, entradas de página/seção, payload bruto/gzip, limite, snippet e as consultas de referência. O build deve continuar funcionando quando `content/docs/` contém apenas o arquivo `.gitkeep`.

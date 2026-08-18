@@ -19,7 +19,11 @@ async function loadHomeData() {
     (doc) => doc.metadata.status === "published",
   );
   const features = publishedDocs
-    .filter((doc) => doc.metadata.section?.id === "funcionalidades")
+    .filter(
+      (doc) =>
+        doc.metadata.section?.id === "funcionalidades" &&
+        doc.metadata.pageType !== "hub",
+    )
     .map<HomeFeature>((doc) => ({
       availability: doc.metadata.availability,
       description:

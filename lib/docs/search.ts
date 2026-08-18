@@ -1,5 +1,8 @@
 import type { DocRecord } from "@/lib/docs/schema";
 
+export const SEARCH_RESULT_LIMIT = 12;
+export const SEARCH_SNIPPET_LENGTH = 220;
+
 export type SearchIndexEntry = {
   kind: "page" | "section";
   title: string;
@@ -95,7 +98,8 @@ export function createSearchIndex(docs: DocRecord[]): SearchIndex {
           kind: "section",
           title: section.title,
           description:
-            section.text.slice(0, 220) || doc.metadata.description,
+            section.text.slice(0, SEARCH_SNIPPET_LENGTH) ||
+            doc.metadata.description,
           href: `${doc.href}#${section.id}`,
           section: doc.metadata.section?.label,
           pageTitle: doc.metadata.title,

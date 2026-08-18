@@ -36,6 +36,7 @@ describe("fonte documental", () => {
 title: Página válida
 description: Descrição válida.
 slug: pagina-valida
+pageType: reference
 order: 10
 keywords:
   - consulta
@@ -51,6 +52,7 @@ Conteúdo pesquisável.
     const docs = await loadDocumentsFromDirectory(directory);
     expect(docs).toHaveLength(1);
     expect(docs[0]?.href).toBe("/docs/pagina-valida");
+    expect(docs[0]?.metadata.pageType).toBe("reference");
     expect(docs[0]?.headings[0]?.id).toBe("leitura");
   });
 
@@ -60,6 +62,7 @@ Conteúdo pesquisável.
 title: Página
 description: Descrição válida.
 slug: mesmo-slug
+pageType: reference
 order: 1
 ---
 
@@ -83,6 +86,7 @@ Texto.
       `---
 title: Sem descrição
 slug: /slug-invalido/
+pageType: desconhecido
 order: primeiro
 ---
 `,

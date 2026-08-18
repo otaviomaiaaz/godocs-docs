@@ -30,6 +30,7 @@ import {
   isSearchIndex,
   normalizeSearchText,
   searchDocuments,
+  SEARCH_RESULT_LIMIT,
   type SearchIndex,
   type SearchResult,
 } from "@/lib/docs/search";
@@ -181,7 +182,7 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
   const requestRef = useRef<AbortController | null>(null);
 
   const rankedResults = useMemo(
-    () => (index ? searchDocuments(index, query, 12) : []),
+    () => (index ? searchDocuments(index, query, SEARCH_RESULT_LIMIT) : []),
     [index, query],
   );
   const results = useMemo(

@@ -11,11 +11,21 @@ export const docSectionSchema = z.object({
     .regex(slugSegmentPattern, "section.id deve usar minúsculas, números e hífens"),
   label: z.string().trim().min(1, "section.label é obrigatório"),
   description: z.string().trim().min(1, "section.description é obrigatória"),
+  entrySlug: z
+    .string()
+    .trim()
+    .min(1, "section.entrySlug é obrigatório")
+    .regex(
+      slugPattern,
+      "section.entrySlug deve ser um slug válido, sem barras nas extremidades",
+    ),
   order: z
     .number()
     .int("section.order deve ser inteiro")
     .nonnegative("section.order deve ser positivo"),
 });
+
+export const docPageTypeSchema = z.enum(["hub", "task", "reference"]);
 
 export const docAncestorSchema = z.object({
   segment: z
@@ -50,9 +60,16 @@ export const docFrontmatterSchema = z
         slugPattern,
         "slug deve usar segmentos minúsculos, números e hífens, sem barras nas extremidades",
       ),
+    pageType: docPageTypeSchema,
     section: docSectionSchema.optional(),
     navTitle: z.string().trim().min(1, "navTitle não pode ser vazio").optional(),
-    ancestors: z.array(docAncestorSchema).default([]),
+    ancestors: z
+      .array(docAncestorSchema)
+      .max(
+        2,
+        "ancestors aceita no máximo dois níveis anteriores neste ciclo",
+      )
+      .default([]),
     order: z
       .number()
       .int("order deve ser inteiro")
@@ -111,6 +128,7 @@ export const docFrontmatterSchema = z
 export type DocFrontmatter = z.infer<typeof docFrontmatterSchema>;
 export type DocSection = z.infer<typeof docSectionSchema>;
 export type DocAncestor = z.infer<typeof docAncestorSchema>;
+export type DocPageType = z.infer<typeof docPageTypeSchema>;
 
 export type DocHeading = {
   depth: 2 | 3;

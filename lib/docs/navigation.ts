@@ -1,10 +1,11 @@
-import type { DocRecord } from "@/lib/docs/schema";
+import type { DocPageType, DocRecord } from "@/lib/docs/schema";
 
 export type DocNavigationItem = {
   id: string;
   label: string;
   description?: string;
   href?: string;
+  pageType?: DocPageType;
   children: DocNavigationItem[];
 };
 
@@ -13,7 +14,9 @@ export type DocNavigationGroup = {
   title?: string;
   description?: string;
   order: number;
+  entrySlug?: string;
   entryHref?: string;
+  entryPageType?: DocPageType;
   items: DocNavigationItem[];
 };
 
@@ -28,6 +31,7 @@ type MutableNavigationItem = {
   label: string;
   description?: string;
   href?: string;
+  pageType?: DocPageType;
   order: number;
   children: Map<string, MutableNavigationItem>;
 };
@@ -36,8 +40,7 @@ type MutableNavigationGroup = {
   title?: string;
   description?: string;
   order: number;
-  entryHref?: string;
-  entryOrder: number;
+  entrySlug?: string;
   items: Map<string, MutableNavigationItem>;
 };
 
@@ -47,6 +50,7 @@ function finalizeItem(item: MutableNavigationItem): DocNavigationItem {
     label: item.label,
     description: item.description,
     href: item.href,
+    pageType: item.pageType,
     children: Array.from(item.children.values())
       .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label, "pt-BR"))
       .map(finalizeItem),
@@ -55,6 +59,7 @@ function finalizeItem(item: MutableNavigationItem): DocNavigationItem {
 
 export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
   const groups = new Map<string, MutableNavigationGroup>();
+  const docsBySlug = new Map(docs.map((doc) => [doc.slug, doc]));
 
   docs.forEach((doc) => {
     const section = doc.metadata.section;
@@ -63,26 +68,45 @@ export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
       title: section?.label,
       description: section?.description,
       order: section?.order ?? Number.MAX_SAFE_INTEGER,
-      entryOrder: Number.MAX_SAFE_INTEGER,
+      entrySlug: section?.entrySlug,
       items: new Map<string, MutableNavigationItem>(),
     };
 
-    if (doc.metadata.order < group.entryOrder) {
-      group.entryHref = doc.href;
-      group.entryOrder = doc.metadata.order;
+    if (section && group.entrySlug !== section.entrySlug) {
+      throw new Error(
+        `Taxonomia inconsistente em ${doc.filePath}: section.entrySlug diverge dentro de "${section.id}"`,
+      );
     }
 
     groups.set(groupId, group);
 
+    if (
+      section &&
+      doc.slug === section.entrySlug &&
+      doc.metadata.pageType === "hub"
+    ) {
+      return;
+    }
+
     let level = group.items;
-    const collapsesSectionPrefix =
+    const sectionEntry = section ? docsBySlug.get(section.entrySlug) : undefined;
+    const entrySegments = sectionEntry?.segments ?? [];
+    const collapsibleHubPrefix =
+      sectionEntry?.metadata.pageType === "hub" &&
+      entrySegments.every((segment, index) => doc.segments[index] === segment);
+    const collapsesLegacySectionPrefix =
       section !== undefined &&
       doc.segments[0] === section.id &&
       doc.metadata.ancestors[0]?.label.toLocaleLowerCase("pt-BR") ===
         section.label.toLocaleLowerCase("pt-BR");
+    const collapsedPrefixLength = collapsibleHubPrefix
+      ? entrySegments.length
+      : collapsesLegacySectionPrefix
+        ? 1
+        : 0;
 
     doc.segments.forEach((segment, index) => {
-      if (collapsesSectionPrefix && index === 0) {
+      if (index < collapsedPrefixLength) {
         return;
       }
 
@@ -114,6 +138,7 @@ export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
         current.description =
           doc.metadata.cardDescription ?? doc.metadata.description;
         current.href = doc.href;
+        current.pageType = doc.metadata.pageType;
       }
 
       level.set(segment, current);
@@ -127,19 +152,33 @@ export function buildNavigation(docs: DocRecord[]): DocNavigationGroup[] {
         a.order - b.order ||
         (a.title ?? aId).localeCompare(b.title ?? bId, "pt-BR"),
     )
-    .map(([id, group]) => ({
-      id,
-      title: group.title,
-      description: group.description,
-      order: group.order,
-      entryHref: group.entryHref,
-      items: Array.from(group.items.values())
-        .sort(
-          (a, b) =>
-            a.order - b.order || a.label.localeCompare(b.label, "pt-BR"),
-        )
-        .map(finalizeItem),
-    }));
+    .map(([id, group]) => {
+      const entry = group.entrySlug
+        ? docsBySlug.get(group.entrySlug)
+        : undefined;
+
+      if (group.entrySlug && !entry) {
+        throw new Error(
+          `Taxonomia incompleta: destino explícito "${group.entrySlug}" da seção "${id}" não foi publicado`,
+        );
+      }
+
+      return {
+        id,
+        title: group.title,
+        description: group.description,
+        order: group.order,
+        entrySlug: group.entrySlug,
+        entryHref: entry?.href,
+        entryPageType: entry?.metadata.pageType,
+        items: Array.from(group.items.values())
+          .sort(
+            (a, b) =>
+              a.order - b.order || a.label.localeCompare(b.label, "pt-BR"),
+          )
+          .map(finalizeItem),
+      };
+    });
 }
 
 export function buildBreadcrumbs(
@@ -148,58 +187,90 @@ export function buildBreadcrumbs(
 ): DocBreadcrumb[] {
   const breadcrumbs: DocBreadcrumb[] = [];
   const section = doc.metadata.section;
+  const docsBySlug = new Map(docs.map((candidate) => [candidate.slug, candidate]));
+  const sectionEntry = section ? docsBySlug.get(section.entrySlug) : undefined;
 
-  if (section) {
-    const entry = docs.find((candidate) => candidate.metadata.section?.id === section.id);
+  if (section && sectionEntry?.metadata.pageType === "hub") {
     breadcrumbs.push({
       id: `section:${section.id}`,
       label: section.label,
-      href: entry?.slug === doc.slug ? undefined : entry?.href,
+      href: sectionEntry.slug === doc.slug ? undefined : sectionEntry.href,
     });
   }
 
-  doc.segments.forEach((segment, index) => {
-    const isDocument = index === doc.segments.length - 1;
+  doc.metadata.ancestors.forEach((ancestor, index) => {
     const slug = doc.segments.slice(0, index + 1).join("/");
-    const ancestorDoc = docs.find((candidate) => candidate.slug === slug);
-    const label = isDocument
-      ? doc.metadata.title
-      : doc.metadata.ancestors[index]?.label;
-
-    if (!label) {
-      return;
-    }
-
-    if (
-      !isDocument &&
-      breadcrumbs.at(-1)?.label.toLocaleLowerCase("pt-BR") ===
-        label.toLocaleLowerCase("pt-BR")
-    ) {
-      return;
-    }
-
+    if (slug === sectionEntry?.slug) return;
+    const ancestorDoc = docsBySlug.get(slug);
     breadcrumbs.push({
-      id: `path:${slug || segment}`,
-      label,
-      href: isDocument ? undefined : ancestorDoc?.href,
+      id: `path:${slug}`,
+      label: ancestor.label,
+      href: ancestorDoc?.href,
     });
   });
 
+  if (sectionEntry?.slug !== doc.slug) {
+    breadcrumbs.push({
+      id: `path:${doc.slug}`,
+      label: doc.metadata.title,
+    });
+  }
+
   return breadcrumbs;
+}
+
+function flattenNavigationItem(item: DocNavigationItem): string[] {
+  return [
+    ...(item.href ? [item.href.slice("/docs/".length)] : []),
+    ...item.children.flatMap(flattenNavigationItem),
+  ];
+}
+
+function getPaginationDomains(
+  docs: DocRecord[],
+): string[][] {
+  const domains: string[][] = [];
+
+  for (const group of buildNavigation(docs)) {
+    let siblingDomain: string[] = [];
+
+    if (group.entryPageType === "hub" && group.entrySlug) {
+      siblingDomain.push(group.entrySlug);
+    }
+
+    for (const item of group.items) {
+      if (item.children.length > 0) {
+        if (siblingDomain.length > 0) domains.push(siblingDomain);
+        domains.push(flattenNavigationItem(item));
+        siblingDomain = [];
+      } else {
+        siblingDomain.push(...flattenNavigationItem(item));
+      }
+    }
+
+    if (siblingDomain.length > 0) domains.push(siblingDomain);
+  }
+
+  return domains;
 }
 
 export function getAdjacentDocs(
   docs: DocRecord[],
   slug: string,
 ): { previous?: DocRecord; next?: DocRecord } {
-  const index = docs.findIndex((doc) => doc.slug === slug);
+  const domain = getPaginationDomains(docs).find((candidate) =>
+    candidate.includes(slug),
+  );
+  const index = domain?.indexOf(slug) ?? -1;
 
-  if (index < 0) {
+  if (!domain || index < 0) {
     return {};
   }
 
+  const docsBySlug = new Map(docs.map((doc) => [doc.slug, doc]));
+
   return {
-    previous: docs[index - 1],
-    next: docs[index + 1],
+    previous: docsBySlug.get(domain[index - 1] ?? ""),
+    next: docsBySlug.get(domain[index + 1] ?? ""),
   };
 }

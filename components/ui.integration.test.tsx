@@ -415,6 +415,8 @@ describe("fluxos interativos", () => {
                 {
                   id: "funcionalidades",
                   label: "Funcionalidades",
+                  href: "/docs/funcionalidades",
+                  pageType: "hub",
                   children: [
                     {
                       id: "funcionalidades/documentos",
@@ -434,6 +436,10 @@ describe("fluxos interativos", () => {
     const expand = screen.getByRole("button", {
       name: "Expandir Funcionalidades",
     });
+    const hubLink = screen.getByRole("link", { name: "Funcionalidades" });
+    expect(hubLink.getAttribute("href")).toBe("/docs/funcionalidades");
+    expect(hubLink).not.toBe(expand);
+    expect(expand.getAttribute("aria-expanded")).toBe("false");
     expand.focus();
     expect(document.activeElement).toBe(expand);
 
@@ -446,6 +452,48 @@ describe("fluxos interativos", () => {
     await user.keyboard(" ");
     expect(expand.getAttribute("aria-expanded")).toBe("false");
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+  });
+
+  it("torna o hub explícito da seção navegável e marca a página atual", () => {
+    pathname.value = "/docs/funcionalidades";
+
+    renderInSiteShell(
+      <nav aria-label="Navegação da documentação">
+        <NavigationTree
+          groups={[
+            {
+              id: "funcionalidades",
+              title: "Funcionalidades",
+              description: "Funcionalidades publicadas.",
+              order: 1,
+              entrySlug: "funcionalidades",
+              entryHref: "/docs/funcionalidades",
+              entryPageType: "hub",
+              items: [
+                {
+                  id: "funcionalidades/visao-geral",
+                  label: "Visão Geral",
+                  href: "/docs/funcionalidades/visao-geral",
+                  pageType: "reference",
+                  children: [],
+                },
+              ],
+            },
+          ]}
+        />
+      </nav>,
+    );
+
+    expect(
+      screen
+        .getByRole("link", { name: "Funcionalidades" })
+        .getAttribute("aria-current"),
+    ).toBe("page");
+    expect(
+      screen.getByRole("link", { name: "Visão Geral" }).hasAttribute(
+        "aria-current",
+      ),
+    ).toBe(false);
   });
 
   it("mantém o drawer modal, fecha por teclado e não introduz violações axe", async () => {

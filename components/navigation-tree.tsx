@@ -98,9 +98,23 @@ export function NavigationTree({ groups, onNavigate }: NavigationTreeProps) {
         return (
           <div className="navigation-tree__group" key={group.id}>
             {group.title ? (
-              <div className="navigation-tree__group-title" id={titleId}>
-                {group.title}
-              </div>
+              group.entryHref && group.entryPageType === "hub" ? (
+                <Link
+                  aria-current={
+                    group.entryHref === pathname ? "page" : undefined
+                  }
+                  className="navigation-tree__group-title navigation-tree__group-title--link"
+                  href={group.entryHref}
+                  id={titleId}
+                  onClick={onNavigate}
+                >
+                  {group.title}
+                </Link>
+              ) : (
+                <div className="navigation-tree__group-title" id={titleId}>
+                  {group.title}
+                </div>
+              )
             ) : null}
             <ul aria-labelledby={titleId} className="navigation-tree__list">
               {group.items.map((item) => (

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Breadcrumbs } from "@/components/docs/breadcrumbs";
+import { AnchorCompatibility } from "@/components/docs/anchor-compatibility";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { Pagination } from "@/components/docs/pagination";
 import { TableOfContents } from "@/components/docs/table-of-contents";
@@ -35,6 +36,7 @@ export function ArticleShell({
 
   return (
     <main className="article-page" id="main-content">
+      <AnchorCompatibility slug={doc.slug} />
       <div
         className="article-layout"
         data-has-sidebar={navigation.length > 0}

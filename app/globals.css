@@ -872,10 +872,34 @@ body:has(dialog[open]) {
     background-color var(--duration-fast) var(--ease);
 }
 
+.navigation-tree__group-title--link {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
+}
+
+.navigation-tree__group-title--link:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.navigation-tree__group-title--link[aria-current="page"] {
+  background: color-mix(in srgb, var(--accent-subtle) 64%, transparent);
+  color: var(--accent-text);
+}
+
 .drawer .navigation-tree__link {
   display: flex;
   min-height: 44px;
   align-items: center;
+}
+
+.drawer .navigation-tree__group-title--link {
+  min-height: 44px;
 }
 
 .navigation-tree__link:hover {

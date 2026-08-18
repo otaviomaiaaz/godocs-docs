@@ -3,11 +3,11 @@
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
 > **Última atualização:** 18 de agosto de 2026 (UTC−03:00)<br>
-> **Estado geral:** Auditoria Estratégica concluída; o Lote 0 foi aprovado e sua arquitetura-alvo está consolidada para implementação progressiva. Os 8 documentos publicados permanecem inalterados.<br>
-> **Fase atual:** preparação para o Lote 1 — Fundação da Nova Arquitetura.<br>
-> **Commit mais recente verificado:** `0e86d92` — `Estabiliza baseline do redesign` — 18/08/2026.<br>
-> **Deploy do commit mais recente:** não revalidado nesta estabilização; a última confirmação registrada é Vercel `success` para `700998c`.<br>
-> **Próxima ação principal:** revisar e versionar o Lote 0.1; em seguida, iniciar o Lote 1 — Fundação da Nova Arquitetura.
+> **Estado geral:** Lote 1 — Fundação da Nova Arquitetura implementado localmente e validado; pronto para revisão, sem commit ou push. A coleção possui 9 documentos, incluindo o novo hub de Funcionalidades, e os 8 artigos anteriores preservam o corpo editorial.<br>
+> **Fase atual:** Lote 1 pronto para revisão; Lotes 2 e 3 ainda não iniciados.<br>
+> **Commit mais recente verificado:** `587069f` — `Contrato da nova arquitetura` — 18/08/2026.<br>
+> **Deploy do commit mais recente:** não revalidado nesta tarefa; a última confirmação registrada é Vercel `success` para `700998c`.<br>
+> **Próxima ação principal:** revisar e versionar o Lote 1; somente depois iniciar o Lote 2 com solicitação própria.
 ---
 
 ## 1. Função deste arquivo
@@ -61,19 +61,19 @@ BRANCH
 main
 
 ÚLTIMO COMMIT
-0e86d92 — Estabiliza baseline do redesign
+587069f — Contrato da nova arquitetura
 
 VERCEL
 não revalidado nesta estabilização
 
 DOCUMENTOS PUBLICADOS
-8
+9
 
 FRENTE EDITORIAL
 Configurações
 
 FRENTE DE DESIGN E ARQUITETURA
-Auditoria Estratégica concluída; contrato aprovado em REDESIGN_ARCHITECTURE.md; Lote 1 pendente
+Lote 1 implementado e validado localmente; Lotes 2 e 3 não iniciados
 
 MEMÓRIA UNIVERSAL
 Memória.md (ainda não versionado em project-docs/ na main)
@@ -241,7 +241,7 @@ Além disso, a auditoria Impeccable que gerou os lotes de correção e fechament
 
 ## 5. Conteúdo publicado
 
-Existem **8 documentos MDX** na coleção atual.
+Existem **9 documentos MDX** na coleção atual.
 
 ### Comece por aqui
 
@@ -253,6 +253,7 @@ content/docs/primeiro-acesso.mdx
 ### Funcionalidades
 
 ```text
+content/docs/funcionalidades/index.mdx
 content/docs/funcionalidades/visao-geral.mdx
 content/docs/funcionalidades/documentos.mdx
 content/docs/funcionalidades/favoritos.mdx
@@ -267,6 +268,7 @@ content/docs/funcionalidades/relatorios.mdx
 |---|---|
 | O que é o GoDocs? | Publicado |
 | Primeiro Acesso | Publicado |
+| Funcionalidades | Publicado — hub explícito |
 | Visão Geral | Publicado |
 | Documentos | Publicado |
 | Favoritos | Publicado |
@@ -338,11 +340,29 @@ Não existe, no estado verificado, bloqueio técnico remanescente da auditoria.
 
 A Auditoria Estratégica foi concluída. O Lote 0 foi aprovado e consolidado em `project-docs/REDESIGN_ARCHITECTURE.md`, que registra a arquitetura-alvo, hubs, slugs públicos futuros, compatibilidade, `pageType`, paginação, guardrails e roadmap.
 
-Os 8 documentos publicados permanecem inalterados. Documentos e Workflows continuam, respectivamente, com aproximadamente 11 e 20 minutos de leitura; a decomposição ainda não foi implementada. A decisão sobre quantidade de resultados da busca em mobile e desktop permanece deferida para o Lote 4.
+No baseline do contrato, os 8 documentos publicados permaneciam inalterados. Documentos e Workflows continuavam, respectivamente, com aproximadamente 11 e 20 minutos de leitura; a decomposição ainda não havia sido implementada. A decisão sobre quantidade de resultados da busca em mobile e desktop permanece deferida para o Lote 4.
 
-Próximo passo: Lote 1 — Fundação da Nova Arquitetura.
+O passo seguinte desse baseline foi o Lote 1 — Fundação da Nova Arquitetura.
 
-### 6.4 Governança de memória
+### 6.4 Lote 1 — Fundação da Nova Arquitetura
+
+O Lote 1 foi implementado localmente sobre `587069f`, sem commit ou push. A fundação agora inclui `pageType` explícito, destino de seção por `entrySlug`, hub `/docs/funcionalidades`, árvore preparada para hubs com filhos, breadcrumbs por ancestrais reais, paginação por domínio, manifesto tipado dos 79 anchors atuais, fragments H2/H3/H4 + aliases e baseline determinístico da busca.
+
+Documentos e Workflows não foram decompostos. Seus corpos editoriais e 79 anchors permanecem nas URLs atuais. A home continua mostrando os seis cards de funcionalidades; o novo hub entra em rota, canonical, sitemap, imagem social e busca sem antecipar o redesign visual.
+
+Validação registrada neste lote:
+
+```text
+content:validate: 9 documentos válidos
+lint: 0 erros do produto; 151 warnings preexistentes em .agents/skills/impeccable
+typecheck: aprovado com --incremental false
+testes: 18 arquivos / 127 testes aprovados / 0 falhas
+build: aprovado / 26 páginas estáticas
+busca: 9 documentos / 134 entradas / 271.847 bytes bruto / 36.557 bytes gzip
+visual: 320, 390, 767, 1023, 1279 e 1440; light/dark; sem overflow ou console errors
+```
+
+### 6.5 Governança de memória
 
 Foi definida uma organização:
 
@@ -603,9 +623,9 @@ A versão pública só muda depois da sincronização com o repositório e do de
 
 ## 12. Próximas ações recomendadas
 
-### 1. Iniciar o Lote 1 — Fundação da Nova Arquitetura
+### 1. Revisar e versionar o Lote 1 — Fundação da Nova Arquitetura
 
-Implementar apenas a fundação aprovada em `project-docs/REDESIGN_ARCHITECTURE.md`: hubs explícitos, `pageType`, compatibilidade, navegação estrutural, breadcrumbs e paginação hierárquica. Não antecipar a decomposição editorial dos lotes seguintes.
+Revisar o diff local e, após aprovação, criar commit e publicar separadamente. Não iniciar a decomposição de Documentos ou Workflows sem a solicitação correspondente aos Lotes 2 ou 3.
 
 ### 2. Finalizar Configurações
 
@@ -673,6 +693,7 @@ Após cada marco material:
 | 14/08/2026 | Git | `main` sincronizada com `origin/main` e working tree limpo após o push de `700998c` |
 | 18/08/2026 | Baseline do redesign | Referências normalizadas, falso positivo de identidade corrigido e validação técnica verde; pronto para revisão e versionamento |
 | 18/08/2026 | Lote 0 e Lote 0.1 | Contrato da nova arquitetura aprovado e consolidado em `REDESIGN_ARCHITECTURE.md`; próximo passo é o Lote 1 |
+| 18/08/2026 | Lote 1 | Fundação técnica implementada e validada localmente; sem commit, push ou decomposição editorial |
 
 ---
 
@@ -732,4 +753,4 @@ Ao iniciar uma nova sessão:
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` está em `0e86d92` — **Estabiliza baseline do redesign**. A coleção permanece com 8 documentos publicados; Workflows e Documentos têm, respectivamente, cerca de 20 e 11 minutos de leitura. A Auditoria Estratégica e o Lote 0 foram concluídos, e o contrato aprovado está consolidado em `project-docs/REDESIGN_ARCHITECTURE.md`. Não houve implementação arquitetural nesta consolidação; o próximo passo é revisar e versionar o Lote 0.1, depois iniciar o Lote 1 — Fundação da Nova Arquitetura.
+**Estado ao encerrar esta atualização:** a branch `main` permanece em `587069f` — **Contrato da nova arquitetura**, com o Lote 1 implementado apenas no working tree e pronto para revisão. A coleção possui 9 documentos publicados; o novo documento é o hub `/docs/funcionalidades`. Os corpos de Workflows e Documentos não foram alterados nem decompostos, e seus 79 anchors permanecem válidos nas URLs atuais. As validações técnicas e renderizadas do Lote 1 passaram; não houve commit, push ou deploy.

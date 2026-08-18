@@ -58,6 +58,27 @@ describe("SEO e indexação", () => {
     });
   });
 
+  it("publica canonical e imagem social do hub de Funcionalidades", async () => {
+    const hubMetadata = await generateMetadata({
+      params: Promise.resolve({ slug: ["funcionalidades"] }),
+    });
+
+    expect(hubMetadata).toMatchObject({
+      title: "Funcionalidades",
+      alternates: {
+        canonical: absoluteUrl("/docs/funcionalidades"),
+      },
+      openGraph: {
+        url: absoluteUrl("/docs/funcionalidades"),
+        images: [
+          expect.objectContaining({
+            url: absoluteUrl("/share-image/funcionalidades"),
+          }),
+        ],
+      },
+    });
+  });
+
   it("publica somente a home e documentos reais no sitemap", async () => {
     const entries = await sitemap();
 
@@ -65,6 +86,7 @@ describe("SEO e indexação", () => {
       absoluteUrl("/"),
       absoluteUrl("/docs/o-que-e-o-godocs"),
       absoluteUrl("/docs/primeiro-acesso"),
+      absoluteUrl("/docs/funcionalidades"),
       absoluteUrl("/docs/funcionalidades/visao-geral"),
       absoluteUrl("/docs/funcionalidades/busca-inteligente"),
       absoluteUrl("/docs/funcionalidades/documentos"),
@@ -75,12 +97,13 @@ describe("SEO e indexação", () => {
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
   });
 
-  it("gera estaticamente os oito documentos publicados", async () => {
+  it("gera estaticamente os nove documentos publicados", async () => {
     const params = await generateStaticParams();
 
     expect(params).toEqual([
       { slug: ["o-que-e-o-godocs"] },
       { slug: ["primeiro-acesso"] },
+      { slug: ["funcionalidades"] },
       { slug: ["funcionalidades", "visao-geral"] },
       { slug: ["funcionalidades", "busca-inteligente"] },
       { slug: ["funcionalidades", "documentos"] },

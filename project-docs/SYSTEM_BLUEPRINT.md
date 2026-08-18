@@ -409,10 +409,10 @@ Não criar demonstrações públicas fictícias.
 | Busca local | Sim | Modal e índice; vazio sem documentos |
 | Atalho `Ctrl/Cmd + K` | Sim | Abre busca sem conflitar com campos editáveis |
 | Markdown/MDX | Sim | Pipeline local funcional |
-| Navegação hierárquica | Fundação funcional | Gerada quando documentos existirem |
+| Navegação hierárquica | Sim | Árvore canônica com destino explícito de seção e suporte a hub → filha |
 | Rota dinâmica de artigo | Sim | `/docs/[...slug]` e `not-found` |
 | Sumário automático | Fundação funcional | Gerado quando artigo tiver headings |
-| Anterior/próxima | Fundação funcional | Derivado da ordem documental |
+| Anterior/próxima | Sim | Paginação hierárquica limitada ao domínio da árvore |
 | Drawer mobile | Condicional | Exibido quando houver navegação |
 | Busca externa/IA | Não | Fora do MVP |
 | CMS/banco/admin | Não | Fora do MVP |
@@ -485,7 +485,13 @@ Contrato mínimo:
 title: Título da página
 description: Descrição curta da página.
 slug: caminho-da-pagina
-section: identificador-da-secao
+pageType: reference
+section:
+  id: identificador-da-secao
+  label: Nome da seção
+  description: Descrição da seção.
+  entrySlug: caminho-da-pagina
+  order: 10
 order: 10
 availability: available
 keywords:
@@ -495,14 +501,19 @@ keywords:
 
 Regras:
 
-- `title`, `description`, `slug` e `order` são obrigatórios;
-- `section` é obrigatório quando houver categorias publicadas;
+- `title`, `description`, `slug`, `pageType` e `order` são obrigatórios;
+- `pageType` aceita o enum fechado `hub`, `task` ou `reference` sem impor estilo visual;
+- `section` é obrigatório quando houver categorias publicadas e define `entrySlug` explícito, sem depender do primeiro documento por `order`;
 - `availability` é opcional e diferencia conteúdo disponível de páginas publicadas em preparação, sem retirar essas páginas de rotas, navegação ou busca;
 - `keywords` é opcional;
 - slug não começa nem termina com `/`;
 - slugs duplicados falham de forma clara no build;
 - dados inválidos não são ignorados silenciosamente;
-- sidebar, busca, paginação e rotas consomem a mesma coleção normalizada.
+- sidebar, drawer, breadcrumbs, busca, paginação e rotas consomem a mesma coleção normalizada;
+- breadcrumbs apontam apenas para ancestrais publicados reais;
+- paginação percorre domínios hierárquicos e não cruza automaticamente para outra seção ou para o item posterior a um hub com filhos;
+- fragments H2/H3/H4 e aliases do manifesto central são validados;
+- compatibilidade de hash entre URLs usa manifesto tipado e resolução client-side quando o destino canônico muda.
 
 ### 9.3 Pipeline
 

@@ -11,6 +11,11 @@ import { visit } from "unist-util-visit";
 
 import { buildNavigation } from "@/lib/docs/navigation";
 import {
+  resolveCompatibleAnchor,
+  validateAnchorCompatibilityManifest,
+  type AnchorCompatibilityEntry,
+} from "@/lib/docs/compatibility";
+import {
   findDocumentFiles,
   loadDocumentFile,
 } from "@/lib/docs/source";
@@ -45,7 +50,8 @@ export type ContentValidationIssue = {
     | "link"
     | "fragment"
     | "asset"
-    | "taxonomy";
+    | "taxonomy"
+    | "compatibility";
   message: string;
 };
 
@@ -269,6 +275,7 @@ function validateLink(
   doc: DocRecord,
   docsBySlug: Map<string, DocRecord>,
   issues: ContentValidationIssue[],
+  compatibilityManifest: readonly AnchorCompatibilityEntry[],
 ) {
   if (EXTERNAL_PROTOCOL.test(reference.url)) return;
 
@@ -306,7 +313,23 @@ function validateLink(
   if (!fragment) return;
   const fragmentId = decodeFragment(fragment);
 
-  if (!target.headings.some((heading) => heading.id === fragmentId)) {
+  if (target.sections.some((section) => section.id === fragmentId)) return;
+
+  const compatibleTarget = resolveCompatibleAnchor(
+    target.slug,
+    fragmentId,
+    compatibilityManifest,
+  );
+  const compatibleDocument = compatibleTarget
+    ? docsBySlug.get(compatibleTarget.slug)
+    : undefined;
+  const isCompatibleFragment =
+    compatibleDocument?.metadata.status === "published" &&
+    compatibleDocument.sections.some(
+      (section) => section.id === compatibleTarget?.fragment,
+    );
+
+  if (!isCompatibleFragment) {
     issues.push(
       issue(
         doc.filePath,
@@ -323,7 +346,13 @@ function validateTaxonomy(
 ) {
   const sections = new Map<
     string,
-    { label: string; description: string; order: number; filePath: string }
+    {
+      label: string;
+      description: string;
+      entrySlug: string;
+      order: number;
+      filePath: string;
+    }
   >();
   const ancestors = new Map<
     string,
@@ -338,13 +367,14 @@ function validateTaxonomy(
         current &&
         (current.label !== section.label ||
           current.description !== section.description ||
+          current.entrySlug !== section.entrySlug ||
           current.order !== section.order)
       ) {
         issues.push(
           issue(
             doc.filePath,
             "taxonomy",
-            `section "${section.id}" diverge de ${current.filePath}; label, description e order devem ser idênticos`,
+            `section "${section.id}" diverge de ${current.filePath}; label, description, entrySlug e order devem ser idênticos`,
           ),
         );
       } else if (!current) {
@@ -357,6 +387,27 @@ function validateTaxonomy(
       const ancestorPath = doc.segments.slice(0, index + 1).join("/");
       const key = `${groupId}:${ancestorPath}`;
       const current = ancestors.get(key);
+      const ancestorDocument = documents.find(
+        (candidate) => candidate.slug === ancestorPath,
+      );
+
+      if (!ancestorDocument) {
+        issues.push(
+          issue(
+            doc.filePath,
+            "taxonomy",
+            `ancestor "${ancestorPath}" não corresponde a uma página real`,
+          ),
+        );
+      } else if (ancestorDocument.metadata.status !== "published") {
+        issues.push(
+          issue(
+            doc.filePath,
+            "taxonomy",
+            `ancestor "${ancestorPath}" não está publicado`,
+          ),
+        );
+      }
 
       if (
         current &&
@@ -373,6 +424,35 @@ function validateTaxonomy(
         ancestors.set(key, { ...ancestor, filePath: doc.filePath });
       }
     });
+  });
+
+  sections.forEach((section, sectionId) => {
+    const entry = documents.find((doc) => doc.slug === section.entrySlug);
+    if (!entry) {
+      issues.push(
+        issue(
+          section.filePath,
+          "taxonomy",
+          `section "${sectionId}" aponta para destino inexistente "${section.entrySlug}"`,
+        ),
+      );
+    } else if (entry.metadata.section?.id !== sectionId) {
+      issues.push(
+        issue(
+          section.filePath,
+          "taxonomy",
+          `section "${sectionId}" aponta para documento de outra seção: "${section.entrySlug}"`,
+        ),
+      );
+    } else if (entry.metadata.status !== "published") {
+      issues.push(
+        issue(
+          section.filePath,
+          "taxonomy",
+          `section "${sectionId}" aponta para documento não publicado: "${section.entrySlug}"`,
+        ),
+      );
+    }
   });
 
   try {
@@ -393,6 +473,7 @@ export async function validateContentDirectory(
   options: {
     publicDirectory?: string;
     workspaceDirectory?: string;
+    compatibilityManifest?: readonly AnchorCompatibilityEntry[];
   } = {},
 ): Promise<ContentValidationResult> {
   const workspaceDirectory = path.resolve(
@@ -402,6 +483,7 @@ export async function validateContentDirectory(
     options.publicDirectory ?? path.join(workspaceDirectory, "public"),
   );
   const files = await findDocumentFiles(contentDirectory);
+  const compatibilityManifest = options.compatibilityManifest ?? [];
   const issues: ContentValidationIssue[] = [];
   const documents: DocRecord[] = [];
   const referencesByFile = new Map<string, Reference[]>();
@@ -458,6 +540,18 @@ export async function validateContentDirectory(
 
   validateTaxonomy(documents, issues);
 
+  validateAnchorCompatibilityManifest(documents, compatibilityManifest).forEach(
+    (compatibilityIssue) => {
+      issues.push(
+        issue(
+          "content/docs",
+          "compatibility",
+          compatibilityIssue.message,
+        ),
+      );
+    },
+  );
+
   for (const doc of documents) {
     for (const relatedSlug of doc.metadata.related) {
       const related = docsBySlug.get(relatedSlug);
@@ -493,7 +587,13 @@ export async function validateContentDirectory(
           issues,
         );
       } else {
-        validateLink(reference, doc, docsBySlug, issues);
+        validateLink(
+          reference,
+          doc,
+          docsBySlug,
+          issues,
+          compatibilityManifest,
+        );
       }
     }
   }

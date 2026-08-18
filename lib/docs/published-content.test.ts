@@ -8,6 +8,7 @@ import {
   getAdjacentDocs,
 } from "@/lib/docs/navigation";
 import { createSearchIndex, searchDocuments } from "@/lib/docs/search";
+import { anchorCompatibilityManifest } from "@/lib/docs/compatibility";
 import {
   loadDocumentsFromDirectory,
   loadPublishedDocumentsFromDirectory,
@@ -36,8 +37,10 @@ describe("conteúdo publicado", () => {
         id: "comece-por-aqui",
         label: "Comece por aqui",
         description: "Conteúdos introdutórios para conhecer o GoDocs.",
+        entrySlug: "o-que-e-o-godocs",
         order: 10,
       },
+      pageType: "reference",
       order: 1,
     });
     expect(doc?.href).toBe("/docs/o-que-e-o-godocs");
@@ -52,10 +55,13 @@ describe("conteúdo publicado", () => {
     );
   });
 
-  it("publica os sete artigos adicionais com frontmatter, rotas e sumários aprovados", async () => {
+  it("publica o hub e os oito artigos existentes com frontmatter, rotas e sumários aprovados", async () => {
     const docs = await loadPublishedDocs();
     const firstAccess = docs.find(
       (candidate) => candidate.slug === "primeiro-acesso",
+    );
+    const functionalities = docs.find(
+      (candidate) => candidate.slug === "funcionalidades",
     );
     const overview = docs.find(
       (candidate) => candidate.slug === "funcionalidades/visao-geral",
@@ -75,12 +81,25 @@ describe("conteúdo publicado", () => {
     const reports = docs.find(
       (candidate) => candidate.slug === "funcionalidades/relatorios",
     );
-    expect(docs).toHaveLength(8);
+    expect(docs).toHaveLength(9);
+    expect(functionalities?.metadata).toMatchObject({
+      title: "Funcionalidades",
+      slug: "funcionalidades",
+      pageType: "hub",
+      section: {
+        id: "funcionalidades",
+        entrySlug: "funcionalidades",
+      },
+      order: 0,
+    });
+    expect(functionalities?.href).toBe("/docs/funcionalidades");
     expect(firstAccess?.metadata).toMatchObject({
       title: "Primeiro Acesso",
+      pageType: "task",
       cardDescription: "Crie sua conta e acesse o GoDocs.",
       section: {
         id: "comece-por-aqui",
+        entrySlug: "o-que-e-o-godocs",
         order: 10,
       },
       order: 2,
@@ -107,6 +126,7 @@ describe("conteúdo publicado", () => {
         id: "funcionalidades",
         label: "Funcionalidades",
         description: "Conheça os principais recursos disponíveis no GoDocs.",
+        entrySlug: "funcionalidades",
         order: 20,
       },
       ancestors: [
@@ -239,7 +259,7 @@ describe("conteúdo publicado", () => {
     }
   });
 
-  it("integra os oito artigos disponíveis a rotas, navegação e busca públicas", async () => {
+  it("integra os nove documentos disponíveis a rotas, navegação e busca públicas", async () => {
     const allDocs = await loadDocumentsFromDirectory(contentDirectory);
     const publishedDocs = await loadPublishedDocs();
     const preparing = allDocs.filter(
@@ -248,7 +268,7 @@ describe("conteúdo publicado", () => {
     const publicIndex = createSearchIndex(publishedDocs);
 
     expect(preparing).toEqual([]);
-    expect(publishedDocs).toHaveLength(8);
+    expect(publishedDocs).toHaveLength(9);
     expect(publicIndex.entries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -259,6 +279,7 @@ describe("conteúdo publicado", () => {
       ]),
     );
     for (const slug of [
+      "funcionalidades",
       "funcionalidades/favoritos",
       "funcionalidades/workflows",
       "funcionalidades/relatorios",
@@ -280,6 +301,16 @@ describe("conteúdo publicado", () => {
       "Comece por aqui",
       "Funcionalidades",
     ]);
+    expect(navigation[0]).toMatchObject({
+      entrySlug: "o-que-e-o-godocs",
+      entryHref: "/docs/o-que-e-o-godocs",
+      entryPageType: "reference",
+    });
+    expect(navigation[1]).toMatchObject({
+      entrySlug: "funcionalidades",
+      entryHref: "/docs/funcionalidades",
+      entryPageType: "hub",
+    });
     expect(navigation[0]?.items).toMatchObject([
       {
         label: "O que é o GoDocs?",
@@ -322,6 +353,7 @@ describe("conteúdo publicado", () => {
     expect(docs.map((doc) => doc.slug)).toEqual([
       "o-que-e-o-godocs",
       "primeiro-acesso",
+      "funcionalidades",
       "funcionalidades/visao-geral",
       "funcionalidades/busca-inteligente",
       "funcionalidades/documentos",
@@ -330,11 +362,24 @@ describe("conteúdo publicado", () => {
       "funcionalidades/relatorios",
     ]);
 
-    docs.forEach((doc, index) => {
-      const adjacent = getAdjacentDocs(docs, doc.slug);
-      expect(adjacent.previous?.slug).toBe(docs[index - 1]?.slug);
-      expect(adjacent.next?.slug).toBe(docs[index + 1]?.slug);
+    expect(getAdjacentDocs(docs, "o-que-e-o-godocs")).toMatchObject({
+      next: { slug: "primeiro-acesso" },
     });
+    expect(getAdjacentDocs(docs, "primeiro-acesso")).toMatchObject({
+      previous: { slug: "o-que-e-o-godocs" },
+    });
+    expect(getAdjacentDocs(docs, "primeiro-acesso").next).toBeUndefined();
+    expect(getAdjacentDocs(docs, "funcionalidades")).toMatchObject({
+      next: { slug: "funcionalidades/visao-geral" },
+    });
+    expect(getAdjacentDocs(docs, "funcionalidades/visao-geral")).toMatchObject({
+      previous: { slug: "funcionalidades" },
+      next: { slug: "funcionalidades/busca-inteligente" },
+    });
+    expect(getAdjacentDocs(docs, "funcionalidades/relatorios")).toMatchObject({
+      previous: { slug: "funcionalidades/workflows" },
+    });
+    expect(getAdjacentDocs(docs, "funcionalidades/relatorios").next).toBeUndefined();
   });
 
   it("gera breadcrumbs sem duplicar a seção Funcionalidades", async () => {
@@ -348,22 +393,29 @@ describe("conteúdo publicado", () => {
     const smartSearch = docs.find(
       (candidate) => candidate.slug === "funcionalidades/busca-inteligente",
     );
+    const functionalities = docs.find(
+      (candidate) => candidate.slug === "funcionalidades",
+    );
 
     expect(firstAccess && buildBreadcrumbs(firstAccess, docs)).toEqual([
       {
-        id: "section:comece-por-aqui",
-        label: "Comece por aqui",
-        href: "/docs/o-que-e-o-godocs",
-      },
-      {
         id: "path:primeiro-acesso",
         label: "Primeiro Acesso",
+      },
+    ]);
+    expect(
+      functionalities && buildBreadcrumbs(functionalities, docs),
+    ).toEqual([
+      {
+        id: "section:funcionalidades",
+        label: "Funcionalidades",
       },
     ]);
     expect(overview && buildBreadcrumbs(overview, docs)).toEqual([
       {
         id: "section:funcionalidades",
         label: "Funcionalidades",
+        href: "/docs/funcionalidades",
       },
       {
         id: "path:funcionalidades/visao-geral",
@@ -374,7 +426,7 @@ describe("conteúdo publicado", () => {
       {
         id: "section:funcionalidades",
         label: "Funcionalidades",
-        href: "/docs/funcionalidades/visao-geral",
+        href: "/docs/funcionalidades",
       },
       {
         id: "path:funcionalidades/busca-inteligente",
@@ -394,7 +446,7 @@ describe("conteúdo publicado", () => {
         {
           id: "section:funcionalidades",
           label: "Funcionalidades",
-          href: "/docs/funcionalidades/visao-geral",
+          href: "/docs/funcionalidades",
         },
         {
           id: `path:${slug}`,
@@ -433,13 +485,15 @@ describe("conteúdo publicado", () => {
   });
 
   it("mantém slugs, taxonomia, componentes, links, fragments e assets válidos", async () => {
-    const result = await validateContentDirectory(contentDirectory);
+    const result = await validateContentDirectory(contentDirectory, {
+      compatibilityManifest: anchorCompatibilityManifest,
+    });
 
     expect(result.issues).toEqual([]);
-    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(8);
+    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(9);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "published"),
-    ).toHaveLength(8);
+    ).toHaveLength(9);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "draft"),
     ).toHaveLength(0);
@@ -452,6 +506,6 @@ describe("conteúdo publicado", () => {
       result.documents.filter(
         (doc) => doc.metadata.availability === "available",
       ),
-    ).toHaveLength(8);
+    ).toHaveLength(9);
   });
 });
