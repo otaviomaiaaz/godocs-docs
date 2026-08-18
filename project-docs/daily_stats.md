@@ -3,11 +3,11 @@
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
 > **Última atualização:** 18 de agosto de 2026 (UTC−03:00)<br>
-> **Estado geral:** baseline do redesign estabilizado localmente; os 8 documentos publicados permanecem inalterados, as referências estratégicas estão prontas para versionamento e a validação técnica está verde.<br>
-> **Fase atual:** preparação controlada para a Auditoria Estratégica de Redesign com Impeccable.<br>
-> **Commit mais recente verificado:** `07dfed7` — `Atualiza estado operacional do projeto` — 14/08/2026.<br>
+> **Estado geral:** Auditoria Estratégica concluída; o Lote 0 foi aprovado e sua arquitetura-alvo está consolidada para implementação progressiva. Os 8 documentos publicados permanecem inalterados.<br>
+> **Fase atual:** preparação para o Lote 1 — Fundação da Nova Arquitetura.<br>
+> **Commit mais recente verificado:** `0e86d92` — `Estabiliza baseline do redesign` — 18/08/2026.<br>
 > **Deploy do commit mais recente:** não revalidado nesta estabilização; a última confirmação registrada é Vercel `success` para `700998c`.<br>
-> **Próxima ação principal:** revisar e versionar a estabilização; em seguida, iniciar uma tarefa separada de Auditoria Estratégica de Redesign com Impeccable.
+> **Próxima ação principal:** revisar e versionar o Lote 0.1; em seguida, iniciar o Lote 1 — Fundação da Nova Arquitetura.
 ---
 
 ## 1. Função deste arquivo
@@ -61,7 +61,7 @@ BRANCH
 main
 
 ÚLTIMO COMMIT
-07dfed7 — Atualiza estado operacional do projeto
+0e86d92 — Estabiliza baseline do redesign
 
 VERCEL
 não revalidado nesta estabilização
@@ -72,14 +72,14 @@ DOCUMENTOS PUBLICADOS
 FRENTE EDITORIAL
 Configurações
 
-FRENTE DE DESIGN
-baseline do redesign estabilizado; Auditoria Estratégica de Redesign pendente
+FRENTE DE DESIGN E ARQUITETURA
+Auditoria Estratégica concluída; contrato aprovado em REDESIGN_ARCHITECTURE.md; Lote 1 pendente
 
 MEMÓRIA UNIVERSAL
 Memória.md (ainda não versionado em project-docs/ na main)
 
 ESTADO OPERACIONAL
-daily_stats.md
+daily_stats.md + REDESIGN_ARCHITECTURE.md
 ```
 
 ---
@@ -334,13 +334,13 @@ Após o encerramento funcional, `.impeccable/design.json` foi sincronizado separ
 
 Não existe, no estado verificado, bloqueio técnico remanescente da auditoria.
 
-### 6.3 Estabilização do baseline do redesign
+### 6.3 Auditoria Estratégica e contrato da nova arquitetura
 
-Em 18/08/2026, a estrutura `project-docs/references/redesign/` foi normalizada e preparada para versionamento com benchmarks de Confluence, Mintlify (Stripe e AbacatePay) e Landing Page do GoDocs 4. O README estratégico foi preservado.
+A Auditoria Estratégica foi concluída. O Lote 0 foi aprovado e consolidado em `project-docs/REDESIGN_ARCHITECTURE.md`, que registra a arquitetura-alvo, hubs, slugs públicos futuros, compatibilidade, `pageType`, paginação, guardrails e roadmap.
 
-O falso positivo de identidade foi corrigido ao restringir a validação à copy pública (`app/`, `components/`, `content/docs/`, `lib/site.ts` e `lib/social-image.tsx`), mantendo a documentação interna fora desse escopo. A suíte passou com **14 arquivos / 101 testes / 101 aprovados / 0 falhas**; conteúdo, lint, typecheck, build de 24 páginas e `git diff --check` também foram aprovados.
+Os 8 documentos publicados permanecem inalterados. Documentos e Workflows continuam, respectivamente, com aproximadamente 11 e 20 minutos de leitura; a decomposição ainda não foi implementada. A decisão sobre quantidade de resultados da busca em mobile e desktop permanece deferida para o Lote 4.
 
-O baseline editorial continua com 8 documentos publicados; as métricas que motivam a próxima auditoria permanecem Workflows ≈ 20 min e Documentos ≈ 11 min. O próximo marco é versionar esta estabilização e, depois, abrir uma Auditoria Estratégica de Redesign com Impeccable.
+Próximo passo: Lote 1 — Fundação da Nova Arquitetura.
 
 ### 6.4 Governança de memória
 
@@ -603,13 +603,15 @@ A versão pública só muda depois da sincronização com o repositório e do de
 
 ## 12. Próximas ações recomendadas
 
-### 1. Finalizar Configurações
+### 1. Iniciar o Lote 1 — Fundação da Nova Arquitetura
 
-É a principal frente editorial registrada.
+Implementar apenas a fundação aprovada em `project-docs/REDESIGN_ARCHITECTURE.md`: hubs explícitos, `pageType`, compatibilidade, navegação estrutural, breadcrumbs e paginação hierárquica. Não antecipar a decomposição editorial dos lotes seguintes.
 
-Continuar somente com informações sustentadas pelas evidências disponíveis, consolidar o texto e, após aprovação, transformar o conteúdo em MDX.
+### 2. Finalizar Configurações
 
-### 2. Sincronizar a memória universal do projeto
+A frente editorial de Configurações permanece separada. Continuar somente com informações sustentadas pelas evidências disponíveis e converter para MDX após aprovação.
+
+### 3. Sincronizar a memória universal do projeto
 
 `project-docs/Memória.md` continua ausente da `main` verificada.
 
@@ -621,13 +623,13 @@ project-docs/Memória.md
 
 Não reconstruir esse arquivo por inferência caso a versão canônica não esteja disponível.
 
-### 3. Versionar esta atualização operacional
+### 4. Versionar esta atualização operacional
 
 Após revisar este `daily_stats.md`, substituir a versão do repositório e criar um commit descritivo.
 
-### 4. Tratar novas melhorias visuais como nova fase
+### 5. Tratar novas melhorias visuais como nova fase
 
-A próxima evolução visual deve ocorrer em uma tarefa separada de **Auditoria Estratégica de Redesign com Impeccable**, iniciada somente após a revisão e o versionamento desta estabilização.
+Qualquer evolução visual deve ocorrer em tarefa separada e partir da fundação estrutural aprovada.
 
 Não reabrir automaticamente os achados antigos. Qualquer nova evolução visual deve partir do baseline auditado e ser tratada como nova iniciativa, preservando:
 
@@ -638,7 +640,7 @@ Não reabrir automaticamente os achados antigos. Qualquer nova evolução visual
 - temas claro e escuro;
 - ausência de regressões.
 
-### 5. Manter GitHub e Vercel sincronizados
+### 6. Manter GitHub e Vercel sincronizados
 
 Após cada marco material:
 
@@ -670,6 +672,7 @@ Após cada marco material:
 | 14/08/2026 | Vercel | `success` confirmado para `700998c` |
 | 14/08/2026 | Git | `main` sincronizada com `origin/main` e working tree limpo após o push de `700998c` |
 | 18/08/2026 | Baseline do redesign | Referências normalizadas, falso positivo de identidade corrigido e validação técnica verde; pronto para revisão e versionamento |
+| 18/08/2026 | Lote 0 e Lote 0.1 | Contrato da nova arquitetura aprovado e consolidado em `REDESIGN_ARCHITECTURE.md`; próximo passo é o Lote 1 |
 
 ---
 
@@ -729,4 +732,4 @@ Ao iniciar uma nova sessão:
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` permanece no commit `07dfed7` — **Atualiza estado operacional do projeto** — sem commit ou push desta estabilização. A coleção permanece com 8 documentos publicados; Workflows e Documentos têm, respectivamente, cerca de 20 e 11 minutos de leitura. As referências de redesign estão preparadas para versionamento, o falso positivo da suíte foi removido pela delimitação conceitual entre copy pública e documentação interna, e a validação atual passou com **14 arquivos / 101 testes / 101 aprovados / 0 falhas**, conteúdo válido, lint e typecheck aprovados, build de 24 páginas e `git diff --check` aprovado. `DESIGN.md` e `.impeccable/design.json` permanecem intactos. Após revisar e versionar o diff, o próximo passo é uma Auditoria Estratégica de Redesign com Impeccable.
+**Estado ao encerrar esta atualização:** a branch `main` está em `0e86d92` — **Estabiliza baseline do redesign**. A coleção permanece com 8 documentos publicados; Workflows e Documentos têm, respectivamente, cerca de 20 e 11 minutos de leitura. A Auditoria Estratégica e o Lote 0 foram concluídos, e o contrato aprovado está consolidado em `project-docs/REDESIGN_ARCHITECTURE.md`. Não houve implementação arquitetural nesta consolidação; o próximo passo é revisar e versionar o Lote 0.1, depois iniciar o Lote 1 — Fundação da Nova Arquitetura.
