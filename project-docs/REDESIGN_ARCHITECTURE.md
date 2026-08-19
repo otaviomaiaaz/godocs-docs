@@ -212,7 +212,8 @@ Nenhum quarto nível de conteúdo será criado sem nova aprovação arquitetural
 
 - Funcionalidades terá hub explícito.
 - Hubs podem ser clicáveis e expansíveis; a expansão usa controle separado do link.
-- O ramo atual abre automaticamente; os demais ficam recolhidos.
+- O ramo correspondente à página atual pode abrir automaticamente para fornecer contexto; depois dessa abertura, a pessoa pode recolhê-lo manualmente.
+- Página ativa e estado expandido são independentes: a árvore não deve forçar reabertura contínua enquanto a mesma rota permanecer ativa; a regra também vale para futuros hubs com páginas-filhas, como Workflows.
 - A sidebar desktop será retrátil por ação do usuário e ficará aberta por padrão.
 - Recolher a sidebar não deve ser consequência automática de entrar em um card ou trocar de página.
 - O estado aberto/recolhido deve permanecer consistente durante a navegação do usuário.

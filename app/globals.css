@@ -1635,11 +1635,11 @@ body:has(dialog[open]) {
     width: 104px;
   }
 
-  .hub-navigation__list {
+  .prose .hub-navigation__list {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .hub-navigation__link {
+  .prose a.hub-navigation__link {
     min-height: 76px;
   }
 

@@ -20,7 +20,7 @@ describe("baseline determinístico da busca", () => {
       entries: 141,
       pages: 14,
       sections: 127,
-      rawBytes: 276_568,
+      rawBytes: 276_446,
       gzipBytes: 35_862,
       resultLimit: 12,
       snippetCharacters: 220,

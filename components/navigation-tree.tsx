@@ -33,7 +33,7 @@ function NavigationItem({
 }) {
   const branchIsActive = branchContainsPath(item, pathname);
   const [isOpen, setIsOpen] = useState(branchIsActive);
-  const isExpanded = branchIsActive || isOpen;
+  const isExpanded = isOpen;
 
   const hasChildren = item.children.length > 0;
 
@@ -73,9 +73,9 @@ function NavigationItem({
       {hasChildren && isExpanded ? (
         <ul className="navigation-tree__children">
           {item.children.map((child) => (
-            <NavigationItem
-              item={child}
-              key={child.id}
+              <NavigationItem
+                item={child}
+                key={`${child.id}-${pathname}`}
               onNavigate={onNavigate}
               pathname={pathname}
             />
@@ -120,7 +120,7 @@ export function NavigationTree({ groups, onNavigate }: NavigationTreeProps) {
               {group.items.map((item) => (
                 <NavigationItem
                   item={item}
-                  key={item.id}
+                  key={`${item.id}-${pathname}`}
                   onNavigate={onNavigate}
                   pathname={pathname}
                 />

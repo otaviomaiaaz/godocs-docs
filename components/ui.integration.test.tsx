@@ -454,6 +454,77 @@ describe("fluxos interativos", () => {
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
   });
 
+  it("respeita o recolhimento manual do ramo ativo até uma nova navegação", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    const user = userEvent.setup();
+    const groups = [
+      {
+        id: "funcionalidades",
+        title: "Funcionalidades",
+        description: "Funcionalidades publicadas.",
+        order: 1,
+        items: [
+          {
+            id: "funcionalidades/documentos",
+            label: "Documentos",
+            href: "/docs/funcionalidades/documentos",
+            pageType: "hub" as const,
+            children: [
+              {
+                id: "funcionalidades/documentos/pastas",
+                label: "Pastas",
+                href: "/docs/funcionalidades/documentos/pastas",
+                children: [],
+              },
+              {
+                id: "funcionalidades/documentos/logs-e-acoes",
+                label: "Logs e ações",
+                href: "/docs/funcionalidades/documentos/logs-e-acoes",
+                children: [],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    const renderTree = () => (
+      <nav aria-label="Navegação da documentação">
+        <NavigationTree groups={groups} />
+      </nav>
+    );
+    const view = renderInSiteShell(renderTree());
+
+    const toggle = screen.getByRole("button", { name: "Recolher Documentos" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(
+      screen.getByRole("link", { name: "Documentos" }).getAttribute("aria-current"),
+    ).toBe("page");
+
+    await user.click(toggle);
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("link", { name: "Pastas" })).toBeNull();
+    expect(
+      screen.getByRole("link", { name: "Documentos" }).getAttribute("aria-current"),
+    ).toBe("page");
+
+    view.rerender(renderTree());
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+
+    pathname.value = "/docs/funcionalidades/documentos/logs-e-acoes";
+    view.rerender(renderTree());
+
+    await waitFor(() =>
+      expect(
+        screen
+          .getByRole("button", { name: "Recolher Documentos" })
+          .getAttribute("aria-expanded"),
+      ).toBe("true"),
+    );
+    expect(
+      screen.getByRole("link", { name: "Logs e ações" }).getAttribute("aria-current"),
+    ).toBe("page");
+  });
+
   it("torna o hub explícito da seção navegável e marca a página atual", () => {
     pathname.value = "/docs/funcionalidades";
 

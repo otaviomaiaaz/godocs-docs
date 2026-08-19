@@ -2,11 +2,11 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 19 de agosto de 2026, 10:22 (UTC−03:00)  
-> **Estado geral:** Lote 1 da Nova Arquitetura versionado; Lote 2 — Documentos implementado no working tree e validado tecnicamente, porém ainda não encerrado. A inspeção visual manual confirmou a nova hierarquia e revelou uma necessidade de UX no hub de Documentos: adicionar cards compactos das páginas-filhas no final do hub.  
-> **Fase atual:** ajuste focal e fechamento do Lote 2 antes de iniciar o Lote 3 — Workflows.  
-> **Commit mais recente confirmado no início do Lote 2:** `cc5f6e1` — `Redesign - Implementação do Lote 1`.  
-> **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.  
+> **Última atualização:** 19 de agosto de 2026, 10:22 (UTC−03:00)
+> **Estado geral:** Lote 1 da Nova Arquitetura versionado; Lote 2 — Documentos implementado no working tree e validado tecnicamente, porém ainda não encerrado. A inspeção visual manual confirmou a nova hierarquia e revelou uma necessidade de UX no hub de Documentos: adicionar cards compactos das páginas-filhas no final do hub.
+> **Fase atual:** ajuste focal e fechamento do Lote 2 antes de iniciar o Lote 3 — Workflows.
+> **Commit mais recente confirmado no início do Lote 2:** `cc5f6e1` — `Redesign - Implementação do Lote 1`.
+> **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
 > **Próxima ação principal:** consolidar as decisões atuais, aplicar o ajuste focal do hub de Documentos, repetir a validação necessária, versionar o Lote 2 e somente depois iniciar o Lote 3 — Workflows.
 
 ---
