@@ -86,7 +86,7 @@ export default async function DocPage({ params }: DocPageProps) {
       Boolean(candidate),
     );
   const hubChildren =
-    doc.slug === "funcionalidades/documentos"
+    doc.metadata.pageType === "hub" && doc.segments.length > 1
       ? docs
           .filter(
             (candidate) =>
@@ -126,7 +126,7 @@ export default async function DocPage({ params }: DocPageProps) {
             slug: child.slug,
             title: child.metadata.title,
           }))}
-          title="Explore Documentos"
+          title={`Explore ${doc.metadata.title}`}
         />
       ) : null}
     </ArticleShell>
