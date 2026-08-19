@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lotes 1 e 2 implementados localmente e prontos para revisão; Lotes 3–9 pendentes
+> **Implementação:** Lote 1 implementado; Lote 2 implementado localmente, com ajuste focal do hub de Documentos pendente antes do encerramento; Lotes 3–9 pendentes
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -56,20 +56,51 @@ Home → hub de domínio → página de tarefa ou referência → relacionados/p
 - Função: hub editorial e mapa das áreas documentadas da seção.
 - Não substitui `/docs/funcionalidades/visao-geral`.
 - A URL de Visão Geral continua sendo a documentação da funcionalidade **Visão Geral**.
+- Mantém os seis destinos principais com peso visual equivalente: Visão Geral, Busca Inteligente, Documentos, Favoritos, Workflows e Relatórios.
+- Documentos e Workflows não recebem cards maiores ou tratamento que quebre a uniformidade do conjunto apenas por possuírem páginas-filhas.
 
 ### Documentos
 
 - URL preservada: `/docs/funcionalidades/documentos`.
 - Implementado como hub editorial com cinco páginas-filhas aprovadas e compatibilidade dos 30 anchors históricos.
+- O hub apresenta primeiro o contexto e o conteúdo conceitual do domínio.
+- A navegação para as cinco páginas-filhas será apresentada em cards compactos ao final do hub, depois do conteúdo conceitual e de **Conceitos importantes**, quando essa seção existir.
 
 ### Workflows
 
 - URL preservada: `/docs/funcionalidades/workflows`.
 - A página atual será transformada progressivamente em hub de Workflows.
+- O hub seguirá o mesmo padrão estrutural aprovado para Documentos: contexto e conteúdo conceitual primeiro; cards compactos das páginas-filhas no final.
 
 ### Integração via API
 
 Não terá página própria neste ciclo. O conteúdo disponível ainda não possui volume nem intenção editorial independente suficientes; ele permanece no hub ou contexto adequado de Workflows até nova documentação aprovada.
+
+
+### Padrão estrutural dos hubs de domínio
+
+Hubs com páginas-filhas seguem a estrutura:
+
+```text
+H1 + resumo
+→ conteúdo geral e conceitual do domínio
+→ informações ou requisitos relevantes
+→ Conceitos importantes, quando existir
+→ navegação para páginas-filhas em cards compactos
+```
+
+Regras:
+
+- os cards das páginas-filhas ficam no final do conteúdo do hub;
+- quando houver **Conceitos importantes**, os cards aparecem depois dessa seção;
+- cada card representa uma página-filha canônica;
+- os cards devem ser compactos, uniformes e fáceis de escanear;
+- o conteúdo dos cards deve permanecer conciso, com título, descrição curta e indicação de navegação;
+- não transformar hubs em landing pages;
+- evitar excesso de elementos decorativos, informação ou diferenciação visual que prejudique a leitura;
+- a sidebar continua sendo a navegação persistente; os cards servem como descoberta e orientação dentro do domínio.
+
+O princípio é manter a experiência **robusta na estrutura e clean na apresentação**.
 
 ## 4. Slugs públicos futuros aprovados
 
@@ -129,7 +160,8 @@ pageType: reference
 
 - Não inferir hub apenas pela existência de filhos.
 - `pageType` representa função editorial e comportamento estrutural.
-- Não obriga estilo visual diferente; templates e componentes continuam subordinados ao Design System.
+- Não obriga estilo visual isolado ou um template comercial; templates e componentes continuam subordinados ao Design System.
+- Hubs com páginas-filhas devem respeitar o padrão estrutural aprovado neste documento, incluindo a navegação por cards compactos ao final.
 
 ## 6. Compatibilidade pública
 
@@ -181,9 +213,30 @@ Nenhum quarto nível de conteúdo será criado sem nova aprovação arquitetural
 - Funcionalidades terá hub explícito.
 - Hubs podem ser clicáveis e expansíveis; a expansão usa controle separado do link.
 - O ramo atual abre automaticamente; os demais ficam recolhidos.
-- O drawer mobile usa a mesma árvore da sidebar.
+- A sidebar desktop será retrátil por ação do usuário e ficará aberta por padrão.
+- Recolher a sidebar não deve ser consequência automática de entrar em um card ou trocar de página.
+- O estado aberto/recolhido deve permanecer consistente durante a navegação do usuário.
+- A retração da sidebar inteira é independente da expansão e do recolhimento dos ramos internos.
+- O drawer mobile usa a mesma árvore da sidebar e continua sendo o padrão de navegação em telas pequenas.
 - Touch targets de 44 px permanecem obrigatórios.
 - Não criar sistema paralelo de navegação.
+
+
+### “Nesta página” / TOC
+
+O componente **Nesta página** deve adaptar sua densidade à complexidade do artigo sem fragmentar conteúdo desnecessariamente.
+
+- páginas simples podem manter seus destinos visíveis;
+- páginas com muitos subtópicos devem priorizar os tópicos principais e usar expansão progressiva dos níveis internos;
+- H2 têm prioridade na hierarquia;
+- H3 podem ser agrupados e revelados conforme a seção ativa;
+- H4 não deve dominar visualmente o componente;
+- o grupo da seção atual pode permanecer expandido enquanto os demais ficam compactos;
+- altura e scroll interno podem ser limitados quando necessários para evitar que o TOC compita visualmente com o artigo;
+- o comportamento sticky permanece;
+- no mobile, **Nesta página** continua recolhível e deve respeitar a mesma hierarquia progressiva.
+
+Uma página não deve ser decomposta apenas para reduzir o tamanho visual do TOC.
 
 ### Breadcrumbs
 
@@ -216,7 +269,24 @@ O modelo global plano atual será abandonado progressivamente em favor de pagina
 
 A ativação pertence a lote posterior.
 
-## 9. Busca
+
+## 9. FAQ
+
+A seção de FAQ será desenvolvida durante o redesign, substituindo o placeholder atual por conteúdo útil e factual.
+
+Diretrizes:
+
+- organizar perguntas por domínio quando isso melhorar a descoberta;
+- preferir respostas curtas e diretas;
+- usar accordions simples para reduzir densidade visual;
+- quando uma resposta exigir explicação extensa, resumir a dúvida e direcionar para a documentação completa;
+- não duplicar artigos inteiros dentro do FAQ;
+- não inventar perguntas, comportamentos ou funcionalidades;
+- usar como base conteúdo já documentado e dúvidas realmente úteis ou recorrentes quando houver evidência disponível.
+
+A implementação detalhada do FAQ pertence a etapa posterior e não altera, por si só, a arquitetura pública aprovada neste documento.
+
+## 10. Busca
 
 Baseline preservado:
 
@@ -242,7 +312,7 @@ Não implementar otimização neste momento.
 
 Não há limite definitivo distinto por viewport. O futuro Lote de Busca deverá testar até 8 resultados no mobile e 10 no desktop contra o baseline atual de 12, avaliando descoberta, densidade e qualidade antes de consolidar o comportamento.
 
-## 10. Critérios editoriais aprovados
+## 11. Critérios editoriais aprovados
 
 | Tipo | Referência |
 |---|---|
@@ -251,11 +321,15 @@ Não há limite definitivo distinto por viewport. O futuro Lote de Busca deverá
 
 Páginas menores são permitidas quando possuem intenção independente forte. Uma página exige revisão quando tiver aproximadamente mais de 1.200 palavras, mais de 12 destinos no TOC ou mais de 6 minutos de leitura. Esses sinais não são limites matemáticos.
 
+O tempo de leitura é um sinal editorial, não uma regra automática de decomposição. Conteúdos na faixa de aproximadamente 4–6 minutos podem exigir revisão de densidade ou navegação, mas só devem ser divididos quando houver ganho claro de arquitetura da informação.
+
+A decomposição é indicada principalmente quando existem intenções independentes, procedimentos que fazem sentido isoladamente ou uma estrutura tão ramificada que prejudica a consulta. Uma página pode permanecer única quando houver uma intenção principal e sequência lógica coerente, mesmo que seja mais longa que páginas simples.
+
 Regra principal:
 
 > Uma intenção clara e útil por página, com no máximo 1–2 intenções fortemente relacionadas quando necessário.
 
-## 11. Guardrails
+## 12. Guardrails
 
 - MDX permanece a fonte pública principal.
 - A mesma coleção normalizada alimenta todas as superfícies públicas.
@@ -267,14 +341,39 @@ Regra principal:
 - Não sacrificar compatibilidade para simplificar implementação.
 - Não implementar redesign visual antes da fundação estrutural correspondente.
 
-## 12. Roadmap oficial
+
+## 13. Direção visual planejada
+
+A revisão visual mais profunda permanece reservada aos lotes próprios de identidade e refinamento. As decisões abaixo registram direção, não especificações finais de Design System.
+
+### Paletas e temas
+
+- os temas claro e escuro serão refinados;
+- o tema claro é a prioridade da revisão por apresentar menor diferenciação perceptível entre algumas superfícies;
+- a revisão deve aumentar legibilidade, contraste e separação entre background, superfícies, bordas, navegação, cards e conteúdo sem poluir a interface;
+- o tema escuro será refinado de forma mais contida, preservando a base atual;
+- o laranja GoDocs permanece como accent principal, especialmente em links, foco, estados ativos e pequenos destaques;
+- evitar grandes superfícies laranja sem necessidade funcional.
+
+### Tokens e consistência
+
+A revisão de paleta deve ser sistêmica e orientada por tokens, evitando correções isoladas de CSS. Os valores finais e a nomenclatura definitiva serão consolidados no `DESIGN.md` durante a etapa visual.
+
+### Referência de identidade
+
+A Landing Page do GoDocs 4 permanece referência de identidade, atmosfera, profundidade e relação entre superfícies. Ela não deve ser copiada literalmente.
+
+O objetivo continua sendo fazer o GoDocs Docs pertencer claramente à família GoDocs sem deixar de parecer uma ferramenta de documentação.
+
+
+## 14. Roadmap oficial
 
 ```text
 Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
 
-Lote 1 — Fundação — implementado localmente, pronto para revisão
-Lote 2 — Documentos — implementado localmente, pronto para revisão
+Lote 1 — Fundação — implementado
+Lote 2 — Documentos — implementado localmente; ajuste focal do hub pendente antes do encerramento
 Lote 3 — Workflows
 Lote 4 — Busca
 Lote 5 — Descoberta e consolidação

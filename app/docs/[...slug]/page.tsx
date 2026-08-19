@@ -5,6 +5,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import { ArticleShell } from "@/components/docs/article-shell";
+import { HubNavigation } from "@/components/docs/hub-navigation";
 import { mdxComponents } from "@/components/docs/mdx-components";
 import {
   buildBreadcrumbs,
@@ -84,6 +85,19 @@ export default async function DocPage({ params }: DocPageProps) {
     .filter((candidate): candidate is (typeof docs)[number] =>
       Boolean(candidate),
     );
+  const hubChildren =
+    doc.slug === "funcionalidades/documentos"
+      ? docs
+          .filter(
+            (candidate) =>
+              candidate.segments.length === doc.segments.length + 1 &&
+              candidate.segments.every(
+                (segment, index) =>
+                  index === doc.segments.length || segment === doc.segments[index],
+              ),
+          )
+          .sort((first, second) => first.metadata.order - second.metadata.order)
+      : [];
 
   return (
     <ArticleShell
@@ -104,6 +118,17 @@ export default async function DocPage({ params }: DocPageProps) {
         }}
         source={doc.source}
       />
+      {hubChildren.length > 0 ? (
+        <HubNavigation
+          items={hubChildren.map((child) => ({
+            description: child.metadata.cardDescription ?? child.metadata.description,
+            href: child.href,
+            slug: child.slug,
+            title: child.metadata.title,
+          }))}
+          title="Explore Documentos"
+        />
+      ) : null}
     </ArticleShell>
   );
 }

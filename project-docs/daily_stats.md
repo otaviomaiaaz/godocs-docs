@@ -2,35 +2,31 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 18 de agosto de 2026 (UTC−03:00)<br>
-> **Estado geral:** Lotes 1 e 2 da Nova Arquitetura implementados localmente, sem commit ou push. A coleção possui 14 documentos; Documentos é um hub com cinco páginas-filhas e 30 deep links históricos compatíveis.<br>
-> **Fase atual:** Lote 2 pronto para revisão técnica; Lote 3 — Workflows é o próximo passo.<br>
-> **Commit mais recente verificado:** `587069f` — `Contrato da nova arquitetura` — 18/08/2026.<br>
-> **Deploy do commit mais recente:** não revalidado nesta tarefa; a última confirmação registrada é Vercel `success` para `700998c`.<br>
-> **Próxima ação principal:** revisar e versionar os Lotes 1 e 2; somente depois iniciar o Lote 3 com solicitação própria.
+> **Última atualização:** 19 de agosto de 2026, 10:22 (UTC−03:00)  
+> **Estado geral:** Lote 1 da Nova Arquitetura versionado; Lote 2 — Documentos implementado no working tree e validado tecnicamente, porém ainda não encerrado. A inspeção visual manual confirmou a nova hierarquia e revelou uma necessidade de UX no hub de Documentos: adicionar cards compactos das páginas-filhas no final do hub.  
+> **Fase atual:** ajuste focal e fechamento do Lote 2 antes de iniciar o Lote 3 — Workflows.  
+> **Commit mais recente confirmado no início do Lote 2:** `cc5f6e1` — `Redesign - Implementação do Lote 1`.  
+> **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.  
+> **Próxima ação principal:** consolidar as decisões atuais, aplicar o ajuste focal do hub de Documentos, repetir a validação necessária, versionar o Lote 2 e somente depois iniciar o Lote 3 — Workflows.
+
 ---
 
 ## 1. Função deste arquivo
 
 O `daily_stats.md` é o **retrato operacional atual do projeto**.
 
-Ele deve responder rapidamente:
+Ele deve permitir entender rapidamente:
 
-- onde o projeto está agora;
-- o que foi concluído recentemente;
+- onde o projeto está;
+- o que já foi concluído;
 - o que está em andamento;
-- quais são as pendências atuais;
-- qual é o commit mais recente relevante;
-- qual é o estado do deploy;
+- quais decisões recentes alteram os próximos lotes;
+- quais pendências ainda bloqueiam o próximo marco;
+- qual é o último estado Git confirmado;
+- qual é o estado conhecido do deploy;
 - qual é a próxima ação recomendada.
 
-Ele **não deve funcionar como memória histórica completa**.
-
-Para contexto amplo, conhecimento funcional do GoDocs, decisões antigas, decisões superadas, histórico e transferência de contexto entre IAs ou ambientes, usar:
-
-```text
-project-docs/Memória.md
-```
+Ele **não substitui a memória universal nem os documentos canônicos de produto, design ou arquitetura**.
 
 ### Divisão de responsabilidade
 
@@ -38,13 +34,14 @@ project-docs/Memória.md
 |---|---|
 | `project-docs/Memória.md` | Contexto universal e consolidado do projeto |
 | `project-docs/daily_stats.md` | Estado operacional atual |
+| `project-docs/REDESIGN_ARCHITECTURE.md` | Contrato e arquitetura-alvo do redesign |
 | `AGENTS.md` | Regras de execução para agentes/Codex |
-| `PRODUCT.md` | Definição de produto e princípios editoriais |
+| `PRODUCT.md` | Definição do produto e princípios editoriais |
 | `DESIGN.md` | Design System e decisões visuais canônicas |
 | `README.md` | Execução, estrutura, conteúdo e comandos do repositório |
-| `content/docs/` | Documentação final publicada |
+| `content/docs/` | Documentação pública em Markdown/MDX |
 
-As conversas servem para análise e trabalho. Informações que precisem sobreviver ao histórico devem ser consolidadas nos arquivos adequados.
+As conversas são ambiente de análise e trabalho. Decisões que precisem sobreviver ao histórico devem ser consolidadas nos arquivos apropriados.
 
 ---
 
@@ -60,31 +57,85 @@ otaviomaiaaz/godocs-docs
 BRANCH
 main
 
-ÚLTIMO COMMIT
-587069f — Contrato da nova arquitetura
+HEAD CONFIRMADO NO INÍCIO DO LOTE 2
+cc5f6e1 — Redesign - Implementação do Lote 1
+
+ESTADO DO LOTE 1
+Versionado
+
+ESTADO DO LOTE 2
+Implementado localmente
+Validação técnica aprovada
+Ajuste focal do hub pendente
+Sem commit/push do Lote 2 confirmado
+
+COLEÇÃO NO WORKING TREE DO LOTE 2
+14 documentos
+
+COLEÇÃO DO LOTE 1 VERSIONADO
+9 documentos
+
+PRÓXIMO LOTE
+Lote 3 — Workflows
+Somente após fechamento/versionamento do Lote 2
+
+FRENTE EDITORIAL PARALELA
+Configurações — analisada/documentada em conversa; publicação MDX não confirmada
+
+AUDITORIA IMPECCABLE ANTERIOR
+Encerrada
+
+UI UX PRO MAX
+Não há confirmação de instalação
+Instalação planejada após o Lote 3, antes do Lote 4
 
 VERCEL
-não revalidado nesta estabilização
-
-DOCUMENTOS PUBLICADOS
-14
-
-FRENTE EDITORIAL
-Configurações
-
-FRENTE DE DESIGN E ARQUITETURA
-Lotes 1 e 2 implementados localmente; Lote 3 — Workflows pendente
-
-MEMÓRIA UNIVERSAL
-Memória.md (ainda não versionado em project-docs/ na main)
-
-ESTADO OPERACIONAL
-daily_stats.md + REDESIGN_ARCHITECTURE.md
+Último success explicitamente registrado: 700998c
+Estado do SHA atual não confirmado
 ```
+
+### Observação sobre “publicado”
+
+A contagem de **14 documentos** pertence ao working tree do Lote 2. Como não há confirmação de commit, push e deployment desse lote, não tratar automaticamente os 14 documentos como estado público de produção.
 
 ---
 
-## 3. Repositório e publicação
+## 3. Contexto operacional do produto
+
+O GoDocs Docs é uma aplicação de documentação independente para o GoDocs 4.
+
+Direções consolidadas:
+
+- substituir a dependência do Confluence como experiência principal de documentação;
+- utilizar Markdown/MDX versionado como fonte pública;
+- usar Notion apenas quando necessário na autoria/revisão interna;
+- usar GitHub para versionamento;
+- usar Vercel para publicação;
+- manter o Codex como ferramenta principal de implementação;
+- usar Confluence como referência do estado corporativo atual;
+- usar Mintlify como benchmark de maturidade de documentação, sem copiar;
+- usar a Landing Page do GoDocs 4 como referência de identidade, atmosfera e linguagem visual, sem copiar literalmente.
+
+Princípio do redesign:
+
+> **biblioteca operacional orientada por intenção**
+
+Fluxo-alvo:
+
+```text
+Home
+→ hub de domínio
+→ página de tarefa ou referência
+→ relacionados / próximos passos
+```
+
+Direção visual consolidada:
+
+> **robusto na estrutura e clean na apresentação**
+
+---
+
+## 4. Repositório, Git e publicação
 
 ### Repositório
 
@@ -92,55 +143,54 @@ daily_stats.md + REDESIGN_ARCHITECTURE.md
 otaviomaiaaz/godocs-docs
 ```
 
-Estado verificado:
+Estado conhecido:
 
 | Item | Situação |
 |---|---|
-| Visibilidade | Pública |
 | Branch principal | `main` |
-| Permissão | Admin / push |
-| Repositório arquivado | Não |
 | Deploy | Vercel |
 | Conteúdo | Markdown/MDX local |
-| CMS | Não |
-| Banco de dados | Não |
-| Autenticação própria | Não |
+| CMS público | Não |
+| Banco de dados próprio da documentação | Não |
+| Autenticação própria da documentação | Não |
 
-### Último commit verificado
+### Último HEAD confirmado para a frente atual
 
-```text
-07dfed73b3eeb6275d73ad67f0cbdb80cb636112
-Atualiza estado operacional do projeto
-14/08/2026
-```
-
-O commit atualiza apenas:
+No início do Lote 2:
 
 ```text
-project-docs/daily_stats.md
+cc5f6e1 — Redesign - Implementação do Lote 1
 ```
+
+O Lote 2 foi desenvolvido sobre esse estado e permaneceu sem commit/push durante as validações registradas.
 
 ### Deploy
 
-O deploy associado a `07dfed7` não foi revalidado nesta estabilização. A última confirmação registrada permanece:
+A última confirmação explícita registrada permanece:
 
 ```text
 Vercel: success para 700998c
 ```
 
-Não inferir o estado do deploy de um commit posterior sem nova verificação no provedor.
+Não assumir que um push ou um estado local mais novo está publicado sem confirmar a associação:
 
-### Estado local verificado na estabilização
+```text
+commit / SHA
+→ deployment
+→ ambiente acessível
+```
 
-Não houve commit nem push nesta tarefa. O working tree contém apenas as alterações esperadas da estabilização: referências de redesign, fronteira do teste de identidade e este registro operacional.
+Em 19/08/2026 foram fornecidos prints renderizados do sistema com a nova estrutura de Documentos. Esses prints servem como evidência visual da interface apresentada, mas não confirmam, por si só, qual SHA está ativo no Vercel.
 
 ---
 
-## 4. O que mudou recentemente
+## 5. Marcos técnicos e de design já concluídos
 
-### `b595458` — Melhoria de interface
+### 5.1 Evolução de interface anterior ao redesign estrutural
 
-Principais efeitos:
+Commits e marcos relevantes preservados no histórico:
+
+#### `b595458` — Melhoria de interface
 
 - correções de estados visuais;
 - melhorias de semântica ARIA da busca;
@@ -148,345 +198,1150 @@ Principais efeitos:
 - `aria-controls` condicionado à existência da lista;
 - ampliação de testes de estados do combobox.
 
-### `d9b9278` — Melhoria de interface 2
-
-Principais efeitos:
+#### `d9b9278` — Melhoria de interface 2
 
 - grande limpeza de `app/globals.css`;
-- remoção de mais de mil linhas em relação ao commit anterior;
+- remoção de mais de mil linhas em relação ao estado anterior;
 - redução de estilos antigos e duplicados;
-- ampliação de testes de acessibilidade de artigos;
-- novos testes de blocos de código;
-- melhorias em headings;
-- ajustes em componentes MDX;
-- melhorias de touch targets em navegação mobile;
-- botão de retry da busca ajustado para 44 px;
-- reforço de testes de identidade e design.
+- ampliação dos testes de acessibilidade de artigos;
+- ajustes em headings e componentes MDX;
+- melhorias de touch targets na navegação mobile;
+- retry da busca ajustado para 44 px;
+- reforço dos testes de identidade e design.
 
-### `ec96743` — Melhoria de interface 3
+#### `ec96743` — Melhoria de interface 3
 
-Principais efeitos:
+- `DESIGN.md` passou a governar formalmente a **Hero Atmosphere**;
+- ambientação técnica/focal do hero foi aceita como exceção controlada;
+- decoração ornamental excedente foi removida;
+- `home-hero__ambient` foi simplificado;
+- a regra não autoriza decoração equivalente em cards, artigos, sidebar ou outras superfícies.
 
-- `DESIGN.md` passou a documentar formalmente a regra **Hero Atmosphere**;
-- a ambientação técnica/focal do hero deixou de ser apenas um possível design drift e passou a ter uma exceção governada dentro do Design System;
-- a exceção ficou restrita ao hero e não autoriza decoração equivalente em cards, artigos, sidebar ou outras superfícies;
-- foram explicitamente mantidas restrições contra decoração gratuita, glassmorphism, glow promocional, efeitos 3D, parallax e animações ornamentais;
-- a implementação do hero foi simplificada;
-- o campo pontilhado ornamental foi removido;
-- os anéis/elipses ambientais adicionais foram removidos;
-- `home-hero__ambient` foi simplificado para uma única camada estrutural;
-- a implementação e o `DESIGN.md` ficaram mais alinhados.
+#### `a5f8534` — Atualização de memória e design do sistema
 
-### `a5f8534` — Atualização de memória e design do sistema
+- ajustes em `DESIGN.md`;
+- refinamentos em `PRODUCT.md`;
+- reorganização do `daily_stats.md` para a função operacional atual.
 
-Principais efeitos verificados:
+#### `23e2a32` — Revisão de auditoria
 
-- ajustes pontuais no `DESIGN.md`;
-- refinamentos no `PRODUCT.md`;
-- reorganização ampla de `project-docs/daily_stats.md` para sua função operacional atual;
-- nenhuma criação de `project-docs/Memória.md` foi verificada na `main`.
-
-### `23e2a32` — Revisão de auditoria
-
-Principais efeitos:
-
-- correções de fechamento concentradas no TOC, no estado ativo, no token tipográfico da home e na governança de caminhos;
-- TOC móvel de artigos longos passou a usar divulgação progressiva sem reduzir os touch targets de 44 px;
-- Workflows preservou os 24 destinos e passou a mostrar 7 destinos inicialmente;
-- `.home-hero h1` passou a consumir `--type-home-title` como fonte canônica;
-- referências operacionais `project_docs/` no `AGENTS.md` foram corrigidas para `project-docs/`;
+- TOC móvel longo passou a usar divulgação progressiva;
+- Workflows preservou 24 destinos, com 7 inicialmente visíveis;
+- `.home-hero h1` passou a consumir `--type-home-title`;
+- caminhos `project_docs/` no `AGENTS.md` foram corrigidos para `project-docs/`;
 - cobertura automatizada do TOC foi ampliada.
 
-### `fc384cc` — Revisão de auditoria final
+#### `fc384cc` — Revisão de auditoria final
 
-Principais efeitos:
+- caso residual de `aria-current` no último heading corrigido;
+- listener de `scroll` passou a coexistir com `IntersectionObserver`;
+- dois testes de regressão adicionados;
+- baseline final da auditoria: **100/100 testes**;
+- N1 considerado resolvido.
 
-- correção do caso residual de `aria-current` no último heading de artigos longos;
-- o listener passivo de `scroll` passou a coexistir com `IntersectionObserver`, garantindo reavaliação da regra de fim do documento;
-- dois testes de regressão foram adicionados para o último heading no limite inferior;
-- suíte final passou de 98 para **100 testes**, todos aprovados;
-- N1 foi considerado resolvido;
-- a auditoria deixou de possuir bloqueio técnico pendente.
-
-### `700998c` — Sincroniza Impeccable com o Design System
-
-Principais efeitos:
+#### `700998c` — Sincroniza Impeccable com o Design System
 
 - somente `.impeccable/design.json` foi alterado;
-- sidecar foi regenerado para refletir o `DESIGN.md` atual;
-- foram adicionadas rampas tonais OKLCH às 20 cores existentes;
-- overview e regras narrativas foram sincronizados, incluindo **The Essential Technical Atmosphere Rule**;
-- o exemplo de Icon Button foi alinhado ao token semântico `--accent-hover`;
-- o breakpoint `mobile-compact: 341px` foi preservado após confirmação de correspondência com regras reais `@media (max-width: 340px)` da implementação;
-- `DESIGN.md` permaneceu inalterado durante a sincronização;
-- JSON/schema e `git diff --check` foram aprovados.
+- sidecar regenerado a partir do `DESIGN.md`;
+- rampas tonais OKLCH adicionadas às cores;
+- regras narrativas sincronizadas;
+- exemplo de Icon Button alinhado a `--accent-hover`;
+- breakpoint `mobile-compact: 341px` preservado;
+- `git diff --check` aprovado.
 
-### Consequência operacional
+### 5.2 Estado final da auditoria Impeccable anterior
 
-O antigo item pendente:
+A auditoria que originou os lotes de correção está **formalmente encerrada**.
 
-```text
-decidir se a ambientação do hero faz parte da Sala de Referência GoDocs
-```
+Estado final conhecido:
 
-está **resolvido**.
+- TOC móvel longo resolvido;
+- `aria-current` residual resolvido;
+- `--type-home-title` resolvido;
+- caminhos `project-docs/` resolvidos;
+- nenhuma regressão relevante permaneceu aberta;
+- baseline final: **14 arquivos / 100 testes / 100 aprovados / 0 falhas**;
+- build aprovado com 24 páginas estáticas naquele snapshot;
+- console sem erros/warnings de produto observados;
+- overflow horizontal não reproduzido nos breakpoints inspecionados;
+- `git diff --check` aprovado.
 
-A decisão atual é:
+Os 151 warnings de lint conhecidos estavam restritos a scripts internos em `.agents/skills/impeccable` e não foram tratados como erro do produto.
 
-> A ambientação estrutural e focal discreta pode existir no hero quando subordinada ao conteúdo e obedecendo às regras definidas em `DESIGN.md`.
-
-Além disso, a auditoria Impeccable que gerou os lotes de correção e fechamento está **formalmente encerrada**. Novas mudanças visuais devem ser tratadas como uma nova frente de evolução, e não como continuação automática dessa auditoria.
+Novas mudanças visuais pertencem à nova frente de evolução do redesign e **não reabrem automaticamente os achados antigos**.
 
 ---
 
-## 5. Conteúdo publicado
+## 6. Redesign estrutural — baseline e contrato
 
-Existem **14 documentos MDX** na coleção atual.
+### 6.1 Baseline estabilizado
+
+Foi estabilizado um baseline antes dos lotes arquiteturais.
+
+Commit registrado:
+
+```text
+0e86d92 — Estabiliza baseline do redesign
+```
+
+Principais confirmações daquele marco:
+
+- teste de identidade deixou de gerar falso positivo sobre referências internas;
+- referências do redesign foram organizadas;
+- suíte técnica ficou verde;
+- o redesign passou a ter um ponto de partida estável.
+
+### 6.2 Auditoria Estratégica
+
+A Auditoria Estratégica do redesign foi concluída.
+
+Conclusão principal:
+
+- não fazer uma reconstrução visual ampla primeiro;
+- priorizar arquitetura editorial e navegação;
+- decompor domínios excessivamente monolíticos;
+- preparar busca, hubs, compatibilidade e navegação para escala;
+- refinar identidade visual somente depois da fundação estrutural.
+
+Achados principais consolidados:
+
+- **F-01:** Workflows e Documentos concentravam múltiplas intenções;
+- **F-02:** busca precisava ser preparada para o crescimento da coleção;
+- **F-03:** seções não possuíam hubs explícitos;
+- **F-04:** resultados de busca mobile podiam ficar densos;
+- **F-05:** Related ainda não estava ativado;
+- **F-06:** metadados editoriais poderiam ser mais aproveitados;
+- **F-07:** breadcrumbs precisavam suportar a profundidade futura;
+- **F-08:** FAQ ainda era placeholder;
+- **F-09:** hubs poderiam ganhar assinatura visual mais clara em etapa posterior;
+- **F-10:** primitives editoriais poderiam ser mais bem aproveitadas.
+
+### 6.3 Lote 0 — Contrato da Nova Arquitetura
+
+Concluído e aprovado.
+
+Decisões consolidadas:
+
+- preservar URLs públicas existentes;
+- criar hub explícito `/docs/funcionalidades`;
+- manter `/docs/funcionalidades/visao-geral` como página real de Visão Geral;
+- transformar as URLs atuais de Documentos e Workflows em hubs;
+- introduzir `pageType: hub | task | reference`;
+- limitar profundidade a seção → hub/página → filha;
+- usar paginação hierárquica por domínio;
+- preservar compatibilidade de URLs e anchors;
+- manter Related manual e factual;
+- não criar página própria de Integração via API neste ciclo;
+- considerar critérios editoriais como sinais, não limites matemáticos;
+- deferir otimizações específicas de busca para o Lote 4.
+
+Baseline de compatibilidade do contrato:
+
+```text
+Documentos: 30 anchors históricos
+Workflows: 49 anchors históricos
+Total: 79
+```
+
+### 6.4 Lote 0.1 — Consolidação
+
+Concluído.
+
+Criado:
+
+```text
+project-docs/REDESIGN_ARCHITECTURE.md
+```
+
+Função:
+
+- ser a referência canônica e versionável da arquitetura-alvo;
+- permitir que novos chats do Codex entendam o contrato sem depender da conversa anterior.
+
+Commit-base registrado no documento:
+
+```text
+587069f — Contrato da nova arquitetura
+```
+
+---
+
+## 7. Lote 1 — Fundação da Nova Arquitetura
+
+### Estado
+
+**Implementado, revalidado e versionado.**
+
+Commit confirmado:
+
+```text
+cc5f6e1 — Redesign - Implementação do Lote 1
+```
+
+### Implementações principais
+
+- `pageType` explícito no schema;
+- `section.entrySlug` substituindo inferência pelo primeiro item ordenado;
+- novo hub `/docs/funcionalidades`;
+- árvore preparada para hub → filhos;
+- hub clicável com controle de expansão separado;
+- mesma árvore para sidebar e drawer;
+- breadcrumbs baseados em ancestrais reais;
+- paginação hierárquica e limitada ao domínio;
+- manifesto tipado de compatibilidade para os 79 anchors;
+- resolução client-side preparada para aliases históricos;
+- validação de H2/H3/H4 e aliases;
+- baseline determinístico de busca por `pnpm search:benchmark`.
+
+### `pageType` após o Lote 1
+
+- hub: Funcionalidades;
+- task: Primeiro Acesso, Busca Inteligente, Favoritos;
+- reference: O que é o GoDocs, Visão Geral, Documentos, Workflows, Relatórios.
+
+Documentos e Workflows ainda não foram decompostos no Lote 1.
+
+### Revalidação focal do Lote 1
+
+Foram adicionados testes que confirmaram:
+
+1. o manifesto de compatibilidade é explícito, versionado e independente da permanência do heading original;
+2. `section.entrySlug` possui validação centralizada para conflito, destino inexistente e destino não publicado.
+
+Resultado final registrado:
+
+```text
+Documentos: 9
+Entradas de busca: 134
+Páginas: 9
+Seções: 125
+Payload bruto: 271.847 bytes
+Payload gzip: 36.557 bytes
+Testes: 131/131
+Build: 26 páginas estáticas
+```
+
+---
+
+## 8. Lote 2 — Documentos
+
+### Estado atual
+
+**Implementado no working tree, tecnicamente validado, mas ainda não encerrado.**
+
+Base confirmada no início do lote:
+
+```text
+main
+HEAD cc5f6e1
+origin sem divergência registrada
+working tree inicialmente limpo
+```
+
+Nenhum commit ou push do Lote 2 foi confirmado.
+
+### Estrutura implementada
+
+```text
+Documentos
+├── Organizar pastas e subpastas
+├── Adicionar documentos
+├── Localizar, filtrar e consultar metadados
+├── Visualizar e gerenciar documentos
+└── Logs e ações
+```
+
+Rotas:
+
+```text
+/docs/funcionalidades/documentos
+/docs/funcionalidades/documentos/pastas
+/docs/funcionalidades/documentos/adicionar-documentos
+/docs/funcionalidades/documentos/filtros-e-metadados
+/docs/funcionalidades/documentos/gerenciar-documentos
+/docs/funcionalidades/documentos/logs-e-acoes
+```
+
+### Métricas editoriais registradas
+
+| Página | Palavras | Leitura | TOC |
+|---|---:|---:|---:|
+| Hub Documentos | 214 | 2 min | 2 |
+| Organizar pastas e subpastas | 542 | 3 min | 5 |
+| Adicionar documentos | 183 | 1 min | 2 |
+| Localizar, filtrar e consultar metadados | 253 | 2 min | 3 |
+| Visualizar e gerenciar documentos | 597 | 3 min | 7 |
+| Logs e ações | 313 | 2 min | 6 |
+
+Nenhuma perda útil de conteúdo foi identificada na migração registrada.
+
+### Compatibilidade
+
+Os 30 aliases de Documentos foram distribuídos entre os novos destinos:
+
+```text
+Hub: 2
+Pastas: 10
+Adicionar documentos: 2
+Filtros e metadados: 3
+Gerenciar documentos: 7
+Logs e ações: 6
+Total: 30
+```
+
+Workflows permaneceu intacto:
+
+```text
+49/49 aliases/anchors preservados
+```
+
+### Navegação
+
+Implementado:
+
+- ramo Documentos com cinco filhas;
+- hub clicável;
+- expansão separada;
+- breadcrumbs hierárquicos;
+- domínio próprio de paginação;
+- `Logs e ações` encerra a sequência de Documentos;
+- não deve existir `Logs e ações → Favoritos`.
+
+### Busca após o Lote 2
+
+Baseline registrado:
+
+```text
+Documentos no working tree: 14
+Entradas: 141
+Páginas: 14
+Seções: 127
+Payload bruto: 276.568 bytes
+Payload gzip: 35.862 bytes
+```
+
+Consultas registradas como priorizando as respectivas páginas-filhas:
+
+- `pastas`;
+- `adicionar documento`;
+- `metadados`;
+- `logs da pasta`;
+- `visualizar documento`.
+
+Não houve alteração do algoritmo, pesos, snippets ou limite de resultados.
+
+### SEO
+
+As cinco novas páginas entraram no pipeline de:
+
+- sitemap;
+- canonical;
+- imagem social;
+- busca.
+
+### Validações técnicas do Lote 2
+
+Resultados registrados:
+
+```text
+content:validate: 14 documentos válidos
+lint: 0 erros do produto; 151 warnings preexistentes em .agents
+typecheck: aprovado
+testes: 18 arquivos / 165 testes / 165 aprovados
+build: aprovado / 36 páginas estáticas
+search:benchmark: aprovado
+git diff --check: aprovado
+```
+
+### Revalidação visual automatizada
+
+O ambiente do Codex não conseguiu iniciar um navegador:
+
+- navegador integrado bloqueado por restrição de confiança;
+- Chrome/Chromium/Playwright não disponíveis no runtime;
+- servidor `next start` respondeu localmente;
+- as rotas de Documentos e a rota-controle de Workflows retornaram `200`;
+- H1 e canonical foram confirmados;
+- inspeção de console, foco, drawer, temas e breakpoints não pôde ser feita pelo Codex.
+
+Veredito daquela tentativa:
+
+```text
+VALIDAÇÃO VISUAL PENDENTE POR LIMITAÇÃO DO AMBIENTE
+```
+
+Nenhum arquivo adicional foi alterado nessa revalidação.
+
+---
+
+## 9. Inspeção visual manual do Lote 2 e nova decisão de UX
+
+Em 19/08/2026 foram fornecidos prints representativos de:
+
+- Home;
+- hub de Documentos em dark;
+- hub de Documentos em light;
+- Organizar pastas e subpastas em desktop;
+- Organizar pastas e subpastas em mobile;
+- drawer mobile com Documentos expandido;
+- paginação de uma página-filha;
+- Logs e ações;
+- final de Logs e ações.
+
+### O que os prints confirmaram visualmente
+
+- hierarquia de Documentos renderizada;
+- breadcrumbs coerentes;
+- ramo Documentos expandido na sidebar;
+- filha ativa identificável;
+- TOC renderizado;
+- layout desktop coerente;
+- layout mobile sem overflow aparente nos exemplos fornecidos;
+- drawer mobile comportando as cinco filhas;
+- paginação `Documentos → Pastas → Adicionar...`;
+- `Logs e ações` sem `Próxima → Favoritos`;
+- temas claro e escuro renderizando a estrutura.
+
+Os prints não comprovam, sozinhos:
+
+- retorno de foco;
+- `Escape`;
+- console;
+- todos os breakpoints;
+- execução real de deep links históricos no navegador.
+
+### Problema de UX identificado
+
+A decomposição editorial ficou adequada, porém o hub de Documentos ainda se comportava visualmente como um artigo comum.
+
+Problema percebido:
+
+> o usuário precisava descobrir pela sidebar que Documentos possuía cinco páginas-filhas.
+
+Decisão:
+
+- manter a decomposição atual;
+- não refazer o Lote 2;
+- adicionar uma navegação explícita por cards compactos dentro do hub;
+- posicionar esses cards **no final do hub**;
+- os cards devem aparecer depois do conteúdo conceitual e também depois de **Conceitos importantes**, quando essa seção existir.
+
+### Estrutura aprovada para o hub de Documentos
+
+```text
+Documentos
+↓
+H1 + resumo
+↓
+conteúdo geral / contextual
+↓
+permissões ou informações relevantes
+↓
+Conceitos importantes
+↓
+Explore Documentos
+↓
+5 cards compactos das páginas-filhas
+```
+
+Os cards devem ser:
+
+- compactos;
+- uniformes;
+- clean;
+- fáceis de escanear;
+- com título;
+- descrição curta;
+- indicação discreta de navegação.
+
+Evitar:
+
+- cards excessivamente grandes;
+- gradientes pesados;
+- excesso de badges;
+- imagens decorativas sem função;
+- informação demais dentro do card.
+
+### Estado do Lote 2 após essa decisão
+
+O lote **não deve ser considerado finalizado ainda**.
+
+Pendência focal:
+
+```text
+Adicionar os cinco cards ao final do hub
+→ validar desktop/mobile
+→ validar light/dark
+→ executar validações proporcionais
+→ revisar diff
+→ commit/push
+```
+
+---
+
+## 10. Novas decisões arquiteturais do redesign
+
+Estas decisões foram definidas após a implementação e inspeção do Lote 2 e devem orientar os próximos lotes.
+
+### 10.1 Funcionalidades mantém seis cards equivalentes
+
+Manter os seis destinos principais com o mesmo peso visual:
+
+```text
+Visão Geral
+Busca Inteligente
+Documentos
+Favoritos
+Workflows
+Relatórios
+```
+
+Não criar cards maiores ou mais densos para Documentos e Workflows apenas por serem hubs.
+
+Objetivo:
+
+- preservar limpeza;
+- evitar poluição;
+- manter a primeira camada da arquitetura simples e consistente.
+
+### 10.2 Padrão oficial dos hubs de domínio
+
+Hubs como Documentos e Workflows devem:
+
+1. explicar o domínio;
+2. apresentar conceitos e informações relevantes;
+3. finalizar com navegação explícita para as páginas-filhas.
+
+Padrão:
+
+```text
+H1 + resumo
+→ conteúdo geral
+→ informações/requisitos
+→ Conceitos importantes, quando existir
+→ cards compactos das páginas-filhas
+```
+
+Os cards ficam **no final**.
+
+A sidebar continua sendo navegação persistente; os cards funcionam como descoberta e orientação.
+
+### 10.3 Workflows deverá usar o mesmo padrão
+
+A decomposição planejada continua:
+
+```text
+Workflows
+├── Cards, Kanban e Lista
+├── Automações
+├── Criar e configurar
+├── Fases e transições
+├── Formulários e campos
+├── Membros e papéis
+└── Formulário público e acompanhamento
+```
+
+O hub de Workflows deverá nascer já com:
+
+```text
+contexto
+→ conteúdo conceitual
+→ Conceitos importantes, quando aplicável
+→ cards finais das sete páginas-filhas
+```
+
+### 10.4 Tempo de leitura não determina sozinho a decomposição
+
+Não adotar regra:
+
+```text
+4 minutos ou mais = criar mini hub
+```
+
+O tempo é apenas sinal editorial.
+
+Uma página pode permanecer única quando:
+
+- possui uma intenção principal;
+- há sequência lógica;
+- os subtópicos dependem do contexto comum;
+- a divisão criaria páginas pequenas ou fragmentadas.
+
+Considerar decomposição quando:
+
+- existem várias intenções independentes;
+- procedimentos fazem sentido isoladamente;
+- a estrutura fica excessivamente ramificada;
+- a consulta parcial é mais provável que a leitura sequencial.
+
+O critério principal permanece:
+
+> **intenção e arquitetura da informação**
+
+### 10.5 Evolução do componente “Nesta página”
+
+Problema identificado em páginas como Busca Inteligente:
+
+- o componente pode ficar visualmente grande e competir com o artigo;
+- uma página com cerca de 5 minutos não precisa ser dividida apenas para reduzir o TOC.
+
+Direção aprovada:
+
+- páginas simples podem exibir os destinos normalmente;
+- páginas densas devem priorizar os tópicos principais;
+- H2 têm prioridade;
+- H3 podem ser agrupados progressivamente;
+- o grupo da seção ativa pode permanecer expandido;
+- grupos não ativos podem ficar compactos;
+- H4 não deve dominar visualmente o TOC;
+- altura e scroll interno podem ser limitados quando necessário;
+- o comportamento sticky permanece;
+- no mobile, `Nesta página` continua recolhível e segue a mesma hierarquia progressiva.
+
+Busca Inteligente permanece, no estado discutido, como **uma página única**. A solução preferida é melhorar o TOC antes de considerar decomposição.
+
+### 10.6 Sidebar desktop retrátil
+
+Decisão:
+
+- sidebar desktop aberta por padrão;
+- usuário pode recolher/expandir;
+- não recolher automaticamente ao entrar em um card ou mudar de página;
+- estado deve permanecer consistente durante a navegação;
+- retração da sidebar inteira é independente da expansão dos ramos internos.
+
+### 10.7 Ramos internos continuam expansíveis
+
+Exemplo:
+
+```text
+▼ Documentos
+    Pastas
+    Adicionar documentos
+    Metadados
+    Gerenciar documentos
+    Logs e ações
+
+› Workflows
+```
+
+Regras:
+
+- ramo atual abre automaticamente;
+- demais podem ficar recolhidos;
+- reduzir densidade da árvore sem esconder o contexto atual.
+
+### 10.8 Mobile continua com drawer
+
+Não criar sidebar persistente para mobile.
+
+Continuar:
+
+```text
+menu
+→ drawer
+→ árvore de navegação
+```
+
+O drawer utiliza a mesma arquitetura da sidebar.
+
+### 10.9 FAQ será desenvolvido
+
+A seção de FAQ deixará de ser apenas placeholder em etapa posterior do redesign.
+
+Direção aprovada:
+
+- perguntas agrupadas por domínio quando fizer sentido;
+- accordions simples;
+- respostas curtas e diretas;
+- respostas extensas devem apontar para a documentação completa;
+- não duplicar artigos;
+- não inventar perguntas, funcionalidades ou comportamentos;
+- usar conteúdo documentado e dúvidas reais/úteis quando houver evidência.
+
+O lote exato de implementação ainda não foi formalmente fechado neste registro.
+
+### 10.10 Revisão das paletas
+
+As duas paletas serão revistas.
+
+Prioridade:
+
+> **tema claro**
+
+Motivo observado:
+
+- baixa diferenciação perceptível entre algumas superfícies;
+- contraste estrutural menos claro que no dark;
+- interface pode parecer lavada em determinadas áreas.
+
+Direção:
+
+- melhorar separação entre background, superfícies, cards, navegação e artigo;
+- melhorar bordas e divisores;
+- melhorar contraste de textos secundários;
+- revisar hover/active/focus;
+- manter o sistema clean.
+
+Tema escuro:
+
+- também será refinado;
+- intervenção deve ser mais contida;
+- preservar a base que já funciona melhor.
+
+### 10.11 Laranja GoDocs permanece como accent
+
+Continuar usando principalmente em:
+
+- links;
+- foco;
+- estados ativos;
+- navegação atual;
+- pequenos destaques funcionais.
+
+Evitar grandes superfícies laranja sem necessidade.
+
+### 10.12 Revisão visual por tokens
+
+A revisão das paletas deve ser sistêmica.
+
+Direção de camadas:
+
+```text
+background
+surface
+surface secundária
+surface interativa/elevada
+border
+text-muted
+text
+accent
+focus
+```
+
+Os valores finais não foram definidos nesta etapa e **não devem ser inventados**.
+
+A especificação definitiva pertence à etapa visual e deverá ser consolidada no `DESIGN.md`.
+
+### 10.13 DESIGN.md não deve ser reescrito agora
+
+A direção visual pode ser registrada na arquitetura, mas a especificação final de:
+
+- cores;
+- tokens;
+- superfícies;
+- sidebar recolhida;
+- TOC;
+- estados;
+- microinterações;
+
+deve ser consolidada quando as soluções forem efetivamente desenhadas e validadas nos Lotes 6 e 7.
+
+---
+
+## 11. Documentos canônicos e atualizações necessárias
+
+### `REDESIGN_ARCHITECTURE.md`
+
+Deve refletir:
+
+- padrão oficial de hubs;
+- cards no final;
+- Funcionalidades com seis cards equivalentes;
+- Workflows usando o mesmo padrão de Documentos;
+- regra de decomposição por intenção;
+- evolução do `Nesta página`;
+- sidebar retrátil;
+- drawer mobile preservado;
+- FAQ planejado;
+- direção da revisão de paletas;
+- robustez estrutural sem poluição visual.
+
+Uma versão revisada desse documento foi preparada nesta frente de trabalho em 19/08/2026. A incorporação/versionamento no repositório deve ser confirmada no fluxo Git; não assumir que o arquivo gerado fora do repositório já esteja na `main`.
+
+### `daily_stats.md`
+
+Este arquivo deve registrar o estado atual descrito aqui:
+
+- Lote 1 versionado;
+- Lote 2 ainda em fechamento;
+- novo ajuste focal do hub;
+- decisões que alteram os próximos lotes;
+- uso planejado das skills;
+- estado Git/deploy sem inferências.
+
+### `DESIGN.md`
+
+Não atualizar profundamente agora.
+
+Atualizar quando as decisões visuais tiverem especificação concreta nos Lotes 6 e 7.
+
+### `PRODUCT.md`
+
+Nenhuma das decisões recentes exige alteração confirmada de definição de produto.
+
+### `AGENTS.md`
+
+Nenhuma alteração adicional foi definida nesta frente.
+
+### Auditoria Impeccable anterior
+
+Não editar para fazer o relatório histórico refletir decisões posteriores.
+
+---
+
+## 12. Conteúdo e frentes editoriais
+
+### Estado local após o Lote 2
+
+Working tree:
+
+```text
+14 documentos MDX
+```
+
+Estrutura conhecida:
 
 ### Comece por aqui
 
 ```text
-content/docs/o-que-e-o-godocs.mdx
-content/docs/primeiro-acesso.mdx
+O que é o GoDocs?
+Primeiro Acesso
 ```
 
 ### Funcionalidades
 
 ```text
-content/docs/funcionalidades/index.mdx
-content/docs/funcionalidades/visao-geral.mdx
-content/docs/funcionalidades/documentos.mdx
-content/docs/funcionalidades/documentos/pastas.mdx
-content/docs/funcionalidades/documentos/adicionar-documentos.mdx
-content/docs/funcionalidades/documentos/filtros-e-metadados.mdx
-content/docs/funcionalidades/documentos/gerenciar-documentos.mdx
-content/docs/funcionalidades/documentos/logs-e-acoes.mdx
-content/docs/funcionalidades/favoritos.mdx
-content/docs/funcionalidades/workflows.mdx
-content/docs/funcionalidades/busca-inteligente.mdx
-content/docs/funcionalidades/relatorios.mdx
+Funcionalidades
+Visão Geral
+Busca Inteligente
+Documentos
+Organizar pastas e subpastas
+Adicionar documentos
+Localizar, filtrar e consultar metadados
+Visualizar e gerenciar documentos
+Logs e ações
+Favoritos
+Workflows
+Relatórios
 ```
 
-### Estado editorial
+### Configurações
 
-| Página | Estado |
-|---|---|
-| O que é o GoDocs? | Publicado |
-| Primeiro Acesso | Publicado |
-| Funcionalidades | Publicado — hub explícito |
-| Visão Geral | Publicado |
-| Documentos | Publicado — hub editorial |
-| Organizar pastas e subpastas | Publicado |
-| Adicionar documentos | Publicado |
-| Localizar, filtrar e consultar metadados | Publicado |
-| Visualizar e gerenciar documentos | Publicado |
-| Logs e ações | Publicado |
-| Favoritos | Publicado |
-| Workflows | Publicado |
-| Busca Inteligente | Publicado |
-| Relatórios | Publicado |
-| Configurações | Em análise/documentação |
+Foi realizada análise/documentação da seção a partir de prints em conversa do projeto.
 
-Não existe, até a verificação atual, um arquivo publicado de **Configurações** em `content/docs/`.
+Estado seguro:
+
+- existe trabalho editorial realizado;
+- não há confirmação de arquivo MDX publicado na coleção;
+- não inventar funções não sustentadas pelas evidências;
+- publicação permanece pendente até implementação e validação confirmadas.
+
+### Relatórios
+
+A documentação de Relatórios já foi trabalhada e revisada em conversa anterior.
+
+Pontos funcionais documentados no projeto incluem:
+
+- Tabela de Temporalidades;
+- dados indexados;
+- comportamento observado de descarte com notificação `Temporalidades excluídas com sucesso`.
+
+Esses registros funcionais pertencem à documentação da seção e não alteram a arquitetura atual.
+
+### FAQ
+
+Ainda não implementado.
+
+Passou de “placeholder sem conteúdo confirmado” para **frente planejada do redesign**, condicionada a perguntas factuais e úteis.
 
 ---
 
-## 6. Trabalho em andamento
+## 13. Busca — estado e decisões
 
-### 6.1 Configurações
-
-**Estado:** frente editorial ativa.
-
-Já foi realizada uma análise inicial da seção a partir de um conjunto amplo de prints.
-
-Próximas etapas:
-
-1. concluir a análise funcional;
-2. consolidar o texto final;
-3. revisar como especialista em documentação;
-4. revisar como usuário iniciante;
-5. salvar/aprovar a versão editorial;
-6. transformar em MDX;
-7. validar navegação, busca, TOC, paginação e home após publicação.
-
-Regra: não inferir funções de Configurações apenas pelo nome da área. Utilizar somente informações sustentadas pelas evidências.
-
-### 6.2 Auditoria Impeccable
-
-**Estado:** encerrada.
-
-A auditoria passou por lotes de correção, reauditoria, lotes de fechamento, revalidação focal e um lote final para o caso residual de `aria-current`.
-
-Estado final confirmado:
-
-- achado #5 do TOC móvel: resolvido;
-- N1 — estado ativo / `aria-current`: resolvido;
-- N2 — token `--type-home-title`: resolvido;
-- N3 — caminhos do `AGENTS.md`: resolvido;
-- nenhuma regressão relevante permaneceu aberta;
-- suíte final: **14 arquivos / 100 testes / 100 aprovados / 0 falhas**;
-- `pnpm content:validate`: aprovado para 8 documentos;
-- typecheck: aprovado;
-- lint: 0 erros do produto; warnings conhecidos restritos a `.agents/skills/impeccable`;
-- build: aprovado com 24 páginas estáticas;
-- console do produto: sem erros ou warnings observados na validação final;
-- overflow horizontal: ausente nos breakpoints inspecionados;
-- `git diff --check`: aprovado.
-
-Indicadores finais do TOC de Workflows em `390×844`:
-
-- 24 destinos totais;
-- 7 destinos inicialmente visíveis;
-- 17 destinos progressivos;
-- altura inicial aberta de 384 px;
-- 45,50% da viewport;
-- touch targets mínimos de 44 px preservados.
-
-Após o encerramento funcional, `.impeccable/design.json` foi sincronizado separadamente com o `DESIGN.md` e versionado no commit `700998c`.
-
-Não existe, no estado verificado, bloqueio técnico remanescente da auditoria.
-
-### 6.3 Auditoria Estratégica e contrato da nova arquitetura
-
-A Auditoria Estratégica foi concluída. O Lote 0 foi aprovado e consolidado em `project-docs/REDESIGN_ARCHITECTURE.md`, que registra a arquitetura-alvo, hubs, slugs públicos futuros, compatibilidade, `pageType`, paginação, guardrails e roadmap.
-
-No baseline do contrato, os 8 documentos publicados permaneciam inalterados. Documentos e Workflows continuavam, respectivamente, com aproximadamente 11 e 20 minutos de leitura; a decomposição ainda não havia sido implementada. A decisão sobre quantidade de resultados da busca em mobile e desktop permanece deferida para o Lote 4.
-
-O passo seguinte desse baseline foi o Lote 1 — Fundação da Nova Arquitetura.
-
-### 6.4 Lote 1 — Fundação da Nova Arquitetura
-
-O Lote 1 foi implementado localmente sobre `587069f`, sem commit ou push. A fundação agora inclui `pageType` explícito, destino de seção por `entrySlug`, hub `/docs/funcionalidades`, árvore preparada para hubs com filhos, breadcrumbs por ancestrais reais, paginação por domínio, manifesto tipado dos 79 anchors atuais, fragments H2/H3/H4 + aliases e baseline determinístico da busca.
-
-Documentos e Workflows não foram decompostos. Seus corpos editoriais e 79 anchors permanecem nas URLs atuais. A home continua mostrando os seis cards de funcionalidades; o novo hub entra em rota, canonical, sitemap, imagem social e busca sem antecipar o redesign visual.
-
-Validação registrada neste lote:
+### Baseline após Lote 1
 
 ```text
-content:validate: 9 documentos válidos
-lint: 0 erros do produto; 151 warnings preexistentes em .agents/skills/impeccable
-typecheck: aprovado com --incremental false
-testes: 18 arquivos / 127 testes aprovados / 0 falhas
-build: aprovado / 26 páginas estáticas
-busca: 9 documentos / 134 entradas / 271.847 bytes bruto / 36.557 bytes gzip
-visual: 320, 390, 767, 1023, 1279 e 1440; light/dark; sem overflow ou console errors
+9 documentos
+134 entradas
+125 seções
+271.847 bytes bruto
+36.557 bytes gzip
 ```
 
-### 6.5 Governança de memória
+### Baseline após Lote 2 local
 
-Foi definida uma organização:
+```text
+14 documentos
+141 entradas
+127 seções
+276.568 bytes bruto
+35.862 bytes gzip
+```
+
+### Decisão deferida do Lote 0
+
+Ainda não existe limite definitivo distinto por viewport.
+
+Hipótese registrada para o Lote 4:
+
+- testar até 8 resultados no mobile;
+- testar até 10 no desktop;
+- comparar com o baseline atual de 12;
+- avaliar descoberta, densidade e qualidade antes de consolidar.
+
+### Nova observação relacionada
+
+O problema visual identificado em **Busca Inteligente** está atualmente ligado ao componente `Nesta página`, não a uma decisão de decompor automaticamente a página.
+
+---
+
+## 14. Skills, Codex e economia de créditos
+
+### Impeccable
+
+Estado:
+
+- instalada/em uso no projeto;
+- auditoria anterior encerrada;
+- não usar automaticamente em todos os lotes;
+- volta a ter papel central na fase visual e na reauditoria final.
+
+### UI UX PRO MAX
+
+Estado conhecido:
+
+- não há confirmação de instalação;
+- não instalar durante o fechamento do Lote 2;
+- não usar no Lote 3;
+- instalar **após o Lote 3 — Workflows e antes do Lote 4 — Busca**.
+
+Plano atual:
+
+```text
+Lote 4 — uso pontual para UX da busca
+Lote 5 — uso pontual/opcional
+Lotes 6 e 7 — UI UX PRO MAX + Impeccable
+Lote 9 — Impeccable principal; UI UX PRO MAX somente se necessário
+```
+
+Papel esperado quando usadas juntas:
+
+```text
+UI UX PRO MAX
+→ explorar padrões e alternativas
+
+Impeccable
+→ auditar, criticar e funcionar como quality gate
+```
+
+UI UX PRO MAX não deve:
+
+- substituir `PRODUCT.md`;
+- substituir `DESIGN.md`;
+- substituir `REDESIGN_ARCHITECTURE.md`;
+- gerar um Design System paralelo;
+- apagar a identidade GoDocs.
+
+### Regra de escolha de modelo no Codex
+
+Antes de cada nova tarefa do Codex, indicar explicitamente:
+
+- modelo: **Sol, Terra ou Luna**;
+- nível de raciocínio;
+- escolha orientada ao melhor resultado com economia de créditos/tokens.
+
+Convenção operacional adotada:
+
+- arquitetura ou trabalho de alto risco: Sol High quando realmente necessário;
+- implementação técnica/editorial delimitada: Terra, geralmente High;
+- validação visual/focal: Terra Medium;
+- tarefas Git simples: Luna Medium pode ser suficiente.
+
+Não usar Sol High/Extra High por padrão sem necessidade.
+
+### Configuração para o ajuste focal atual do Lote 2
+
+```text
+Modelo: Terra
+Nível: Medium
+Chat: mesmo chat do Lote 2
+Impeccable: não
+UI UX PRO MAX: não
+Commit/push durante a implementação focal: somente após validação e decisão explícita
+```
+
+### Configuração planejada para o Lote 3
+
+Direção atual:
+
+```text
+Modelo: Terra
+Nível: High
+Chat: novo chat
+Impeccable: não
+UI UX PRO MAX: não
+```
+
+Após o Lote 3, lembrar da instalação da UI UX PRO MAX antes do Lote 4.
+
+---
+
+## 15. Desenvolvimento entre máquinas e contas
+
+O desenvolvimento entre computador do trabalho e computador pessoal foi definido usando o GitHub como fonte central.
+
+O caminho local da pasta não precisa ser igual.
+
+Fluxo:
+
+```bash
+git status
+git pull origin main
+```
+
+desenvolver e validar, depois:
+
+```bash
+git status
+git add .
+git commit -m "mensagem descritiva"
+git push origin main
+```
+
+No outro computador:
+
+```bash
+git pull origin main
+```
+
+Regras:
+
+- não depender de sincronização de pastas locais entre máquinas;
+- `node_modules` permanece local;
+- segredos e `.env` não devem ser versionados;
+- Git é a fonte de continuidade;
+- confirmar deployment Vercel quando o marco for publicado.
+
+### Alternância entre contas Plus no Codex
+
+Foi validado que o usuário pode:
+
+- manter o projeto principal e o contexto no mesmo ChatGPT;
+- alternar entre duas contas Plus no Codex;
+- continuar usando o mesmo repositório local;
+- não migrar o projeto do ChatGPT por causa da troca de conta do Codex.
+
+A continuidade do Codex deve vir dos arquivos do projeto e do Git, não da memória da conta autenticada.
+
+---
+
+## 16. Governança de contexto
+
+Fluxo definido:
 
 ```text
 conversas
-   ↓
+↓
 trabalho temporário
-   ↓
-decisões / conhecimento confirmado
-   ↓
+↓
+decisões e conhecimento confirmado
+↓
 arquivos canônicos
-   ↓
-Memória.md + daily_stats.md
+↓
+Memória.md + daily_stats.md + documentos específicos
 ```
 
-O objetivo é reduzir dependência das conversas antigas.
+Objetivo:
 
-Na `main` verificada em 14/08/2026, `project-docs/Memória.md` ainda não está versionado. O `daily_stats.md` já existe em `project-docs/` e esta atualização consolida o encerramento da auditoria.
+- reduzir dependência de chats antigos;
+- permitir troca de computador, conta ou chat;
+- preservar decisões arquiteturais;
+- evitar documentos redundantes.
+
+### Memória universal
+
+`Memória.md` continua sendo a referência ampla para:
+
+- histórico;
+- contexto do produto;
+- funcionamento confirmado;
+- regras editoriais;
+- decisões superadas;
+- transferência de contexto.
+
+O versionamento atual desse arquivo na `main` não foi revalidado nesta atualização. Não afirmar um estado novo sem inspeção do repositório.
 
 ---
 
-### 6.5 Lote 2 — Documentos
+## 17. Débitos e riscos atuais
 
-O Lote 2 foi implementado localmente sobre `cc5f6e1`, sem commit ou push. `/docs/funcionalidades/documentos` agora é um hub editorial e suas cinco páginas-filhas publicadas organizam o conteúdo por intenção: pastas, adição, filtros e metadados, gerenciamento e logs e ações. Nenhum conteúdo de Workflows foi alterado.
+### P1 — Fechamento do Lote 2
 
-Os 30 aliases históricos de Documentos resolvem para os destinos canônicos; os 49 aliases de Workflows continuam apontando para a mesma URL e fragmento. A navegação, breadcrumbs, paginação, busca, sitemap, canonical e imagens sociais derivam das 14 páginas publicadas. A Home preserva os seis cards de funcionalidades de primeiro nível.
+- [ ] adicionar cards compactos das cinco páginas-filhas no final do hub de Documentos;
+- [ ] manter os cards depois de `Conceitos importantes`;
+- [ ] validar desktop;
+- [ ] validar mobile;
+- [ ] validar light;
+- [ ] validar dark;
+- [ ] reexecutar apenas as validações técnicas proporcionais às alterações;
+- [ ] revisar `git diff`;
+- [ ] confirmar que 30/30 aliases continuam preservados;
+- [ ] confirmar que 49/49 aliases de Workflows continuam intactos;
+- [ ] commit/push do Lote 2 após aprovação;
+- [ ] confirmar deployment correspondente após o push.
 
-Baseline da busca após o lote: 14 documentos, 141 entradas, 14 páginas, 127 seções, payload bruto de 276.568 bytes e gzip de 35.862 bytes. As consultas `pastas`, `adicionar documento`, `metadados`, `logs da pasta` e `visualizar documento` priorizam as respectivas filhas. Não houve ajuste de algoritmo, pesos, snippets ou limite de resultados.
+### P1 — Arquitetura e documentação interna
 
-Validações técnicas executadas: `pnpm content:validate`, lint (0 erros; 151 avisos preexistentes em `.agents`), typecheck, 165 testes, build, benchmark e `git diff --check`. A inspeção visual automatizada do navegador local ficou bloqueada pela restrição do ambiente antes de abrir uma página; o servidor de produção respondeu `200` para o hub.
-
-## 7. Arquivos de contexto e governança
-
-### Estado desejado
-
-```text
-godocs-docs/
-├── AGENTS.md
-├── PRODUCT.md
-├── DESIGN.md
-├── README.md
-│
-├── content/
-│   └── docs/
-│
-└── project-docs/
-    ├── Memória.md
-    ├── daily_stats.md
-    ├── PROJECT_PROMPT.md
-    ├── SYSTEM_BLUEPRINT.md
-    └── references/
-```
-
-### Estado atual da `main`
-
-Na verificação de 14/08/2026, `project-docs/` contém:
-
-```text
-PROJECT_PROMPT.md
-SYSTEM_BLUEPRINT.md
-daily_stats.md
-references/
-```
-
-O `Memória.md` ainda não está versionado em `project-docs/`.
-
-O `daily_stats.md` foi incorporado à `main` em sua forma operacional no commit `a5f8534`; esta revisão de 14/08 atualiza o estado após o encerramento da auditoria e a sincronização do Impeccable.
-
-As referências operacionais do `AGENTS.md` usam atualmente o caminho correto `project-docs/`. A ocorrência histórica de `project_docs` registrada anteriormente no próprio `daily_stats.md` não é uma instrução operacional.
-
----
-
-## 8. Débitos e riscos atuais
-
-### P1 — Governança
-
-- [ ] Versionar `Memória.md` em `project-docs/`.
-- [x] Substituir a antiga versão ampla de `project-docs/daily_stats.md` pelo formato operacional atual.
-- [x] Corrigir referências `project_docs/` → `project-docs/` no `AGENTS.md`.
-- [ ] Revalidar README e documentos históricos para evitar estados editoriais antigos tratados como atuais.
-- [ ] Versionar esta atualização do `daily_stats.md` após revisão/aprovação.
-
-### P1 — Design e acessibilidade
-
-- [x] Resolver a decisão de Design System sobre a ambientação do hero.
-- [x] Simplificar a decoração do hero e remover elementos ornamentais excedentes.
-- [x] Realizar uma grande limpeza inicial de CSS legado.
-- [x] Ampliar testes de acessibilidade de artigos.
-- [x] Corrigir e revalidar touch targets de 44 px nos componentes auditados.
-- [x] Revalidar contraste dos pontos identificados pela auditoria.
-- [x] Revisar o TOC mobile de páginas longas, principalmente Workflows.
-- [x] Revalidar o achado de CSS legado/duplicações sem reintrodução relevante.
-- [x] Ampliar a cobertura automatizada de páginas completas e cenários de acessibilidade.
-- [x] Corrigir o estado ativo / `aria-current` no último heading sem espaço inferior suficiente.
-- [x] Sincronizar `.impeccable/design.json` com o `DESIGN.md` após o encerramento da auditoria.
-
-**Estado:** não há débito de design/acessibilidade remanescente identificado como bloqueador pela auditoria encerrada. Novos achados devem ser tratados como nova análise, regressão ou nova frente de evolução.
+- [ ] incorporar/versionar no repositório a versão final aprovada de `REDESIGN_ARCHITECTURE.md`;
+- [ ] versionar este `daily_stats.md` após revisão;
+- [ ] manter o contrato de Workflows alinhado ao novo padrão de hub;
+- [ ] não iniciar o Lote 3 enquanto o Lote 2 ainda estiver aberto.
 
 ### P1 — Editorial
 
-- [ ] Finalizar Configurações.
-- [ ] Converter Configurações para MDX após aprovação.
-- [ ] Manter Notion e MDX sincronizados.
-- [ ] Continuar revisão das páginas existentes quando surgirem novas evidências.
+- [ ] finalizar/publicar Configurações somente quando o conteúdo estiver aprovado e implementado;
+- [ ] continuar usando apenas informações sustentadas por evidências;
+- [ ] não inventar permissões ou comportamentos.
 
-### P2 — Processo
+### P2 — Navegação futura
 
-- [ ] Preferir mensagens de commit descritivas.
-- [ ] Manter rotina Git consistente entre trabalho e casa.
-- [ ] Consolidar decisões importantes nos arquivos em vez de depender dos chats.
+- [ ] implementar sidebar desktop retrátil em lote adequado;
+- [ ] manter ramos internos expansíveis;
+- [ ] evoluir `Nesta página` para comportamento hierárquico/progressivo;
+- [ ] preservar drawer no mobile.
+
+### P2 — Visual
+
+- [ ] revisar paleta do tema claro com prioridade;
+- [ ] refinar tema escuro;
+- [ ] realizar revisão por tokens;
+- [ ] consolidar valores finais no `DESIGN.md` somente após desenho/validação;
+- [ ] preservar laranja GoDocs como accent;
+- [ ] evitar poluição visual.
+
+### P2 — FAQ
+
+- [ ] desenvolver FAQ em etapa posterior;
+- [ ] usar somente perguntas factuais e úteis;
+- [ ] manter respostas curtas;
+- [ ] direcionar para artigos completos quando necessário.
+
+### P2 — Busca
+
+- [ ] testar hipótese de quantidade de resultados no Lote 4;
+- [ ] medir densidade e descoberta;
+- [ ] não alterar limite por suposição antes dos testes.
+
+### Governança
+
+- [ ] revalidar o estado real de `Memória.md` na `main` quando necessário;
+- [ ] continuar consolidando decisões importantes nos arquivos canônicos;
+- [ ] evitar tratar snapshots antigos como estado atual.
 
 ---
 
-## 9. Stack e validação
+## 18. Stack e comandos de validação
 
 Stack principal registrada:
 
@@ -502,7 +1357,7 @@ next-mdx-remote 6.0.0
 Lucide React 1.25.0
 ```
 
-Comandos de qualidade:
+Comandos principais:
 
 ```bash
 pnpm audit:prod
@@ -511,267 +1366,340 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm search:benchmark
+git diff --check
 ```
 
-Para alterações visuais, validar também:
+Para mudanças visuais, validar proporcionalmente:
 
 - desktop;
-- notebook;
-- tablet;
+- notebook/tablet quando aplicável;
 - celular;
 - tema claro;
 - tema escuro;
 - teclado;
 - foco;
-- dialogs/drawers;
+- drawer/dialog;
 - overflow;
 - console;
 - reduced motion quando aplicável.
 
-### Baseline funcional validado no encerramento da auditoria
-
-No lote final de `fc384cc`:
-
-```text
-Arquivos de teste: 14
-Testes: 100
-Aprovados: 100
-Falhas: 0
-
-content:validate: aprovado — 8 documentos
-typecheck: aprovado
-lint: 0 erros
-build: aprovado — 24 páginas estáticas
-console: sem erros/warnings observados
-overflow horizontal: não reproduzido nos breakpoints inspecionados
-git diff --check: aprovado
-```
-
-O lint registrou 151 warnings preexistentes restritos aos scripts internos em `.agents/skills/impeccable`; eles não foram classificados como falha do produto.
-
-A primeira execução de testes em ambiente restrito encontrou `spawn EPERM`; a repetição pelo mecanismo permitido passou integralmente. O aviso de `HTMLCanvasElement.getContext()` pertence ao JSDOM auxiliar e não afetou os testes.
-
-### Validação da sincronização do sidecar
-
-O commit `700998c` altera apenas `.impeccable/design.json`.
-
-Na tarefa de sincronização foram confirmados:
-
-- JSON válido;
-- schema v2;
-- 20 cores com 20 rampas tonais válidas;
-- narrativa comparada com `DESIGN.md`;
-- `DESIGN.md` preservado;
-- correção do exemplo de Icon Button para `--accent-hover`;
-- validade do breakpoint `mobile-compact: 341px`;
-- `git diff --check` aprovado.
-
-A suíte funcional completa de 100 testes pertence ao baseline imediatamente anterior; não foi registrada como reexecutada após a alteração exclusiva do sidecar.
-
-Não registrar resultados antigos de testes como se fossem validações de uma versão futura diferente.
+Não registrar validações antigas como se tivessem sido reexecutadas em uma versão nova.
 
 ---
 
-## 10. Desenvolvimento entre máquinas e contas
+## 19. Baselines de qualidade por fase
 
-O projeto pode ser desenvolvido no computador do trabalho e em casa.
+### Encerramento da auditoria Impeccable anterior
 
-O caminho local não precisa ser igual.
-
-A continuidade vem do mesmo repositório:
-
-```bash
-git pull origin main
+```text
+Testes: 100/100
+Build: 24 páginas estáticas
+Estado: auditoria encerrada
 ```
 
-antes de começar, e:
+### Lote 1 final
 
-```bash
-git status
-git add .
-git commit -m "mensagem descritiva"
-git push origin main
+```text
+Documentos da coleção: 9
+Testes: 131/131
+Build: 26 páginas estáticas
+Busca: 134 entradas
 ```
 
-ao finalizar.
+### Lote 2 antes do ajuste focal do hub
 
-Também é possível alternar entre contas Plus no Codex.
+```text
+Documentos da coleção local: 14
+Testes: 165/165
+Build: 36 páginas estáticas
+Busca: 141 entradas
+```
 
-A troca da conta do Codex:
-
-- não muda os arquivos locais;
-- não muda o Git;
-- não muda o GitHub;
-- não exige migrar o projeto do ChatGPT;
-- não deve ser usada como fonte de continuidade contextual.
-
-A continuidade deve vir dos arquivos e do repositório.
+Esses números pertencem a snapshots diferentes. Não compará-los como se fossem a mesma suíte sem considerar o crescimento da implementação.
 
 ---
 
-## 11. Fluxo editorial e de publicação
+## 20. Roadmap oficial atualizado
 
 ```text
-GoDocs real / evidências
-          ↓
-análise e documentação
-          ↓
-Notion, quando usado na autoria interna
-          ↓
-conteúdo aprovado
-          ↓
-Codex / MDX
-          ↓
-repositório local
-          ↓
-GitHub / main
-          ↓
-Vercel
-          ↓
-GoDocs Docs
+Lote 0 — Contrato ✅
+Lote 0.1 — Consolidação ✅
+Lote 1 — Fundação ✅ versionado
+
+Lote 2 — Documentos
+├── decomposição ✅
+├── compatibilidade ✅
+├── busca/SEO ✅
+├── validação técnica ✅
+├── inspeção visual representativa ✅
+└── ajuste focal do hub ⏳
+
+Lote 3 — Workflows
+Lote 4 — Busca
+Lote 5 — Descoberta e consolidação
+Lote 6 — Home + Hubs + identidade visual
+Lote 7 — Refinamento visual e microinterações
+Lote 8 — Governança editorial
+Lote 9 — Reauditoria Impeccable + regressão final
 ```
 
-Importante:
+### Dependências importantes
 
 ```text
-Notion atualizado ≠ site atualizado
+Fechar Lote 2
+→ commit/push
+→ Lote 3 — Workflows
+→ validar/versionar
+→ instalar UI UX PRO MAX
+→ Lote 4 — Busca
 ```
 
-A versão pública só muda depois da sincronização com o repositório e do deployment correspondente.
+### Lotes 6 e 7
+
+Concentrarão a evolução visual mais profunda:
+
+- paletas;
+- tema claro;
+- tema escuro;
+- tokens;
+- superfícies;
+- cards;
+- hubs;
+- sidebar;
+- estados;
+- hover/focus/active;
+- microinterações.
+
+Impeccable e UI UX PRO MAX deverão trabalhar de forma complementar nesses lotes.
 
 ---
 
-## 12. Próximas ações recomendadas
+## 21. Ideias futuras discutidas, sem implementação confirmada
 
-### 1. Revisar e versionar o Lote 1 — Fundação da Nova Arquitetura
+Estas ideias pertencem ao histórico do projeto, mas **não devem ser tratadas como roadmap aprovado enquanto não houver decisão específica**:
 
-Revisar o diff local e, após aprovação, criar commit e publicar separadamente. Não iniciar a decomposição de Documentos ou Workflows sem a solicitação correspondente aos Lotes 2 ou 3.
+- assistente de IA para a documentação;
+- busca avançada e sugestões contextuais;
+- navegação inteligente;
+- melhorias adicionais de onboarding;
+- mini vídeos-guia produzidos com IA para explicar áreas do GoDocs, como Workflows.
 
-### 2. Finalizar Configurações
-
-A frente editorial de Configurações permanece separada. Continuar somente com informações sustentadas pelas evidências disponíveis e converter para MDX após aprovação.
-
-### 3. Sincronizar a memória universal do projeto
-
-`project-docs/Memória.md` continua ausente da `main` verificada.
-
-Quando a versão consolidada estiver aprovada e disponível para versionamento, adicionar:
-
-```text
-project-docs/Memória.md
-```
-
-Não reconstruir esse arquivo por inferência caso a versão canônica não esteja disponível.
-
-### 4. Versionar esta atualização operacional
-
-Após revisar este `daily_stats.md`, substituir a versão do repositório e criar um commit descritivo.
-
-### 5. Tratar novas melhorias visuais como nova fase
-
-Qualquer evolução visual deve ocorrer em tarefa separada e partir da fundação estrutural aprovada.
-
-Não reabrir automaticamente os achados antigos. Qualquer nova evolução visual deve partir do baseline auditado e ser tratada como nova iniciativa, preservando:
-
-- `DESIGN.md` como fonte visual canônica;
-- acessibilidade;
-- touch targets;
-- comportamento do TOC;
-- temas claro e escuro;
-- ausência de regressões.
-
-### 6. Manter GitHub e Vercel sincronizados
-
-Após cada marco material:
-
-- confirmar SHA na `main`;
-- confirmar status de deployment;
-- atualizar este arquivo apenas quando houver mudança operacional relevante.
+Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ---
 
-## 13. Registro recente
+## 22. Próximas ações recomendadas
+
+### 1. Fechar a documentação interna da decisão atual
+
+Garantir que:
+
+- `REDESIGN_ARCHITECTURE.md` contenha as novas regras aprovadas;
+- `daily_stats.md` represente o estado atual sem contradições.
+
+### 2. Executar o Ajuste Focal do Hub de Documentos
+
+Escopo:
+
+- adicionar cinco cards compactos no final do hub;
+- manter todo o conteúdo importante existente;
+- não alterar a decomposição;
+- não fazer redesign amplo;
+- não usar Impeccable;
+- não usar UI UX PRO MAX.
+
+Configuração indicada:
+
+```text
+Terra — Medium
+```
+
+### 3. Revalidar o Lote 2
+
+Após o ajuste:
+
+- desktop;
+- mobile;
+- light;
+- dark;
+- navegação;
+- paginação;
+- aliases;
+- testes proporcionais;
+- diff.
+
+### 4. Versionar o Lote 2
+
+Somente após aprovação:
+
+```text
+commit
+push
+confirmar SHA
+confirmar Vercel
+```
+
+### 5. Iniciar o Lote 3 — Workflows
+
+Usar o novo contrato de hub desde o início.
+
+Configuração planejada:
+
+```text
+Terra — High
+```
+
+Não instalar UI UX PRO MAX antes do fechamento do Lote 3.
+
+### 6. Após o Lote 3
+
+- validar/versionar Workflows;
+- instalar e validar UI UX PRO MAX;
+- iniciar Lote 4 — Busca.
+
+### 7. Manter Configurações como frente editorial separada
+
+Não misturar publicação de Configurações com o fechamento técnico do Lote 2 sem uma tarefa específica.
+
+---
+
+## 23. Registro recente
 
 | Data | Marco | Resultado |
 |---|---|---|
-| 11/08/2026 | `8c7b5d6` | Atualização ampla da documentação |
-| 11/08/2026 | `561c3de` | Checkpoint GoDocs Docs |
-| 12/08/2026 | Impeccable | Auditoria de design avançou por lotes |
+| 11/08/2026 | Desenvolvimento contínuo | Fluxo trabalho/casa consolidado via GitHub |
+| 12/08/2026 | Configurações | Análise/documentação iniciada a partir de prints |
 | 12/08/2026 | `b595458` | Semântica e estados da busca refinados |
-| 12/08/2026 | `d9b9278` | Grande limpeza de CSS, testes e acessibilidade ampliados |
-| 12/08/2026 | Memória universal | `Memória.md` consolidado como contexto universal fora da `main`; versionamento continua pendente |
+| 12/08/2026 | `d9b9278` | Limpeza ampla de CSS, acessibilidade e testes ampliados |
 | 12/08/2026 | Codex | Alternância entre duas contas Plus validada |
-| 13/08/2026 | Governança | Conversas passam a ser tratadas como ambiente temporário de trabalho |
-| 13/08/2026 | `ec96743` | Hero e `DESIGN.md` alinhados; ambientação governada e simplificada |
-| 13/08/2026 | Vercel | `success` confirmado para `ec96743` |
-| 13/08/2026 | `a5f8534` | `DESIGN.md`, `PRODUCT.md` e `daily_stats.md` atualizados |
-| 13/08/2026 | `23e2a32` | Lotes de fechamento consolidados: TOC progressivo, token tipográfico e caminhos operacionais |
-| 13/08/2026 | `fc384cc` | Caso residual de `aria-current` corrigido; suíte final 100/100 |
-| 14/08/2026 | Auditoria Impeccable | Auditoria formalmente encerrada, sem bloqueio técnico remanescente |
-| 14/08/2026 | `700998c` | `.impeccable/design.json` sincronizado com o Design System |
+| 13/08/2026 | Governança | Conversas passam a ser tratadas como ambiente temporário |
+| 13/08/2026 | `ec96743` | Hero e `DESIGN.md` alinhados |
+| 13/08/2026 | `a5f8534` | Documentos canônicos/operacionais atualizados |
+| 13/08/2026 | `23e2a32` | TOC progressivo, token tipográfico e caminhos corrigidos |
+| 13/08/2026 | `fc384cc` | Caso residual de `aria-current` corrigido; 100/100 |
+| 14/08/2026 | Auditoria Impeccable | Formalmente encerrada |
+| 14/08/2026 | `700998c` | `.impeccable/design.json` sincronizado |
 | 14/08/2026 | Vercel | `success` confirmado para `700998c` |
-| 14/08/2026 | Git | `main` sincronizada com `origin/main` e working tree limpo após o push de `700998c` |
-| 18/08/2026 | Baseline do redesign | Referências normalizadas, falso positivo de identidade corrigido e validação técnica verde; pronto para revisão e versionamento |
-| 18/08/2026 | Lote 0 e Lote 0.1 | Contrato da nova arquitetura aprovado e consolidado em `REDESIGN_ARCHITECTURE.md`; próximo passo é o Lote 1 |
-| 18/08/2026 | Lote 1 | Fundação técnica implementada e validada localmente; sem commit, push ou decomposição editorial |
-| 18/08/2026 | Lote 2 | Documentos decomposto em hub e cinco filhas; 30 aliases preservados, 49 anchors de Workflows intactos e validação técnica verde; sem commit ou push |
+| 18/08/2026 | `0e86d92` | Baseline do redesign estabilizado |
+| 18/08/2026 | Lote 0 | Contrato da nova arquitetura concluído |
+| 18/08/2026 | Lote 0.1 | `REDESIGN_ARCHITECTURE.md` consolidado |
+| 18/08/2026 | `587069f` | Contrato da nova arquitetura versionado |
+| 18/08/2026 | Lote 1 | Fundação implementada e revalidada |
+| 18–19/08/2026 | `cc5f6e1` | Lote 1 versionado; este é o HEAD confirmado no início do Lote 2 |
+| 19/08/2026 | Lote 2 | Documentos decomposto em hub + cinco filhas; 165/165 testes |
+| 19/08/2026 | Revalidação visual | Navegador do Codex bloqueado; revalidação automatizada permaneceu pendente |
+| 19/08/2026 | Inspeção manual | Prints confirmaram a nova hierarquia e a paginação do domínio |
+| 19/08/2026 | Decisão de UX | Hub de Documentos receberá cards compactos das filhas no final |
+| 19/08/2026 | Arquitetura | Mesmo padrão definido para Workflows; Funcionalidades mantém seis cards uniformes |
+| 19/08/2026 | Navegação | Sidebar retrátil e evolução do `Nesta página` aprovadas como direção |
+| 19/08/2026 | Visual | Revisão futura de paletas definida, com prioridade para light mode |
+| 19/08/2026 | FAQ | Desenvolvimento aprovado para etapa posterior, sem conteúdo inventado |
+| 19/08/2026 | Skills | UI UX PRO MAX mantida para instalação após Lote 3, antes do Lote 4 |
 
 ---
 
-## 14. Protocolo de manutenção
+## 24. Protocolo de manutenção
 
-Atualizar este arquivo somente quando houver mudança material, como:
+Atualizar este arquivo somente quando houver mudança material:
 
 - novo commit relevante;
-- novo deployment importante;
-- página concluída ou publicada;
-- nova frente iniciada;
+- novo deployment confirmado;
+- lote iniciado/concluído;
+- página criada/publicada;
+- arquitetura alterada;
+- decisão relevante de UX/design;
 - prioridade alterada;
 - débito relevante resolvido;
-- risco novo;
-- mudança de fase;
-- mudança importante de design ou arquitetura.
+- nova frente iniciada;
+- baseline de testes/busca/build alterado.
 
-Não registrar:
+Não registrar como estado atual:
 
-- cada comando;
-- cada tentativa;
-- cada pequena alteração;
-- conversas completas;
-- histórico funcional detalhado do GoDocs.
-
-Esses detalhes pertencem ao código, aos documentos canônicos ou ao `Memória.md`.
+- hipóteses não aprovadas;
+- ideias sem implementação como se fossem roadmap;
+- commits não verificados;
+- deployments inferidos;
+- resultados antigos como se fossem reexecuções;
+- informações funcionais não sustentadas por evidência.
 
 ### Cabeçalho obrigatório
 
-Manter sempre atualizados:
+Manter sempre:
 
 ```text
 Última atualização
 Estado geral
 Fase atual
-Commit mais recente verificado
-Deploy do commit
+Commit mais recente confirmado
+Deploy
 Próxima ação principal
 ```
 
 ---
 
-## 15. Retomada rápida
+## 25. Retomada rápida
 
 Ao iniciar uma nova sessão:
 
-1. Leia `AGENTS.md`.
-2. Leia `PRODUCT.md` se a tarefa afetar produto ou documentação.
-3. Leia `DESIGN.md` se a tarefa afetar interface.
-4. Leia `Memória.md` quando precisar do contexto amplo.
-5. Leia este arquivo para saber o estado operacional.
-6. Inspecione a `main` antes de assumir commit, conteúdo ou pendências.
-7. Não use conversas antigas como fonte superior aos arquivos e ao repositório.
-8. Não invente fatos do GoDocs.
-9. Preserve visão white-label, permissões por ação e detalhamento proporcional.
-10. Ao concluir um marco relevante, atualize este arquivo novamente.
+1. ler `AGENTS.md`;
+2. ler `PRODUCT.md` se a tarefa afetar produto/documentação;
+3. ler `DESIGN.md` se afetar interface;
+4. ler `project-docs/REDESIGN_ARCHITECTURE.md` se afetar o redesign;
+5. ler `Memória.md` quando precisar de contexto amplo;
+6. ler este arquivo para estado operacional;
+7. inspecionar `git status`, branch e HEAD antes de assumir o estado do repositório;
+8. não inventar fatos do GoDocs;
+9. preservar white-label, permissões por ação e proporcionalidade editorial;
+10. antes de tarefa no Codex, indicar modelo + nível;
+11. após marco relevante, atualizar os arquivos canônicos correspondentes.
 
 ---
 
-**Estado ao encerrar esta atualização:** a branch `main` permanece em `cc5f6e1` — **Redesign - Implementação do Lote 1**, com os Lotes 1 e 2 implementados apenas no working tree e prontos para revisão. A coleção possui 14 documentos publicados; `/docs/funcionalidades/documentos` é hub de cinco filhas. Os 30 anchors históricos de Documentos apontam para seus destinos canônicos e os 49 anchors de Workflows permanecem inalterados. `content:validate`, lint, typecheck, testes, build, benchmark e `git diff --check` foram executados neste lote; não houve commit, push ou deploy.
+## 26. Estado ao encerrar esta atualização
+
+O último HEAD confirmado para a frente atual é:
+
+```text
+cc5f6e1 — Redesign - Implementação do Lote 1
+```
+
+O Lote 2 está no working tree e possui:
+
+```text
+14 documentos
+141 entradas de busca
+127 seções
+165/165 testes
+36 páginas estáticas no build
+30/30 aliases de Documentos cobertos
+49/49 aliases/anchors de Workflows preservados
+```
+
+A implementação de Documentos foi considerada tecnicamente consistente, mas a inspeção visual revelou que o hub precisa comunicar melhor suas páginas-filhas.
+
+Decisão atual:
+
+```text
+não refazer o Lote 2
+→ adicionar cards compactos ao final do hub de Documentos
+→ revalidar
+→ versionar
+→ iniciar Workflows
+```
+
+As novas decisões de arquitetura incluem:
+
+- Funcionalidades com seis cards uniformes;
+- cards internos no final dos hubs;
+- Workflows seguindo o mesmo padrão;
+- decomposição orientada por intenção, não por tempo isolado;
+- `Nesta página` progressivo em páginas densas;
+- sidebar desktop retrátil;
+- drawer mobile preservado;
+- FAQ factual em etapa posterior;
+- revisão futura das paletas com prioridade para tema claro;
+- revisão visual sistêmica por tokens;
+- UI UX PRO MAX somente após o Lote 3 e antes do Lote 4.
+
+Nenhum commit, push ou deployment do ajuste focal do Lote 2 é confirmado por esta atualização.

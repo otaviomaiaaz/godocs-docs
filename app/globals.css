@@ -1155,6 +1155,84 @@ body:has(dialog[open]) {
   text-decoration-color: currentColor;
 }
 
+.hub-navigation {
+  margin-top: 54px;
+}
+
+.hub-navigation h2 {
+  margin: 0 0 15px;
+}
+
+.prose .hub-navigation__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.prose .hub-navigation__list li,
+.prose .hub-navigation__list li + li {
+  margin: 0;
+}
+
+.prose a.hub-navigation__link {
+  display: flex;
+  min-height: 88px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition:
+    border-color var(--duration-interaction) var(--ease),
+    background-color var(--duration-interaction) var(--ease);
+}
+
+.prose a.hub-navigation__link:hover,
+.prose a.hub-navigation__link:focus-visible {
+  border-color: var(--accent-border);
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+.hub-navigation__copy {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.hub-navigation__copy strong {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.hub-navigation__copy span {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.hub-navigation__arrow {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  transition:
+    color var(--duration-interaction) var(--ease),
+    transform var(--duration-interaction) var(--ease);
+}
+
+.hub-navigation__link:hover .hub-navigation__arrow,
+.hub-navigation__link:focus-visible .hub-navigation__arrow {
+  color: var(--accent-text);
+  transform: translateX(3px);
+}
+
 .prose strong {
   color: var(--text-primary);
   font-weight: 650;
@@ -1555,6 +1633,14 @@ body:has(dialog[open]) {
 
   .brand-logo[data-size="default"] {
     width: 104px;
+  }
+
+  .hub-navigation__list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hub-navigation__link {
+    min-height: 76px;
   }
 
   .brand-logo[data-size="compact"] {
