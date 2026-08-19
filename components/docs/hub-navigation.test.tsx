@@ -38,6 +38,21 @@ const items: HubNavigationItem[] = [
   },
 ];
 
+const workflowItems: HubNavigationItem[] = [
+  ["cards-kanban-e-lista", "Cards, Kanban e Lista"],
+  ["automacoes", "Automações"],
+  ["criar-e-configurar", "Criar e configurar"],
+  ["fases-e-transicoes", "Fases e transições"],
+  ["formularios-e-campos", "Formulários e campos"],
+  ["membros-e-papeis", "Membros e papéis"],
+  ["formulario-publico", "Formulário público e acompanhamento"],
+].map(([segment, title]) => ({
+  description: `Descrição de ${title}.`,
+  href: `/docs/funcionalidades/workflows/${segment}`,
+  slug: `funcionalidades/workflows/${segment}`,
+  title,
+}));
+
 describe("HubNavigation", () => {
   afterEach(cleanup);
 
@@ -55,6 +70,19 @@ describe("HubNavigation", () => {
       items.map((item) => item.href),
     );
     expect(screen.getByRole("list").getAttribute("class")).toBe("hub-navigation__list");
+    expect(screen.getAllByRole("listitem").at(-1)?.getAttribute("class")).toContain(
+      "hub-navigation__item--wide",
+    );
+  });
+
+  it("renders the seven canonical Workflows destinations in order", () => {
+    render(<HubNavigation items={workflowItems} title="Explore Workflows" />);
+
+    expect(screen.getByRole("heading", { name: "Explore Workflows", level: 2 })).toBeTruthy();
+    expect(screen.getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual(
+      workflowItems.map((item) => item.href),
+    );
+    expect(screen.getAllByRole("listitem")).toHaveLength(7);
     expect(screen.getAllByRole("listitem").at(-1)?.getAttribute("class")).toContain(
       "hub-navigation__item--wide",
     );

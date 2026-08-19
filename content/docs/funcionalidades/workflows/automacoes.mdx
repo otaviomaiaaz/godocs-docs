@@ -1,0 +1,47 @@
+---
+title: Automações
+navTitle: Automações
+description: Configure o envio automático de e-mails quando um card for criado em um workflow.
+cardDescription: Configure e-mails automáticos a partir da criação de cards.
+slug: funcionalidades/workflows/automacoes
+pageType: task
+section:
+  id: funcionalidades
+  label: Funcionalidades
+  description: Conheça os principais recursos disponíveis no GoDocs.
+  entrySlug: funcionalidades
+  order: 20
+ancestors:
+  - segment: funcionalidades
+    label: Funcionalidades
+    order: 1
+  - segment: workflows
+    label: Workflows
+    order: 5
+order: 2
+status: published
+keywords:
+  - automações
+  - automação
+  - enviar e-mail
+  - card criado
+---
+
+## Automações
+
+A área **Automações** permite configurar ações executadas automaticamente a partir de eventos ocorridos no workflow. Atualmente, a automação disponível usa o gatilho **Card criado** e a ação **Enviar e-mail**. A criação e o gerenciamento de automações ficam disponíveis para usuários autorizados no workflow.
+
+### Criando uma automação
+
+1. Acesse **Automações** e clique em **Nova automação**.
+2. Informe um nome que facilite a identificação da regra.
+3. Selecione o gatilho **Card criado**.
+4. Configure a ação **Enviar e-mail** e escolha como o destinatário será definido.
+5. Selecione um endereço de remetente verificado no campo **De** e preencha assunto e corpo da mensagem.
+6. Defina os demais campos necessários e clique em **Criar automação**.
+
+O destinatário pode ser um **Endereço fixo**, com vários e-mails separados por vírgulas, ou um **Campo de e-mail do card**, que usa o endereço preenchido no próprio registro. O **Nome do remetente** é opcional e define como o responsável pelo envio será apresentado.
+
+Assunto e corpo aceitam variáveis do card para inserir informações do registro automaticamente. Quando necessário, informe destinatários adicionais em **Cc** e **Cco**. Use **Ativar ao salvar** para escolher se a automação será criada já ativada.
+
+Depois de criada e ativada, a automação envia o e-mail sempre que um card for criado de acordo com a regra configurada.

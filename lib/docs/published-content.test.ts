@@ -55,7 +55,7 @@ describe("conteúdo publicado", () => {
     );
   });
 
-  it("publica o hub e os treze artigos com frontmatter, rotas e sumários aprovados", async () => {
+  it("publica os dois hubs e os dezenove artigos com frontmatter, rotas e sumários aprovados", async () => {
     const docs = await loadPublishedDocs();
     const firstAccess = docs.find(
       (candidate) => candidate.slug === "primeiro-acesso",
@@ -81,7 +81,7 @@ describe("conteúdo publicado", () => {
     const reports = docs.find(
       (candidate) => candidate.slug === "funcionalidades/relatorios",
     );
-    expect(docs).toHaveLength(14);
+    expect(docs).toHaveLength(21);
     expect(functionalities?.metadata).toMatchObject({
       title: "Funcionalidades",
       slug: "funcionalidades",
@@ -236,7 +236,7 @@ describe("conteúdo publicado", () => {
         workflows,
         "Workflows",
         5,
-        "Aprenda a criar, acompanhar e configurar workflows, cards, fases, formulários, membros e automações no GoDocs.",
+        "Conheça a seção Workflows e encontre orientações para organizar processos, cards, fases, formulários e automações no GoDocs.",
         "Crie e acompanhe processos organizados em workflows.",
       ],
       [
@@ -259,6 +259,21 @@ describe("conteúdo publicado", () => {
       expect(doc?.source).not.toContain("Documentação em preparação");
     }
 
+    expect(workflows?.metadata.pageType).toBe("hub");
+    expect(
+      docs
+        .filter((doc) => doc.slug.startsWith("funcionalidades/workflows/"))
+        .map((doc) => [doc.slug, doc.metadata.title, doc.metadata.pageType]),
+    ).toEqual([
+      ["funcionalidades/workflows/cards-kanban-e-lista", "Cards, Kanban e Lista", "task"],
+      ["funcionalidades/workflows/automacoes", "Automações", "task"],
+      ["funcionalidades/workflows/criar-e-configurar", "Criar e configurar", "task"],
+      ["funcionalidades/workflows/fases-e-transicoes", "Fases e transições", "task"],
+      ["funcionalidades/workflows/formularios-e-campos", "Formulários e campos", "task"],
+      ["funcionalidades/workflows/membros-e-papeis", "Membros e papéis", "task"],
+      ["funcionalidades/workflows/formulario-publico", "Formulário público e acompanhamento", "task"],
+    ]);
+
     for (const doc of [
       firstAccess,
       overview,
@@ -272,7 +287,7 @@ describe("conteúdo publicado", () => {
     }
   });
 
-  it("integra os quatorze documentos disponíveis a rotas, navegação e busca públicas", async () => {
+  it("integra os vinte e um documentos disponíveis a rotas, navegação e busca públicas", async () => {
     const allDocs = await loadDocumentsFromDirectory(contentDirectory);
     const publishedDocs = await loadPublishedDocs();
     const preparing = allDocs.filter(
@@ -281,7 +296,7 @@ describe("conteúdo publicado", () => {
     const publicIndex = createSearchIndex(publishedDocs);
 
     expect(preparing).toEqual([]);
-    expect(publishedDocs).toHaveLength(14);
+    expect(publishedDocs).toHaveLength(21);
     expect(publicIndex.entries).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -300,6 +315,13 @@ describe("conteúdo publicado", () => {
       "funcionalidades/documentos/logs-e-acoes",
       "funcionalidades/favoritos",
       "funcionalidades/workflows",
+      "funcionalidades/workflows/cards-kanban-e-lista",
+      "funcionalidades/workflows/automacoes",
+      "funcionalidades/workflows/criar-e-configurar",
+      "funcionalidades/workflows/fases-e-transicoes",
+      "funcionalidades/workflows/formularios-e-campos",
+      "funcionalidades/workflows/membros-e-papeis",
+      "funcionalidades/workflows/formulario-publico",
       "funcionalidades/relatorios",
     ]) {
       expect(
@@ -382,6 +404,37 @@ describe("conteúdo publicado", () => {
       {
         label: "Workflows",
         href: "/docs/funcionalidades/workflows",
+        pageType: "hub",
+        children: [
+          {
+            label: "Cards, Kanban e Lista",
+            href: "/docs/funcionalidades/workflows/cards-kanban-e-lista",
+          },
+          {
+            label: "Automações",
+            href: "/docs/funcionalidades/workflows/automacoes",
+          },
+          {
+            label: "Criar e configurar",
+            href: "/docs/funcionalidades/workflows/criar-e-configurar",
+          },
+          {
+            label: "Fases e transições",
+            href: "/docs/funcionalidades/workflows/fases-e-transicoes",
+          },
+          {
+            label: "Formulários e campos",
+            href: "/docs/funcionalidades/workflows/formularios-e-campos",
+          },
+          {
+            label: "Membros e papéis",
+            href: "/docs/funcionalidades/workflows/membros-e-papeis",
+          },
+          {
+            label: "Formulário público",
+            href: "/docs/funcionalidades/workflows/formulario-publico",
+          },
+        ],
       },
       {
         label: "Relatórios",
@@ -391,21 +444,28 @@ describe("conteúdo publicado", () => {
     expect(
       navigation[1]?.items.some((item) => item.label === "Funcionalidades"),
     ).toBe(false);
-    expect(docs.map((doc) => doc.slug)).toEqual([
-      "o-que-e-o-godocs",
-      "primeiro-acesso",
+    expect(docs.map((doc) => doc.slug).sort()).toEqual([
       "funcionalidades",
-      "funcionalidades/documentos/pastas",
-      "funcionalidades/visao-geral",
-      "funcionalidades/documentos/adicionar-documentos",
       "funcionalidades/busca-inteligente",
       "funcionalidades/documentos",
+      "funcionalidades/documentos/adicionar-documentos",
       "funcionalidades/documentos/filtros-e-metadados",
-      "funcionalidades/favoritos",
       "funcionalidades/documentos/gerenciar-documentos",
       "funcionalidades/documentos/logs-e-acoes",
-      "funcionalidades/workflows",
+      "funcionalidades/documentos/pastas",
+      "funcionalidades/favoritos",
       "funcionalidades/relatorios",
+      "funcionalidades/visao-geral",
+      "funcionalidades/workflows",
+      "funcionalidades/workflows/automacoes",
+      "funcionalidades/workflows/cards-kanban-e-lista",
+      "funcionalidades/workflows/criar-e-configurar",
+      "funcionalidades/workflows/fases-e-transicoes",
+      "funcionalidades/workflows/formulario-publico",
+      "funcionalidades/workflows/formularios-e-campos",
+      "funcionalidades/workflows/membros-e-papeis",
+      "o-que-e-o-godocs",
+      "primeiro-acesso",
     ]);
 
     expect(getAdjacentDocs(docs, "o-que-e-o-godocs")).toMatchObject({
@@ -434,8 +494,46 @@ describe("conteúdo publicado", () => {
     expect(
       getAdjacentDocs(docs, "funcionalidades/documentos/logs-e-acoes").next,
     ).toBeUndefined();
-    expect(getAdjacentDocs(docs, "funcionalidades/relatorios")).toMatchObject({
+    expect(getAdjacentDocs(docs, "funcionalidades/workflows")).toMatchObject({
+      next: { slug: "funcionalidades/workflows/cards-kanban-e-lista" },
+    });
+    expect(
+      getAdjacentDocs(docs, "funcionalidades/workflows/cards-kanban-e-lista"),
+    ).toMatchObject({
       previous: { slug: "funcionalidades/workflows" },
+      next: { slug: "funcionalidades/workflows/automacoes" },
+    });
+    expect(
+      getAdjacentDocs(docs, "funcionalidades/workflows/formulario-publico").next,
+    ).toBeUndefined();
+    const workflowSequence = [
+      "funcionalidades/workflows",
+      "funcionalidades/workflows/cards-kanban-e-lista",
+      "funcionalidades/workflows/automacoes",
+      "funcionalidades/workflows/criar-e-configurar",
+      "funcionalidades/workflows/fases-e-transicoes",
+      "funcionalidades/workflows/formularios-e-campos",
+      "funcionalidades/workflows/membros-e-papeis",
+      "funcionalidades/workflows/formulario-publico",
+    ];
+    expect(
+      workflowSequence.map((slug) => ({
+        previous: getAdjacentDocs(docs, slug).previous?.slug,
+        next: getAdjacentDocs(docs, slug).next?.slug,
+      })),
+    ).toEqual([
+      { previous: undefined, next: workflowSequence[1] },
+      { previous: workflowSequence[0], next: workflowSequence[2] },
+      { previous: workflowSequence[1], next: workflowSequence[3] },
+      { previous: workflowSequence[2], next: workflowSequence[4] },
+      { previous: workflowSequence[3], next: workflowSequence[5] },
+      { previous: workflowSequence[4], next: workflowSequence[6] },
+      { previous: workflowSequence[5], next: workflowSequence[7] },
+      { previous: workflowSequence[6], next: undefined },
+    ]);
+    expect(getAdjacentDocs(docs, "funcionalidades/relatorios")).toEqual({
+      previous: undefined,
+      next: undefined,
     });
     expect(getAdjacentDocs(docs, "funcionalidades/relatorios").next).toBeUndefined();
   });
@@ -545,6 +643,35 @@ describe("conteúdo publicado", () => {
         },
       ]);
     }
+
+    for (const [slug, label] of [
+      ["funcionalidades/workflows/cards-kanban-e-lista", "Cards, Kanban e Lista"],
+      ["funcionalidades/workflows/automacoes", "Automações"],
+      ["funcionalidades/workflows/criar-e-configurar", "Criar e configurar"],
+      ["funcionalidades/workflows/fases-e-transicoes", "Fases e transições"],
+      ["funcionalidades/workflows/formularios-e-campos", "Formulários e campos"],
+      ["funcionalidades/workflows/membros-e-papeis", "Membros e papéis"],
+      ["funcionalidades/workflows/formulario-publico", "Formulário público e acompanhamento"],
+    ] as const) {
+      const doc = docs.find((candidate) => candidate.slug === slug);
+
+      expect(doc && buildBreadcrumbs(doc, docs)).toEqual([
+        {
+          id: "section:funcionalidades",
+          label: "Funcionalidades",
+          href: "/docs/funcionalidades",
+        },
+        {
+          id: "path:funcionalidades/workflows",
+          label: "Workflows",
+          href: "/docs/funcionalidades/workflows",
+        },
+        {
+          id: `path:${slug}`,
+          label,
+        },
+      ]);
+    }
   });
 
   it.each([
@@ -584,10 +711,10 @@ describe("conteúdo publicado", () => {
     });
 
     expect(result.issues).toEqual([]);
-    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(14);
+    expect(new Set(result.documents.map((doc) => doc.slug)).size).toBe(21);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "published"),
-    ).toHaveLength(14);
+    ).toHaveLength(21);
     expect(
       result.documents.filter((doc) => doc.metadata.status === "draft"),
     ).toHaveLength(0);
@@ -600,6 +727,6 @@ describe("conteúdo publicado", () => {
       result.documents.filter(
         (doc) => doc.metadata.availability === "available",
       ),
-    ).toHaveLength(14);
+    ).toHaveLength(21);
   });
 });

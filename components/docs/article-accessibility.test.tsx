@@ -47,6 +47,20 @@ const scenarios: PageScenario[] = [
     theme: "light",
     width: 390,
   },
+  {
+    breakpoint: "desktop",
+    height: 900,
+    slug: "funcionalidades/workflows/criar-e-configurar",
+    theme: "dark",
+    width: 1440,
+  },
+  {
+    breakpoint: "mobile",
+    height: 844,
+    slug: "funcionalidades/workflows/fases-e-transicoes",
+    theme: "light",
+    width: 390,
+  },
 ];
 
 function mediaQueryMatches(query: string, scenario: PageScenario): boolean {
@@ -238,12 +252,21 @@ describe("acessibilidade de páginas documentais completas", () => {
       if (scenario.slug === "primeiro-acesso") {
         expect(container.querySelectorAll(".step__title").length).toBeGreaterThan(1);
         expect(container.querySelector(".step__title")?.tagName).toBe("H2");
-      } else {
-        expect(doc.headings.length).toBeGreaterThan(20);
+      } else if (scenario.slug === "funcionalidades/workflows") {
+        expect(doc.metadata.pageType).toBe("hub");
+        expect(doc.headings.length).toBeGreaterThanOrEqual(2);
+        expect(doc.headings.length).toBeLessThan(8);
+      } else if (scenario.slug === "funcionalidades/workflows/criar-e-configurar") {
+        expect(doc.headings.length).toBeGreaterThanOrEqual(3);
         expect(container.querySelector(".prose h4[id]")).toBeTruthy();
         expect(
           screen.getAllByRole("note", { name: "Exclusão permanente" }),
-        ).toHaveLength(2);
+        ).toHaveLength(1);
+      } else {
+        expect(doc.headings.length).toBeGreaterThanOrEqual(10);
+        expect(
+          screen.getAllByRole("note", { name: "Exclusão permanente" }),
+        ).toHaveLength(1);
       }
 
       const results = await axe.run(container, {

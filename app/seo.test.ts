@@ -9,6 +9,30 @@ import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
+const expectedDocumentPaths = [
+  "/docs/o-que-e-o-godocs",
+  "/docs/primeiro-acesso",
+  "/docs/funcionalidades",
+  "/docs/funcionalidades/workflows/cards-kanban-e-lista",
+  "/docs/funcionalidades/documentos/pastas",
+  "/docs/funcionalidades/visao-geral",
+  "/docs/funcionalidades/documentos/adicionar-documentos",
+  "/docs/funcionalidades/workflows/automacoes",
+  "/docs/funcionalidades/busca-inteligente",
+  "/docs/funcionalidades/workflows/criar-e-configurar",
+  "/docs/funcionalidades/documentos",
+  "/docs/funcionalidades/documentos/filtros-e-metadados",
+  "/docs/funcionalidades/workflows/fases-e-transicoes",
+  "/docs/funcionalidades/favoritos",
+  "/docs/funcionalidades/documentos/gerenciar-documentos",
+  "/docs/funcionalidades/workflows/formularios-e-campos",
+  "/docs/funcionalidades/documentos/logs-e-acoes",
+  "/docs/funcionalidades/workflows",
+  "/docs/funcionalidades/workflows/membros-e-papeis",
+  "/docs/funcionalidades/relatorios",
+  "/docs/funcionalidades/workflows/formulario-publico",
+] as const;
+
 describe("SEO e indexação", () => {
   it("configura metadados globais e canonical da home", () => {
     expect(metadata).toMatchObject({
@@ -79,54 +103,21 @@ describe("SEO e indexação", () => {
     });
   });
 
-  it("publica somente a home e documentos reais no sitemap", async () => {
+  it("publica somente a home e documentos reais, incluindo as filhas de Workflows, no sitemap", async () => {
     const entries = await sitemap();
-
     expect(entries.map((entry) => entry.url)).toEqual([
       absoluteUrl("/"),
-      absoluteUrl("/docs/o-que-e-o-godocs"),
-      absoluteUrl("/docs/primeiro-acesso"),
-      absoluteUrl("/docs/funcionalidades"),
-      absoluteUrl("/docs/funcionalidades/documentos/pastas"),
-      absoluteUrl("/docs/funcionalidades/visao-geral"),
-      absoluteUrl("/docs/funcionalidades/documentos/adicionar-documentos"),
-      absoluteUrl("/docs/funcionalidades/busca-inteligente"),
-      absoluteUrl("/docs/funcionalidades/documentos"),
-      absoluteUrl("/docs/funcionalidades/documentos/filtros-e-metadados"),
-      absoluteUrl("/docs/funcionalidades/favoritos"),
-      absoluteUrl("/docs/funcionalidades/documentos/gerenciar-documentos"),
-      absoluteUrl("/docs/funcionalidades/documentos/logs-e-acoes"),
-      absoluteUrl("/docs/funcionalidades/workflows"),
-      absoluteUrl("/docs/funcionalidades/relatorios"),
+      ...expectedDocumentPaths.map(absoluteUrl),
     ]);
     expect(entries.some((entry) => entry.url.includes("fixtures"))).toBe(false);
   });
 
-  it("gera estaticamente os quatorze documentos publicados", async () => {
+  it("gera estaticamente os vinte e um documentos publicados", async () => {
     const params = await generateStaticParams();
 
-    expect(params).toEqual([
-      { slug: ["o-que-e-o-godocs"] },
-      { slug: ["primeiro-acesso"] },
-      { slug: ["funcionalidades"] },
-      { slug: ["funcionalidades", "documentos", "pastas"] },
-      { slug: ["funcionalidades", "visao-geral"] },
-      {
-        slug: ["funcionalidades", "documentos", "adicionar-documentos"],
-      },
-      { slug: ["funcionalidades", "busca-inteligente"] },
-      { slug: ["funcionalidades", "documentos"] },
-      {
-        slug: ["funcionalidades", "documentos", "filtros-e-metadados"],
-      },
-      { slug: ["funcionalidades", "favoritos"] },
-      {
-        slug: ["funcionalidades", "documentos", "gerenciar-documentos"],
-      },
-      { slug: ["funcionalidades", "documentos", "logs-e-acoes"] },
-      { slug: ["funcionalidades", "workflows"] },
-      { slug: ["funcionalidades", "relatorios"] },
-    ]);
+    expect(params).toEqual(
+      expectedDocumentPaths.map((path) => ({ slug: path.slice("/docs/".length).split("/") })),
+    );
   });
 
   it("permite páginas públicas e referencia o sitemap", () => {

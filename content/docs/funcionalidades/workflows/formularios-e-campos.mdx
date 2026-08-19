@@ -1,0 +1,56 @@
+---
+title: Formulários e campos
+navTitle: Formulários e campos
+description: Configure o Formulário inicial e os campos das fases para registrar as informações necessárias em cada etapa.
+cardDescription: Defina os campos de abertura e os dados exigidos em cada fase.
+slug: funcionalidades/workflows/formularios-e-campos
+pageType: task
+section:
+  id: funcionalidades
+  label: Funcionalidades
+  description: Conheça os principais recursos disponíveis no GoDocs.
+  entrySlug: funcionalidades
+  order: 20
+ancestors:
+  - segment: funcionalidades
+    label: Funcionalidades
+    order: 1
+  - segment: workflows
+    label: Workflows
+    order: 5
+order: 5
+status: published
+keywords:
+  - formulário inicial
+  - campos
+  - campo obrigatório
+  - lógica condicional
+---
+
+## Formulário inicial
+
+O **Formulário inicial** define as informações solicitadas na criação de um card. Ele pode reunir dados simples, anexos, datas, opções de seleção e outros campos disponíveis na configuração. Informações necessárias apenas em etapas posteriores podem ser configuradas diretamente nos campos das fases.
+
+### Configurando o formulário
+
+A tela organiza os tipos de campo à esquerda, os campos adicionados ao formulário ao centro e as configurações do campo selecionado à direita. Para montar o formulário:
+
+1. Acesse **Configurações** e abra **Formulário inicial**.
+2. Na coluna **Tipos de campo**, clique no tipo que deseja adicionar.
+3. Selecione o campo incluído para configurar rótulo, texto de ajuda e obrigatoriedade; em campos de seleção, cadastre as opções.
+4. Organize os campos pela alça no início de cada item e remova um campo pelo **X**, quando necessário.
+5. Clique em **Salvar alterações**.
+
+O **Título** já faz parte da criação do card e permanece obrigatório. Depois que as alterações são salvas, o formulário atualizado é apresentado nas próximas criações de card.
+
+### Configurando cada campo
+
+Ao selecionar um campo, suas propriedades aparecem ao lado direito da página. Nessa área, é possível definir rótulo, texto de ajuda e obrigatoriedade, cadastrar opções nos campos de seleção e adicionar uma **lógica condicional** para exibir o campo somente quando a regra configurada for atendida.
+
+A remoção de um campo afeta apenas os novos cards. Registros criados anteriormente continuam exibindo o campo e a informação já preenchida.
+
+## Campos das fases
+
+Os **Campos das fases** solicitam informações durante etapas específicas do workflow e complementam o Formulário inicial. Cada fase pode possuir seus próprios campos, conforme o que precisa ser registrado naquela etapa.
+
+Para configurá-los, acesse **Fases**, abra a configuração da etapa desejada e selecione **Campos**. Quando um campo estiver definido como obrigatório, ele deverá ser preenchido antes que o card seja movimentado para outra fase. A criação e a edição desses campos ficam disponíveis para usuários com permissão para configurar o workflow.

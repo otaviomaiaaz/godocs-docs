@@ -1,0 +1,82 @@
+---
+title: Fases e transições
+navTitle: Fases e transições
+description: Crie fases, defina suas regras e configure as transições que orientam a movimentação dos cards.
+cardDescription: Organize fases, prazos, responsáveis e transições do processo.
+slug: funcionalidades/workflows/fases-e-transicoes
+pageType: task
+section:
+  id: funcionalidades
+  label: Funcionalidades
+  description: Conheça os principais recursos disponíveis no GoDocs.
+  entrySlug: funcionalidades
+  order: 20
+ancestors:
+  - segment: funcionalidades
+    label: Funcionalidades
+    order: 1
+  - segment: workflows
+    label: Workflows
+    order: 5
+order: 4
+status: published
+keywords:
+  - fases
+  - transições
+  - transição
+  - SLA
+  - mover card
+  - campos obrigatórios
+---
+
+## Fases
+
+A aba **Fases** permite criar e organizar as etapas que formam o processo. Cada fase pode possuir regras próprias de criação de cards, movimentação, prazo, campos e responsáveis. Essa área fica disponível para usuários com permissão para configurar o workflow.
+
+### Criando uma fase
+
+1. Acesse **Configurações** e abra a aba **Fases**.
+2. Clique em **Adicionar fase** e informe nome, descrição quando necessário e cor. A descrição é exibida no Kanban como orientação para a etapa.
+3. Configure as regras de funcionamento e clique em **Criar fase**.
+
+Durante a criação, é possível definir uma **fase final**, permitir a criação de cards diretamente na etapa, estabelecer um **Tempo limite (SLA)** em minutos, horas ou dias e indicar responsáveis pela fase. Um workflow pode possuir mais de uma fase final. Ao entrar em uma delas, o processo é considerado concluído, mas o card poderá ser movimentado quando existir uma transição habilitada.
+
+### Organizando as fases
+
+As fases aparecem na mesma ordem em que são apresentadas no Kanban. Para alterar essa sequência, segure o ícone no início da fase e arraste-a para a posição desejada. Cada item informa a quantidade de cards presentes na etapa e o número de campos obrigatórios configurados para ela.
+
+### Configurando a movimentação dos cards
+
+As transições determinam para quais etapas um card pode ser enviado a partir de sua fase atual. Abra um card na fase desejada, clique em **Configurar mover card**, ative as fases que poderão recebê-lo e clique em **Salvar**. Embora o acesso seja feito por um card, a alteração vale para os demais cards que estiverem naquela fase.
+
+Assim, o processo pode permitir que um card avance, volte para uma etapa anterior, pule fases ou transite entre etapas específicas. Se uma fase não estiver habilitada como destino, a movimentação é bloqueada e o sistema apresenta **Transição de fase não permitida**.
+
+### Editando e configurando uma fase
+
+O ícone de edição permite alterar nome, descrição, cor, regras de negócio, SLA e responsáveis. O ícone de configuração abre opções avançadas nas abas **Geral**, **Campos**, **Responsáveis**, **Automações** e **Permissões**. Depois das mudanças, clique em **Salvar alterações**.
+
+### Excluindo uma fase
+
+Para excluir uma fase, clique no ícone de lixeira e confirme a ação.
+
+<Callout variant="danger" title="Exclusão permanente">
+
+A exclusão da fase não pode ser desfeita. Se existirem cards naquela etapa, eles também serão excluídos junto com a fase.
+
+</Callout>
+
+## Por que não consigo mover um card para determinada fase?
+
+A movimentação depende das transições configuradas para a fase atual. Quando a etapa escolhida não estiver habilitada como destino, o GoDocs bloqueia a ação e apresenta **Transição de fase não permitida**.
+
+## Por que não consigo avançar o card mesmo com a próxima fase habilitada?
+
+Verifique se a fase atual possui campos obrigatórios ainda não preenchidos. Enquanto houver uma informação obrigatória pendente, o card não poderá ser movimentado para outra etapa.
+
+## Um card pode sair de uma fase final?
+
+Sim. A entrada em uma fase final faz com que o processo seja considerado concluído, mas o card ainda poderá ser movimentado quando houver uma transição habilitada para outra fase.
+
+## O que acontece se uma fase com cards for excluída?
+
+Os cards existentes naquela fase são excluídos junto com ela. Como a exclusão não pode ser desfeita, confirme os registros presentes antes de concluir a ação.

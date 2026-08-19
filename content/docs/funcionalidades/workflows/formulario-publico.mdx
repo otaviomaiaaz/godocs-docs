@@ -1,0 +1,74 @@
+---
+title: Formulário público e acompanhamento
+navTitle: Formulário público
+description: Receba solicitações externas pelo Formulário público e oriente o acompanhamento sem login no GoDocs.
+cardDescription: Receba solicitações externas e acompanhe cada envio sem login.
+slug: funcionalidades/workflows/formulario-publico
+pageType: task
+section:
+  id: funcionalidades
+  label: Funcionalidades
+  description: Conheça os principais recursos disponíveis no GoDocs.
+  entrySlug: funcionalidades
+  order: 20
+ancestors:
+  - segment: funcionalidades
+    label: Funcionalidades
+    order: 1
+  - segment: workflows
+    label: Workflows
+    order: 5
+order: 7
+status: published
+keywords:
+  - formulário público
+  - protocolo
+  - QR Code
+  - acompanhamento
+  - link de acompanhamento
+---
+
+## Formulário público
+
+O **Formulário público** permite receber solicitações de pessoas que não possuem conta no GoDocs. Quando habilitado, o sistema gera um link externo que pode ser compartilhado com quem precisa iniciar uma solicitação.
+
+Os campos apresentados são os mesmos configurados no **Formulário inicial**. Ordem, obrigatoriedade e tipos de informação são mantidos, mas o campo **Título** não aparece no formulário público. Cada envio cria um novo card na **primeira fase** do workflow.
+
+### Habilitando e configurando o formulário
+
+1. Abra o workflow, acesse **Configurações** e entre na aba **Formulário público**.
+2. Clique em **Habilitar formulário público**.
+3. Configure mensagens e opções apresentadas ao solicitante.
+4. Clique em **Salvar alterações**.
+
+É possível definir mensagem de boas-vindas, mensagem de agradecimento, a exibição do número de protocolo na confirmação e a notificação de administradores por e-mail. Antes de disponibilizar o formulário, confira se o Formulário inicial contém os campos necessários.
+
+### Revisando e compartilhando o formulário
+
+Depois da ativação, o GoDocs gera uma URL exclusiva para o workflow. Use **Visualizar formulário** para revisar mensagens, ordem dos campos e informações obrigatórias. O link pode ser copiado e distribuído pelos canais usados pela organização, e um **QR Code** pode ser gerado para facilitar o acesso por dispositivos móveis.
+
+A opção **Regenerar link** cria um novo endereço público. O link anterior deixa de funcionar, mas os cards já enviados permanecem registrados normalmente.
+
+### Enviando uma solicitação
+
+Ao abrir o link, a pessoa visualiza o nome do workflow, a mensagem de boas-vindas e os campos definidos no Formulário inicial. Para enviar, preencha as informações solicitadas, adicione arquivos quando houver campo de anexo, revise os dados e clique em **Abrir**.
+
+Após o envio, o GoDocs cria um card na primeira fase. O registro é identificado no Kanban como originado pelo **Formulário público**, e as informações e arquivos enviados ficam armazenados no card para consulta de usuários com acesso.
+
+### Confirmação e protocolo
+
+Depois do envio, o solicitante vê a mensagem de agradecimento e, quando a opção estiver habilitada, o número de protocolo. Quando houver um endereço de e-mail associado ao envio, o GoDocs encaminha uma mensagem com o protocolo e um link para acompanhar o andamento.
+
+### Acompanhando a solicitação
+
+Ao clicar em **Acompanhar solicitação** no e-mail recebido, a pessoa acessa uma página externa do GoDocs sem precisar entrar no sistema. Nela, pode consultar a fase atual, a data e o horário de abertura, o histórico das movimentações e as informações enviadas pelo formulário.
+
+O link de acompanhamento recebido por e-mail é válido por **24 horas**. Quando expira, a página apresenta **Link expirado** e permite solicitar um novo link, enviado por e-mail. A página **Minhas solicitações** reúne os registros associados ao e-mail utilizado no envio; por ela, é possível localizar uma solicitação pelo título ou número de protocolo e abrir seus detalhes.
+
+### Desativando o formulário
+
+Quando não for mais necessário receber solicitações externas, desative **Habilitar formulário público** e salve a alteração. O link passa a informar que o conteúdo está indisponível e deixa de aceitar novos envios. Os cards já criados não são removidos e continuam disponíveis no workflow. A parte superior da página também apresenta o total de envios realizados pelo formulário.
+
+## Por quanto tempo o link de acompanhamento de uma solicitação pública permanece válido?
+
+O link enviado por e-mail é válido por **24 horas**. Depois desse período, a página informa que o link expirou e permite solicitar um novo acesso, enviado novamente por e-mail.
