@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lotes 1 e 2 implementados e concluídos; Lotes 3–9 pendentes
+> **Implementação:** Lotes 1, 2 e 3 implementados e concluídos; Lotes 4–9 pendentes
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -69,8 +69,11 @@ Home → hub de domínio → página de tarefa ou referência → relacionados/p
 ### Workflows
 
 - URL preservada: `/docs/funcionalidades/workflows`.
-- A página atual será transformada progressivamente em hub de Workflows.
-- O hub seguirá o mesmo padrão estrutural aprovado para Documentos: contexto e conteúdo conceitual primeiro; cards compactos das páginas-filhas no final.
+- Implementado como hub editorial com sete páginas-filhas `pageType: task` e compatibilidade dos 49 anchors históricos.
+- O hub aplica o mesmo padrão estrutural de Documentos: contexto e conteúdo conceitual primeiro; **Conceitos importantes** e **Integração via API** antes de `Explore Workflows`; cards compactos das páginas-filhas no final e antes da paginação.
+- `HubNavigation` deriva os filhos diretos da coleção canônica por segmentos, hierarquia e `order`. Essa regra atende hubs aninhados, preserva Documentos e evita hardcode específico de domínio.
+- Sidebar e drawer reutilizam a mesma árvore; os breadcrumbs são `Funcionalidades > Workflows` no hub e acrescentam a filha na profundidade seguinte.
+- A paginação percorre Workflows e suas sete filhas, terminando em `Formulário público e acompanhamento`; não avança para Relatórios.
 
 ### Integração via API
 
@@ -146,7 +149,7 @@ O princípio é manter a experiência **robusta na estrutura e clean na apresent
 | `/membros-e-papeis` | Membros e papéis |
 | `/formulario-publico` | Formulário público e acompanhamento |
 
-Esses slugs são contratos públicos futuros e devem ser preservados depois da criação das páginas.
+Esses slugs são contratos públicos implementados e devem ser preservados.
 
 ## 5. `pageType` aprovado
 
@@ -375,7 +378,7 @@ Lote 0.1 — Consolidação ✅
 
 Lote 1 — Fundação — implementado
 Lote 2 — Documentos — concluído
-Lote 3 — Workflows
+Lote 3 — Workflows — implementado e concluído
 Lote 4 — Busca
 Lote 5 — Descoberta e consolidação
 Lote 6 — Home + Hubs + identidade visual
@@ -385,3 +388,7 @@ Lote 9 — Reauditoria Impeccable + regressão final
 ```
 
 Nenhum lote futuro é autorizado por este documento sem a respectiva tarefa e validação.
+
+### Marco anterior ao Lote 4
+
+Após o fechamento documental do Lote 3, instalar UI UX PRO MAX antes do Lote 4 — Busca. A ferramenta será usada pontualmente para a UX da busca, não substitui `DESIGN.md` e não constitui um Design System paralelo.

@@ -1,82 +1,99 @@
 # GoDocs Docs — Memória consolidada
 
 > **Última consolidação:** 19/08/2026  
-> **Estado geral:** Lotes 1 e 2 concluídos; Lote 3 — Workflows é a próxima etapa.  
-> **Último commit relevante:** `0ae9420` — `Consolidacao do Lote 2`.  
-> **Git verificado antes deste fechamento documental:** `HEAD = origin/main`; este arquivo aguarda apenas o próximo commit documental deliberado.
+> **Estado geral:** Lotes 1, 2 e 3 concluídos; a próxima frente é o Lote 4 — Busca.
+> **Última implementação aprovada:** `415a113` — `Revisão dos workflows`.
 
 ## Estado atual
 
-O Lote 2 — Documentos foi concluído e sincronizado em `0ae9420`. A associação desse SHA a um deployment específico da Vercel não foi confirmada; não inferir publicação a partir do estado Git local.
+O Lote 3 — Workflows está concluído e versionado em `415a113936b776dc65d73b58f343426680327af8`. A associação desse SHA a um deployment específico da Vercel não foi confirmada; é válido registrar apenas que a validação visual manual foi realizada no ambiente publicado.
 
-**Estado atual em uma frase:** Lote 2 concluído em `0ae9420`, com hub de Documentos, cinco páginas-filhas, `Explore Documentos` e `167/167` testes; o próximo lote é Workflows.
+**Estado atual em uma frase:** os hubs de Documentos e Workflows estão concluídos; Workflows possui hub, sete páginas-filhas, `Explore Workflows`, compatibilidade histórica `49/49` e baseline técnico de `233/233` testes.
 
-Documentos é agora um hub explícito com cinco páginas-filhas aprovadas:
-
-- Organizar pastas e subpastas;
-- Adicionar documentos;
-- Localizar, filtrar e consultar metadados;
-- Visualizar e gerenciar documentos;
-- Logs e ações.
-
-O conteúdo útil anterior foi decomposto sem perda intencional. A compatibilidade histórica de Documentos foi preservada com `30/30` aliases/anchors, mantendo URLs, navegação, busca, sitemap e paginação derivados da mesma fonte MDX.
-
-## Padrão de hubs de domínio
-
-O padrão aprovado é: conteúdo contextual → `Conceitos importantes`, quando houver → `Explore <Domínio>` → cards das páginas-filhas.
-
-Os cards servem a descoberta e orientação dentro do domínio; não substituem a sidebar. Em desktop e tablet largo, Documentos usa duas colunas: os quatro primeiros cards formam uma grade 2×2 e o quinto ocupa as duas colunas. Em mobile, todos os cards ocupam uma coluna.
-
-## Navegação e acessibilidade
-
-A rota ativa e o estado expandido da árvore são independentes. Um ramo pode abrir ao entrar no domínio, ser recolhido manualmente, não deve reabrir em um rerender comum e pode abrir novamente diante de nova navegação relevante. A mesma `NavigationTree` atende sidebar e drawer.
-
-O Lote 2 preserva breadcrumbs, TOC, paginação, temas claro/escuro, foco, responsividade e a semântica já aprovada. Workflows não foi decomposto e não deve ser descrito como implementado.
-
-## Baseline final do Lote 2
+## Workflows concluído
 
 ```text
-content:validate: 14 documentos válidos
-typecheck: aprovado
-test: 19 arquivos, 167/167 testes
-build: 36 páginas estáticas
-search: 141 entradas, 127 seções, 276.446 bytes bruto, 35.862 bytes gzip
-search: limite de 12 resultados e snippet de 220 caracteres
-compatibilidade: 30/30 aliases/anchors de Documentos e 49/49 de Workflows
+Workflows
+├── Cards, Kanban e Lista
+├── Automações
+├── Criar e configurar
+├── Fases e transições
+├── Formulários e campos
+├── Membros e papéis
+└── Formulário público e acompanhamento
 ```
+
+O hub `/docs/funcionalidades/workflows` usa `pageType: hub`; as sete filhas usam `pageType: task`. Depois da introdução, dos conceitos importantes e da integração via API, o hub apresenta `Explore Workflows` antes da paginação para `Cards, Kanban e Lista`.
+
+Os cards derivam da coleção canônica. Em desktop, a grade tem duas colunas e o último item ímpar ocupa a largura total; em mobile, todos os cards usam uma coluna. A regra do último card é genérica para hubs com número ímpar de filhos.
+
+Durante a validação, foi corrigida uma integração: `DocPage` derivava filhos somente para Documentos. Hubs aninhados passaram a derivar filhos diretos por segmentos, hierarquia e `order`, preservando Documentos e permitindo a renderização de Workflows. A rota real de Workflows tem teste de regressão para `Explore Workflows`, seus sete destinos e sua ordem.
+
+Uma auditoria editorial comparou o artigo original (3.895 palavras) com a estrutura final (~3.234 palavras). A redução de ~661 palavras (~17%) foi aceita por redistribuição, remoção de repetição e separação por intenção; não há perda funcional conhecida. Foram recuperados o menu de três pontos do card, a descrição da fase como orientação no Kanban e a divisão funcional do Formulário inicial.
+
+## Navegação, compatibilidade e validação
+
+- Sidebar e drawer usam a mesma `NavigationTree`; o ramo Workflows abre na navegação relevante, pode ser recolhido manualmente e mantém estado ativo independente do expandido.
+- Breadcrumbs: `Funcionalidades > Workflows` no hub e `Funcionalidades > Workflows > Página-filha` nas filhas.
+- Paginação: Workflows → Cards, Kanban e Lista → Automações → Criar e configurar → Fases e transições → Formulários e campos → Membros e papéis → Formulário público e acompanhamento. A última filha não possui próxima página.
+- Compatibilidade: Workflows `49/49`; Documentos `30/30`. O alias `#dúvidas-e-situações-comuns` resolve para `/docs/funcionalidades/workflows#como-um-workflow-funciona`.
+- Validação visual manual aprovada em desktop dark/light e mobile dark, incluindo hub, cards, sidebar/drawer, TOC e paginação; não houve overflow horizontal identificado.
+
+## Baseline técnico final do Lote 3
+
+```text
+content:validate: 21 documentos válidos
+lint: 0 erros; 151 warnings preexistentes em .agents/skills/impeccable
+typecheck: aprovado
+test: 20 arquivos, 233/233 testes
+build: 50 páginas estáticas
+search: 148 entradas, 127 seções, 252741 rawBytes, 29706 gzipBytes
+search: limite de 12 resultados e snippet de 220 caracteres
+git diff --check: aprovado
+```
+
+O algoritmo, os pesos, o limite e o snippet da busca não foram alterados pelo Lote 3. A evolução da busca continua pertencendo ao Lote 4.
 
 ## Roadmap
 
 ```text
-Lote 0 — Contrato: concluído
-Lote 0.1 — Consolidação: concluído
-Lote 1 — Fundação: concluído
-Lote 2 — Documentos: concluído
-Lote 3 — Workflows: futuro
-Lote 4 — Busca: futuro
-Lote 5 — Descoberta e consolidação: futuro
-Lote 6 — Home + Hubs + identidade visual: futuro
-Lote 7 — Refinamento visual e microinterações: futuro
-Lote 8 — Governança editorial: futuro
-Lote 9 — Reauditoria Impeccable + regressão final: futuro
+Lote 0   ✅
+Lote 0.1 ✅
+Lote 1   ✅
+Lote 2   ✅
+Lote 3   ✅
+Lote 4   pendente
+Lote 5   pendente
+Lote 6   pendente
+Lote 7   pendente
+Lote 8   pendente
+Lote 9   pendente
 ```
 
-## Prioridade imediata
+## Próximo marco obrigatório
 
-1. Versionar o fechamento documental após a revisão humana.
-2. Iniciar o Lote 3 — Workflows, usando o padrão de hub já validado sem antecipar sua implementação.
+```text
+Lote 3 concluído e versionado
+↓
+fechamento documental
+↓
+instalar UI UX PRO MAX
+↓
+Lote 4 — Busca
+```
 
-## Cronologia do Lote 2
+UI UX PRO MAX ainda não foi instalada. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo.
 
-| Data | Referência | Marco |
-| --- | --- | --- |
-| 18/08/2026 | `de25753` | Documentos tornou-se hub com cinco páginas-filhas e compatibilidade preservada. |
-| 19/08/2026 | `b09b042` | `Explore Documentos` e os cards das filhas foram introduzidos. |
-| 19/08/2026 | `292e11b` | Navegação ativa/recolhível, simplificação editorial e contrato foram atualizados. |
-| 19/08/2026 | `0ae9420` | Grade final dos cards consolidada; Lote 2 concluído e sincronizado. |
-| 19/08/2026 | Validação e Git | Validação visual manual concluída; Git reconstruído com `HEAD = origin/main`. |
-| 19/08/2026 | Fechamento documental | Memória canônica preparada para revisão; próximo lote confirmado: Workflows. |
+## Cronologia relevante
+
+| Referência | Marco |
+| --- | --- |
+| `eec705e` | Fechamento documental do Lote 2. |
+| `d5e5251` | Primeira implementação versionada do Lote 3. |
+| Auditoria e correção focal | Três detalhes editoriais foram recuperados e contratos de teste foram fortalecidos. |
+| Validação visual | Identificou a ausência de `Explore Workflows` no hub. |
+| `415a113` | Derivação genérica dos filhos de hubs corrigida; `Explore Workflows` passou a renderizar e o Lote 3 foi aprovado. |
 
 ## Retomada segura
 
-Antes de iniciar o Lote 3, confirmar o estado Git atual e ler `AGENTS.md`, `project-docs/SYSTEM_BLUEPRINT.md` e `project-docs/REDESIGN_ARCHITECTURE.md`. Tratar o conteúdo MDX como fonte de rotas, navegação, breadcrumbs, busca, sitemap e geração estática; preservar alterações locais não relacionadas.
+Antes do Lote 4, confirmar o estado Git e instalar UI UX PRO MAX. Tratar MDX como fonte de rotas, navegação, breadcrumbs, busca, sitemap e geração estática; preservar alterações locais não relacionadas. A busca é a próxima frente e não deve ser antecipada por mudanças não aprovadas.

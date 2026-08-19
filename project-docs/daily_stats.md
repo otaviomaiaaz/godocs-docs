@@ -2,12 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 19 de agosto de 2026, 12:13 (UTC−03:00)
-> **Estado geral:** Lotes 1 e 2 da Nova Arquitetura concluídos e sincronizados no GitHub. Lote 2 — Documentos foi encerrado após a decomposição, os refinamentos do hub e a validação visual aprovada.
-> **Fase atual:** preparação do Lote 3 — Workflows.
-> **Commit mais recente confirmado:** `0ae9420` — `Consolidacao do Lote 2`.
+> **Última atualização:** 19 de agosto de 2026, fechamento documental do Lote 3 (UTC−03:00)
+> **Estado geral:** Lotes 1, 2 e 3 da Nova Arquitetura concluídos e sincronizados no GitHub.
+> **Fase atual:** preparação do Lote 4 — Busca.
+> **Commit mais recente confirmado:** `415a113` — `Revisão dos workflows`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** iniciar o Lote 3 — Workflows com o padrão de hub, navegação e compatibilidade já consolidado.
+> **Próxima ação principal:** concluir este fechamento documental, instalar UI UX PRO MAX e então iniciar o Lote 4 — Busca.
 
 ---
 
@@ -57,8 +57,8 @@ otaviomaiaaz/godocs-docs
 BRANCH
 main
 
-HEAD FINAL CONFIRMADO DO LOTE 2
-0ae9420 — Consolidacao do Lote 2
+HEAD FINAL CONFIRMADO DO LOTE 3
+415a113 — Revisão dos workflows
 
 ESTADO DO LOTE 1
 Versionado
@@ -69,14 +69,14 @@ Hub + cinco páginas-filhas
 Compatibilidade histórica preservada
 Validação visual aprovada
 
-COLEÇÃO APÓS O LOTE 2
-14 documentos
+COLEÇÃO APÓS O LOTE 3
+21 documentos
 
 COLEÇÃO DO LOTE 1 VERSIONADO
 9 documentos
 
 PRÓXIMO LOTE
-Lote 3 — Workflows
+Lote 4 — Busca
 Próxima etapa do redesign
 
 FRENTE EDITORIAL PARALELA
@@ -96,7 +96,7 @@ Estado do SHA atual não confirmado
 
 ### Observação sobre “publicado”
 
-A contagem de **14 documentos** pertence ao estado consolidado do Lote 2 em `0ae9420`, com `HEAD = origin/main` na verificação final. Isso não confirma, por si só, qual SHA está publicado em produção.
+A contagem de **21 documentos** pertence ao estado final do Lote 3 em `415a113`, com `HEAD = origin/main` na verificação final. Isso não confirma, por si só, qual SHA está publicado em produção.
 
 ---
 
@@ -576,6 +576,58 @@ A validação visual manual posterior foi concluída com os prints fornecidos; n
 
 ---
 
+## 8.1 Lote 3 — Workflows
+
+### Estado final
+
+**CONCLUÍDO e versionado.** O estado final aprovado é `415a113936b776dc65d73b58f343426680327af8` — `Revisão dos workflows`, sincronizado com `origin/main`.
+
+O checkpoint inicial do lote é `d5e5251` — `Redesign - Implementação do Lote 3`. Após a auditoria focal, foram recuperados três detalhes editoriais e fortalecidos contratos de teste. A validação visual identificou que `Explore Workflows` não aparecia no hub; a correção final em `415a113` generalizou a derivação de filhos diretos para hubs aninhados, sem alterar Documentos.
+
+### Estrutura, navegação e compatibilidade
+
+```text
+Workflows (hub)
+├── Cards, Kanban e Lista
+├── Automações
+├── Criar e configurar
+├── Fases e transições
+├── Formulários e campos
+├── Membros e papéis
+└── Formulário público e acompanhamento
+```
+
+- hub com `pageType: hub`; sete filhas com `pageType: task`;
+- `Explore Workflows` deriva os sete cards da coleção canônica, na ordem editorial, antes da paginação;
+- o último card ímpar ocupa as duas colunas no desktop e retorna a uma coluna no mobile;
+- sidebar e drawer compartilham `NavigationTree`; estado ativo e expandido são independentes;
+- breadcrumbs: `Funcionalidades > Workflows` e, nas filhas, `Funcionalidades > Workflows > Página-filha`;
+- paginação termina em `Formulário público e acompanhamento`, sem avançar para Relatórios;
+- compatibilidade: Workflows `49/49`; Documentos `30/30`; `#dúvidas-e-situações-comuns` resolve para `#como-um-workflow-funciona` no hub.
+
+### Baseline final
+
+```text
+21 documentos
+148 entradas de busca
+127 seções
+252741 rawBytes
+29706 gzipBytes
+limit 12
+snippet 220
+20 arquivos de teste
+233/233 testes
+50 páginas estáticas
+```
+
+Validações aprovadas: `pnpm content:validate`, `pnpm lint` (0 erros; 151 warnings preexistentes em `.agents/skills/impeccable`), `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm search:benchmark` e `git diff --check`. `pnpm audit:prod` não foi executado nesta rodada.
+
+### Validação visual
+
+A validação manual no ambiente publicado foi aprovada para Hub Workflows, páginas-filhas, `Explore Workflows`, sidebar, drawer, TOC e paginação nos cenários desktop dark, desktop light e mobile dark. Não foi identificado overflow horizontal; não há associação inferida entre esse ambiente e um SHA específico.
+
+---
+
 ## 9. Inspeção visual manual do Lote 2 e nova decisão de UX
 
 Em 19/08/2026 foram fornecidos prints representativos de:
@@ -717,9 +769,9 @@ Os cards ficam **no final**.
 
 A sidebar continua sendo navegação persistente; os cards funcionam como descoberta e orientação.
 
-### 10.3 Workflows deverá usar o mesmo padrão
+### 10.3 Workflows aplicou o mesmo padrão
 
-A decomposição planejada continua:
+A estrutura abaixo, planejada no fechamento do Lote 2, foi implementada e concluída no Lote 3:
 
 ```text
 Workflows
@@ -732,7 +784,7 @@ Workflows
 └── Formulário público e acompanhamento
 ```
 
-O hub de Workflows deverá nascer já com:
+O hub de Workflows foi entregue com:
 
 ```text
 contexto
@@ -1070,6 +1122,18 @@ Passou de “placeholder sem conteúdo confirmado” para **frente planejada do 
 35.862 bytes gzip
 ```
 
+### Baseline final após Lote 3
+
+```text
+21 documentos
+148 entradas
+127 seções
+252741 rawBytes
+29706 gzipBytes
+limit 12
+snippet 220
+```
+
 ### Decisão deferida do Lote 0
 
 Ainda não existe limite definitivo distinto por viewport.
@@ -1151,9 +1215,9 @@ Convenção operacional adotada:
 
 Não usar Sol High/Extra High por padrão sem necessidade.
 
-### Configuração planejada para o Lote 3
+### Configuração histórica do Lote 3
 
-Direção atual:
+No início do Lote 3, a direção era:
 
 ```text
 Modelo: Terra
@@ -1163,7 +1227,7 @@ Impeccable: não
 UI UX PRO MAX: não
 ```
 
-Após o Lote 3, lembrar da instalação da UI UX PRO MAX antes do Lote 4.
+O Lote 3 foi concluído. A instalação da UI UX PRO MAX continua sendo o próximo marco antes do Lote 4.
 
 ---
 
@@ -1256,19 +1320,22 @@ O arquivo foi consolidado como memória canônica nesta atualização documental
 
 ## 17. Débitos e riscos atuais
 
-### P1 — Fechamento do Lote 2
+### P1 — Fechamento dos Lotes 2 e 3
 
 - [x] hub de Documentos concluído com os cinco cards após `Conceitos importantes`;
 - [x] desktop, mobile, light e dark validados manualmente;
 - [x] compatibilidade de Documentos e Workflows preservada;
 - [x] checkpoints do lote sincronizados em `origin/main`;
 - [x] baseline técnico final revalidado.
+- [x] Workflows decomposto em hub e sete filhas;
+- [x] `Explore Workflows`, drawer, paginação, aliases e cards validados;
+- [x] correção de derivação genérica de hubs versionada em `415a113`.
 
 ### P1 — Arquitetura e documentação interna
 
 - [x] `REDESIGN_ARCHITECTURE.md` atualizado com o estado concluído do Lote 2;
 - [x] `daily_stats.md` e `Memória.md` atualizados para o fechamento documental;
-- [ ] iniciar o Lote 3 somente após a revisão e o versionamento deste fechamento documental.
+- [ ] revisar e versionar o fechamento documental do Lote 3.
 
 ### P1 — Editorial
 
@@ -1407,7 +1474,13 @@ Lote 2 — Documentos ✅ concluído
 ├── validação técnica ✅
 └── validação visual manual ✅
 
-Lote 3 — Workflows
+Lote 3 — Workflows ✅ concluído
+├── hub + sete filhas ✅
+├── compatibilidade 49/49 ✅
+├── Explore Workflows ✅
+├── validação técnica ✅
+└── validação visual manual ✅
+
 Lote 4 — Busca
 Lote 5 — Descoberta e consolidação
 Lote 6 — Home + Hubs + identidade visual
@@ -1419,9 +1492,8 @@ Lote 9 — Reauditoria Impeccable + regressão final
 ### Dependências importantes
 
 ```text
-Revisar e versionar o fechamento documental do Lote 2
-→ Lote 3 — Workflows
-→ validar/versionar
+Lote 3 concluído e versionado
+→ fechamento documental
 → instalar UI UX PRO MAX
 → Lote 4 — Busca
 ```
@@ -1462,27 +1534,17 @@ Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ## 22. Próximas ações recomendadas
 
-### 1. Revisar e versionar o fechamento documental
+### 1. Revisar e versionar o fechamento documental do Lote 3
 
-O código do Lote 2 já está consolidado em `0ae9420`. Esta atualização documental deve ser revisada e versionada separadamente antes do próximo lote.
+O Lote 3 está consolidado em `415a113`. Esta atualização documental deve ser revisada e versionada separadamente antes do próximo lote.
 
-### 2. Iniciar o Lote 3 — Workflows
+### 2. Instalar UI UX PRO MAX
 
-Usar o novo contrato de hub desde o início.
+Não há confirmação de instalação. Ela deve ser instalada após este fechamento documental e antes do Lote 4, de modo pontual, sem substituir `DESIGN.md`.
 
-Configuração planejada:
+### 3. Iniciar o Lote 4 — Busca
 
-```text
-Terra — High
-```
-
-Não instalar UI UX PRO MAX antes do fechamento do Lote 3.
-
-### 3. Após o Lote 3
-
-- validar/versionar Workflows;
-- instalar e validar UI UX PRO MAX;
-- iniciar Lote 4 — Busca.
+Preservar o baseline de 12 resultados e snippet de 220 caracteres até que uma decisão de busca seja validada.
 
 ### 4. Manter Configurações como frente editorial separada
 
@@ -1525,6 +1587,10 @@ Não misturar publicação de Configurações com o fechamento técnico do Lote 
 | 19/08/2026 | Visual | Revisão futura de paletas definida, com prioridade para light mode |
 | 19/08/2026 | FAQ | Desenvolvimento aprovado para etapa posterior, sem conteúdo inventado |
 | 19/08/2026 | Skills | UI UX PRO MAX mantida para instalação após Lote 3, antes do Lote 4 |
+| 19/08/2026 | `d5e5251` | Primeira implementação versionada do Lote 3 — Workflows |
+| 19/08/2026 | Auditoria focal | Três detalhes editoriais recuperados e contratos de teste fortalecidos |
+| 19/08/2026 | Validação visual | Ausência de `Explore Workflows` identificada no hub |
+| 19/08/2026 | `415a113` | Derivação genérica de filhos de hubs corrigida; `Explore Workflows` renderizado e validação final aprovada |
 
 ---
 
@@ -1587,31 +1653,31 @@ Ao iniciar uma nova sessão:
 
 ## 26. Estado ao encerrar esta atualização
 
-O HEAD final confirmado do Lote 2 é:
+O HEAD final confirmado do Lote 3 é:
 
 ```text
-0ae9420 — Consolidacao do Lote 2
+415a113 — Revisão dos workflows
 ```
 
-O Lote 2 está concluído e sincronizado com `origin/main`:
+O Lote 3 está concluído e sincronizado com `origin/main`:
 
 ```text
-14 documentos
-141 entradas de busca
+21 documentos
+148 entradas de busca
 127 seções
-167/167 testes
-36 páginas estáticas no build
+233/233 testes
+50 páginas estáticas no build
 30/30 aliases de Documentos preservados
 49/49 aliases/anchors de Workflows preservados
 ```
 
-O hub de Documentos foi encerrado com a navegação `Explore Documentos`, cards finais equilibrados, mobile em uma coluna e árvore ativa/recolhível validada. O próximo lote é Workflows.
+O hub de Workflows foi encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A próxima frente é o Lote 4 — Busca.
 
 As decisões de arquitetura preservadas incluem:
 
 - Funcionalidades com seis cards uniformes;
 - cards internos no final dos hubs;
-- Workflows seguindo o mesmo padrão;
+- Workflows implementado no mesmo padrão;
 - decomposição orientada por intenção, não por tempo isolado;
 - `Nesta página` progressivo em páginas densas;
 - sidebar desktop retrátil;
@@ -1619,6 +1685,6 @@ As decisões de arquitetura preservadas incluem:
 - FAQ factual em etapa posterior;
 - revisão futura das paletas com prioridade para tema claro;
 - revisão visual sistêmica por tokens;
-- UI UX PRO MAX somente após o Lote 3 e antes do Lote 4.
+- UI UX PRO MAX antes do Lote 4.
 
-Nenhum commit, push ou deployment do ajuste focal do Lote 2 é confirmado por esta atualização.
+Nenhum commit, push ou deployment é inferido por esta atualização documental.
