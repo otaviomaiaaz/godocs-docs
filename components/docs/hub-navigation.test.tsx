@@ -55,5 +55,8 @@ describe("HubNavigation", () => {
       items.map((item) => item.href),
     );
     expect(screen.getByRole("list").getAttribute("class")).toBe("hub-navigation__list");
+    expect(screen.getAllByRole("listitem").at(-1)?.getAttribute("class")).toContain(
+      "hub-navigation__item--wide",
+    );
   });
 });

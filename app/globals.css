@@ -1165,6 +1165,7 @@ body:has(dialog[open]) {
 
 .prose .hub-navigation__list {
   display: grid;
+  grid-auto-rows: minmax(0, 1fr);
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding: 0;
@@ -1172,16 +1173,23 @@ body:has(dialog[open]) {
   list-style: none;
 }
 
-.prose .hub-navigation__list li,
-.prose .hub-navigation__list li + li {
+.prose .hub-navigation__item,
+.prose .hub-navigation__item + .hub-navigation__item {
+  display: flex;
   margin: 0;
 }
 
+.hub-navigation__item--wide {
+  grid-column: 1 / -1;
+}
+
 .prose a.hub-navigation__link {
-  display: flex;
+  display: grid;
+  width: 100%;
   min-height: 88px;
+  height: 100%;
   align-items: center;
-  justify-content: space-between;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
   padding: 16px;
   border: 1px solid var(--surface-border);
@@ -1204,6 +1212,7 @@ body:has(dialog[open]) {
 .hub-navigation__copy {
   display: grid;
   min-width: 0;
+  align-content: center;
   gap: 5px;
 }
 
@@ -1636,10 +1645,16 @@ body:has(dialog[open]) {
   }
 
   .prose .hub-navigation__list {
+    grid-auto-rows: auto;
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .hub-navigation__item--wide {
+    grid-column: auto;
+  }
+
   .prose a.hub-navigation__link {
+    height: auto;
     min-height: 76px;
   }
 
