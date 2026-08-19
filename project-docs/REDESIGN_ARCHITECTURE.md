@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lote 1 implementado; Lote 2 implementado localmente, com ajuste focal do hub de Documentos pendente antes do encerramento; Lotes 3–9 pendentes
+> **Implementação:** Lotes 1 e 2 implementados e concluídos; Lotes 3–9 pendentes
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -64,7 +64,7 @@ Home → hub de domínio → página de tarefa ou referência → relacionados/p
 - URL preservada: `/docs/funcionalidades/documentos`.
 - Implementado como hub editorial com cinco páginas-filhas aprovadas e compatibilidade dos 30 anchors históricos.
 - O hub apresenta primeiro o contexto e o conteúdo conceitual do domínio.
-- A navegação para as cinco páginas-filhas será apresentada em cards compactos ao final do hub, depois do conteúdo conceitual e de **Conceitos importantes**, quando essa seção existir.
+- A navegação para as cinco páginas-filhas é apresentada em cards compactos ao final do hub, depois do conteúdo conceitual e de **Conceitos importantes**, quando essa seção existir.
 
 ### Workflows
 
@@ -102,7 +102,7 @@ Regras:
 
 O princípio é manter a experiência **robusta na estrutura e clean na apresentação**.
 
-## 4. Slugs públicos futuros aprovados
+## 4. Slugs públicos aprovados
 
 ### Documentos
 
@@ -167,7 +167,7 @@ pageType: reference
 
 ### URLs
 
-- As oito URLs públicas atuais permanecem funcionais.
+- As oito URLs públicas existentes no baseline pré-redesign permanecem funcionais.
 - Nenhuma URL existente pode retornar 404 durante a migração.
 - As URLs atuais de Documentos e Workflows continuam canônicas e passam a representar seus hubs.
 - Redirects só existem quando uma URL realmente deixar de ser canônica.
@@ -289,7 +289,7 @@ A implementação detalhada do FAQ pertence a etapa posterior e não altera, por
 
 ## 10. Busca
 
-Baseline preservado:
+Baseline pré-redesign preservado:
 
 ```text
 132 entradas
@@ -374,7 +374,7 @@ Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
 
 Lote 1 — Fundação — implementado
-Lote 2 — Documentos — implementado localmente; ajuste focal do hub pendente antes do encerramento
+Lote 2 — Documentos — concluído
 Lote 3 — Workflows
 Lote 4 — Busca
 Lote 5 — Descoberta e consolidação

@@ -2,12 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 19 de agosto de 2026, 10:22 (UTC−03:00)
-> **Estado geral:** Lote 1 da Nova Arquitetura versionado; Lote 2 — Documentos implementado no working tree e validado tecnicamente, porém ainda não encerrado. A inspeção visual manual confirmou a nova hierarquia e revelou uma necessidade de UX no hub de Documentos: adicionar cards compactos das páginas-filhas no final do hub.
-> **Fase atual:** ajuste focal e fechamento do Lote 2 antes de iniciar o Lote 3 — Workflows.
-> **Commit mais recente confirmado no início do Lote 2:** `cc5f6e1` — `Redesign - Implementação do Lote 1`.
+> **Última atualização:** 19 de agosto de 2026, 12:13 (UTC−03:00)
+> **Estado geral:** Lotes 1 e 2 da Nova Arquitetura concluídos e sincronizados no GitHub. Lote 2 — Documentos foi encerrado após a decomposição, os refinamentos do hub e a validação visual aprovada.
+> **Fase atual:** preparação do Lote 3 — Workflows.
+> **Commit mais recente confirmado:** `0ae9420` — `Consolidacao do Lote 2`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** consolidar as decisões atuais, aplicar o ajuste focal do hub de Documentos, repetir a validação necessária, versionar o Lote 2 e somente depois iniciar o Lote 3 — Workflows.
+> **Próxima ação principal:** iniciar o Lote 3 — Workflows com o padrão de hub, navegação e compatibilidade já consolidado.
 
 ---
 
@@ -57,19 +57,19 @@ otaviomaiaaz/godocs-docs
 BRANCH
 main
 
-HEAD CONFIRMADO NO INÍCIO DO LOTE 2
-cc5f6e1 — Redesign - Implementação do Lote 1
+HEAD FINAL CONFIRMADO DO LOTE 2
+0ae9420 — Consolidacao do Lote 2
 
 ESTADO DO LOTE 1
 Versionado
 
 ESTADO DO LOTE 2
-Implementado localmente
-Validação técnica aprovada
-Ajuste focal do hub pendente
-Sem commit/push do Lote 2 confirmado
+Concluído e sincronizado
+Hub + cinco páginas-filhas
+Compatibilidade histórica preservada
+Validação visual aprovada
 
-COLEÇÃO NO WORKING TREE DO LOTE 2
+COLEÇÃO APÓS O LOTE 2
 14 documentos
 
 COLEÇÃO DO LOTE 1 VERSIONADO
@@ -77,7 +77,7 @@ COLEÇÃO DO LOTE 1 VERSIONADO
 
 PRÓXIMO LOTE
 Lote 3 — Workflows
-Somente após fechamento/versionamento do Lote 2
+Próxima etapa do redesign
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
@@ -96,7 +96,7 @@ Estado do SHA atual não confirmado
 
 ### Observação sobre “publicado”
 
-A contagem de **14 documentos** pertence ao working tree do Lote 2. Como não há confirmação de commit, push e deployment desse lote, não tratar automaticamente os 14 documentos como estado público de produção.
+A contagem de **14 documentos** pertence ao estado consolidado do Lote 2 em `0ae9420`, com `HEAD = origin/main` na verificação final. Isso não confirma, por si só, qual SHA está publicado em produção.
 
 ---
 
@@ -162,7 +162,7 @@ No início do Lote 2:
 cc5f6e1 — Redesign - Implementação do Lote 1
 ```
 
-O Lote 2 foi desenvolvido sobre esse estado e permaneceu sem commit/push durante as validações registradas.
+O Lote 2 foi desenvolvido sobre esse estado. As validações intermediárias ocorreram antes dos commits finais; o fechamento foi consolidado e sincronizado posteriormente em `0ae9420`.
 
 ### Deploy
 
@@ -425,9 +425,11 @@ Build: 26 páginas estáticas
 
 ## 8. Lote 2 — Documentos
 
-### Estado atual
+### Estado final
 
-**Implementado no working tree, tecnicamente validado, mas ainda não encerrado.**
+**CONCLUÍDO.** A implementação aprovada está em `0ae9420` — `Consolidacao do Lote 2`, sincronizada com `origin/main`.
+
+Antes desta atualização documental, o working tree estava limpo e não havia alterações staged ou untracked.
 
 Base confirmada no início do lote:
 
@@ -438,7 +440,7 @@ origin sem divergência registrada
 working tree inicialmente limpo
 ```
 
-Nenhum commit ou push do Lote 2 foi confirmado.
+Checkpoints confirmados do lote: `de25753` (decomposição e compatibilidade), `b09b042` (Explore Documentos), `292e11b` (fechamento funcional e contratual) e `0ae9420` (consolidação visual final).
 
 ### Estrutura implementada
 
@@ -512,11 +514,11 @@ Implementado:
 Baseline registrado:
 
 ```text
-Documentos no working tree: 14
+Documentos: 14
 Entradas: 141
 Páginas: 14
 Seções: 127
-Payload bruto: 276.568 bytes
+Payload bruto: 276.446 bytes
 Payload gzip: 35.862 bytes
 ```
 
@@ -547,7 +549,7 @@ Resultados registrados:
 content:validate: 14 documentos válidos
 lint: 0 erros do produto; 151 warnings preexistentes em .agents
 typecheck: aprovado
-testes: 18 arquivos / 165 testes / 165 aprovados
+testes: 19 arquivos / 167 testes / 167 aprovados
 build: aprovado / 36 páginas estáticas
 search:benchmark: aprovado
 git diff --check: aprovado
@@ -564,13 +566,13 @@ O ambiente do Codex não conseguiu iniciar um navegador:
 - H1 e canonical foram confirmados;
 - inspeção de console, foco, drawer, temas e breakpoints não pôde ser feita pelo Codex.
 
-Veredito daquela tentativa:
+Veredito da revalidação automatizada daquela tentativa:
 
 ```text
-VALIDAÇÃO VISUAL PENDENTE POR LIMITAÇÃO DO AMBIENTE
+PENDENTE NO AMBIENTE DO CODEX
 ```
 
-Nenhum arquivo adicional foi alterado nessa revalidação.
+A validação visual manual posterior foi concluída com os prints fornecidos; nenhum arquivo adicional foi alterado nessa revalidação automatizada.
 
 ---
 
@@ -664,18 +666,7 @@ Evitar:
 
 ### Estado do Lote 2 após essa decisão
 
-O lote **não deve ser considerado finalizado ainda**.
-
-Pendência focal:
-
-```text
-Adicionar os cinco cards ao final do hub
-→ validar desktop/mobile
-→ validar light/dark
-→ executar validações proporcionais
-→ revisar diff
-→ commit/push
-```
+O ajuste focal foi concluído posteriormente: o hub recebeu `Explore Documentos`, o texto redundante foi simplificado, a árvore ativa passou a ser recolhível e o último card passou a ocupar duas colunas no desktop. O mobile permanece em uma coluna.
 
 ---
 
@@ -964,8 +955,8 @@ Uma versão revisada desse documento foi preparada nesta frente de trabalho em 1
 Este arquivo deve registrar o estado atual descrito aqui:
 
 - Lote 1 versionado;
-- Lote 2 ainda em fechamento;
-- novo ajuste focal do hub;
+- Lote 2 concluído e sincronizado;
+- próximo lote: Workflows;
 - decisões que alteram os próximos lotes;
 - uso planejado das skills;
 - estado Git/deploy sem inferências.
@@ -992,9 +983,9 @@ Não editar para fazer o relatório histórico refletir decisões posteriores.
 
 ## 12. Conteúdo e frentes editoriais
 
-### Estado local após o Lote 2
+### Estado após o Lote 2
 
-Working tree:
+Coleção:
 
 ```text
 14 documentos MDX
@@ -1160,17 +1151,6 @@ Convenção operacional adotada:
 
 Não usar Sol High/Extra High por padrão sem necessidade.
 
-### Configuração para o ajuste focal atual do Lote 2
-
-```text
-Modelo: Terra
-Nível: Medium
-Chat: mesmo chat do Lote 2
-Impeccable: não
-UI UX PRO MAX: não
-Commit/push durante a implementação focal: somente após validação e decisão explícita
-```
-
 ### Configuração planejada para o Lote 3
 
 Direção atual:
@@ -1270,7 +1250,7 @@ Objetivo:
 - decisões superadas;
 - transferência de contexto.
 
-O versionamento atual desse arquivo na `main` não foi revalidado nesta atualização. Não afirmar um estado novo sem inspeção do repositório.
+O arquivo foi consolidado como memória canônica nesta atualização documental. Ele permanece não rastreado até a revisão humana e o próximo commit documental deliberado; não tratar essa pendência documental como pendência do Lote 2 de código.
 
 ---
 
@@ -1278,25 +1258,17 @@ O versionamento atual desse arquivo na `main` não foi revalidado nesta atualiza
 
 ### P1 — Fechamento do Lote 2
 
-- [ ] adicionar cards compactos das cinco páginas-filhas no final do hub de Documentos;
-- [ ] manter os cards depois de `Conceitos importantes`;
-- [ ] validar desktop;
-- [ ] validar mobile;
-- [ ] validar light;
-- [ ] validar dark;
-- [ ] reexecutar apenas as validações técnicas proporcionais às alterações;
-- [ ] revisar `git diff`;
-- [ ] confirmar que 30/30 aliases continuam preservados;
-- [ ] confirmar que 49/49 aliases de Workflows continuam intactos;
-- [ ] commit/push do Lote 2 após aprovação;
-- [ ] confirmar deployment correspondente após o push.
+- [x] hub de Documentos concluído com os cinco cards após `Conceitos importantes`;
+- [x] desktop, mobile, light e dark validados manualmente;
+- [x] compatibilidade de Documentos e Workflows preservada;
+- [x] checkpoints do lote sincronizados em `origin/main`;
+- [x] baseline técnico final revalidado.
 
 ### P1 — Arquitetura e documentação interna
 
-- [ ] incorporar/versionar no repositório a versão final aprovada de `REDESIGN_ARCHITECTURE.md`;
-- [ ] versionar este `daily_stats.md` após revisão;
-- [ ] manter o contrato de Workflows alinhado ao novo padrão de hub;
-- [ ] não iniciar o Lote 3 enquanto o Lote 2 ainda estiver aberto.
+- [x] `REDESIGN_ARCHITECTURE.md` atualizado com o estado concluído do Lote 2;
+- [x] `daily_stats.md` e `Memória.md` atualizados para o fechamento documental;
+- [ ] iniciar o Lote 3 somente após a revisão e o versionamento deste fechamento documental.
 
 ### P1 — Editorial
 
@@ -1407,11 +1379,11 @@ Build: 26 páginas estáticas
 Busca: 134 entradas
 ```
 
-### Lote 2 antes do ajuste focal do hub
+### Lote 2 — baseline final
 
 ```text
-Documentos da coleção local: 14
-Testes: 165/165
+Documentos da coleção: 14
+Testes: 167/167
 Build: 36 páginas estáticas
 Busca: 141 entradas
 ```
@@ -1427,13 +1399,13 @@ Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
 Lote 1 — Fundação ✅ versionado
 
-Lote 2 — Documentos
+Lote 2 — Documentos ✅ concluído
 ├── decomposição ✅
 ├── compatibilidade ✅
 ├── busca/SEO ✅
+├── Explore Documentos ✅
 ├── validação técnica ✅
-├── inspeção visual representativa ✅
-└── ajuste focal do hub ⏳
+└── validação visual manual ✅
 
 Lote 3 — Workflows
 Lote 4 — Busca
@@ -1447,8 +1419,7 @@ Lote 9 — Reauditoria Impeccable + regressão final
 ### Dependências importantes
 
 ```text
-Fechar Lote 2
-→ commit/push
+Revisar e versionar o fechamento documental do Lote 2
 → Lote 3 — Workflows
 → validar/versionar
 → instalar UI UX PRO MAX
@@ -1491,56 +1462,11 @@ Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ## 22. Próximas ações recomendadas
 
-### 1. Fechar a documentação interna da decisão atual
+### 1. Revisar e versionar o fechamento documental
 
-Garantir que:
+O código do Lote 2 já está consolidado em `0ae9420`. Esta atualização documental deve ser revisada e versionada separadamente antes do próximo lote.
 
-- `REDESIGN_ARCHITECTURE.md` contenha as novas regras aprovadas;
-- `daily_stats.md` represente o estado atual sem contradições.
-
-### 2. Executar o Ajuste Focal do Hub de Documentos
-
-Escopo:
-
-- adicionar cinco cards compactos no final do hub;
-- manter todo o conteúdo importante existente;
-- não alterar a decomposição;
-- não fazer redesign amplo;
-- não usar Impeccable;
-- não usar UI UX PRO MAX.
-
-Configuração indicada:
-
-```text
-Terra — Medium
-```
-
-### 3. Revalidar o Lote 2
-
-Após o ajuste:
-
-- desktop;
-- mobile;
-- light;
-- dark;
-- navegação;
-- paginação;
-- aliases;
-- testes proporcionais;
-- diff.
-
-### 4. Versionar o Lote 2
-
-Somente após aprovação:
-
-```text
-commit
-push
-confirmar SHA
-confirmar Vercel
-```
-
-### 5. Iniciar o Lote 3 — Workflows
+### 2. Iniciar o Lote 3 — Workflows
 
 Usar o novo contrato de hub desde o início.
 
@@ -1552,13 +1478,13 @@ Terra — High
 
 Não instalar UI UX PRO MAX antes do fechamento do Lote 3.
 
-### 6. Após o Lote 3
+### 3. Após o Lote 3
 
 - validar/versionar Workflows;
 - instalar e validar UI UX PRO MAX;
 - iniciar Lote 4 — Busca.
 
-### 7. Manter Configurações como frente editorial separada
+### 4. Manter Configurações como frente editorial separada
 
 Não misturar publicação de Configurações com o fechamento técnico do Lote 2 sem uma tarefa específica.
 
@@ -1587,10 +1513,13 @@ Não misturar publicação de Configurações com o fechamento técnico do Lote 
 | 18/08/2026 | `587069f` | Contrato da nova arquitetura versionado |
 | 18/08/2026 | Lote 1 | Fundação implementada e revalidada |
 | 18–19/08/2026 | `cc5f6e1` | Lote 1 versionado; este é o HEAD confirmado no início do Lote 2 |
-| 19/08/2026 | Lote 2 | Documentos decomposto em hub + cinco filhas; 165/165 testes |
+| 18/08/2026 | `de25753` | Lote 2 estrutural: Documentos virou hub com cinco páginas-filhas e compatibilidade preservada |
+| 19/08/2026 | `b09b042` | `Explore Documentos` e os cards das páginas-filhas foram introduzidos |
+| 19/08/2026 | `292e11b` | Navegação ativa/recolhível, simplificação editorial e contrato atualizados |
+| 19/08/2026 | `0ae9420` | Lote 2 consolidado: grade final dos cards aprovada e sincronizada |
 | 19/08/2026 | Revalidação visual | Navegador do Codex bloqueado; revalidação automatizada permaneceu pendente |
 | 19/08/2026 | Inspeção manual | Prints confirmaram a nova hierarquia e a paginação do domínio |
-| 19/08/2026 | Decisão de UX | Hub de Documentos receberá cards compactos das filhas no final |
+| 19/08/2026 | Decisão de UX | Hub de Documentos recebeu cards compactos das filhas no final |
 | 19/08/2026 | Arquitetura | Mesmo padrão definido para Workflows; Funcionalidades mantém seis cards uniformes |
 | 19/08/2026 | Navegação | Sidebar retrátil e evolução do `Nesta página` aprovadas como direção |
 | 19/08/2026 | Visual | Revisão futura de paletas definida, com prioridade para light mode |
@@ -1658,37 +1587,27 @@ Ao iniciar uma nova sessão:
 
 ## 26. Estado ao encerrar esta atualização
 
-O último HEAD confirmado para a frente atual é:
+O HEAD final confirmado do Lote 2 é:
 
 ```text
-cc5f6e1 — Redesign - Implementação do Lote 1
+0ae9420 — Consolidacao do Lote 2
 ```
 
-O Lote 2 está no working tree e possui:
+O Lote 2 está concluído e sincronizado com `origin/main`:
 
 ```text
 14 documentos
 141 entradas de busca
 127 seções
-165/165 testes
+167/167 testes
 36 páginas estáticas no build
-30/30 aliases de Documentos cobertos
+30/30 aliases de Documentos preservados
 49/49 aliases/anchors de Workflows preservados
 ```
 
-A implementação de Documentos foi considerada tecnicamente consistente, mas a inspeção visual revelou que o hub precisa comunicar melhor suas páginas-filhas.
+O hub de Documentos foi encerrado com a navegação `Explore Documentos`, cards finais equilibrados, mobile em uma coluna e árvore ativa/recolhível validada. O próximo lote é Workflows.
 
-Decisão atual:
-
-```text
-não refazer o Lote 2
-→ adicionar cards compactos ao final do hub de Documentos
-→ revalidar
-→ versionar
-→ iniciar Workflows
-```
-
-As novas decisões de arquitetura incluem:
+As decisões de arquitetura preservadas incluem:
 
 - Funcionalidades com seis cards uniformes;
 - cards internos no final dos hubs;
