@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lotes 1, 2 e 3 implementados e concluídos; Lotes 4–9 pendentes
+> **Implementação:** Lotes 1, 2, 3 e 4 implementados e concluídos; Lote 5 é a próxima frente.
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -213,10 +213,10 @@ Nenhum quarto nível de conteúdo será criado sem nova aprovação arquitetural
 
 ### Sidebar e drawer
 
-- Funcionalidades terá hub explícito.
+- Funcionalidades possui hub explícito.
 - Hubs podem ser clicáveis e expansíveis; a expansão usa controle separado do link.
 - O ramo correspondente à página atual pode abrir automaticamente para fornecer contexto; depois dessa abertura, a pessoa pode recolhê-lo manualmente.
-- Página ativa e estado expandido são independentes: a árvore não deve forçar reabertura contínua enquanto a mesma rota permanecer ativa; a regra também vale para futuros hubs com páginas-filhas, como Workflows.
+- Página ativa e estado expandido são independentes: a árvore não deve forçar reabertura contínua enquanto a mesma rota permanecer ativa; a regra vale para hubs com páginas-filhas, como Documentos e Workflows, e deve ser preservada em futuros hubs equivalentes.
 - A sidebar desktop será retrátil por ação do usuário e ficará aberta por padrão.
 - Recolher a sidebar não deve ser consequência automática de entrar em um card ou trocar de página.
 - O estado aberto/recolhido deve permanecer consistente durante a navegação do usuário.
@@ -254,7 +254,7 @@ A profundidade máxima é de quatro elementos, incluindo Home. “Comece por aqu
 
 ### Paginação
 
-O modelo global plano atual será abandonado progressivamente em favor de paginação **hierárquica e limitada ao domínio**:
+Nos domínios já migrados, a paginação é **hierárquica e limitada ao domínio**. Superfícies ainda não migradas devem convergir para esse modelo:
 
 - hub e filhos formam sequência editorial;
 - não saltar automaticamente entre domínios;
@@ -292,29 +292,33 @@ A implementação detalhada do FAQ pertence a etapa posterior e não altera, por
 
 ## 10. Busca
 
-Baseline pré-redesign preservado:
+O Lote 4 consolidou a busca local existente sem trocar sua arquitetura:
+
+- índice estático `/search-index.json`, matching determinístico, normalização de acentos, matching por palavras/prefixos, pesos e campos pesquisados preservados;
+- limite universal de 12 resultados e snippet de 220 caracteres preservados;
+- candidatos completos recebem score e ordenação antes da diversidade; cada documento canônico, identificado pelo href sem fragmento, pode contribuir com no máximo três resultados;
+- a diversidade continua pelos candidatos elegíveis até preencher o limite quando houver resultados suficientes;
+- stopwords são conservadoras; `sem` não é ruído e permanece relevante para intenções como `sem login`;
+- consultas somente com stopwords retornam zero resultados sem ranking arbitrário; o estado vazio é orientativo;
+- resultados informam `Página` ou `Seção` a partir de `result.kind`;
+- combobox, listbox, ARIA, foco, Ctrl/Cmd+K, setas, Enter e Escape permanecem contratos da busca;
+- não foram introduzidos IA, NLP, embeddings, operadores booleanos ou autocomplete complexo.
+
+Baseline consolidado:
 
 ```text
-132 entradas
-269.380 bytes bruto
-36.232 bytes gzip
+21 documentos
+148 entradas
+127 seções
+252741 rawBytes
+29706 gzipBytes
 12 resultados
 220 caracteres de snippet
+242/242 testes
+50 páginas estáticas
 ```
 
-Orçamento inicial da arquitetura futura:
-
-```text
-aproximadamente 145–160 entradas
-até 350 KB bruto
-até 50 KB gzip
-```
-
-Não implementar otimização neste momento.
-
-### Decisão deferida — quantidade de resultados
-
-Não há limite definitivo distinto por viewport. O futuro Lote de Busca deverá testar até 8 resultados no mobile e 10 no desktop contra o baseline atual de 12, avaliando descoberta, densidade e qualidade antes de consolidar o comportamento.
+O SHA funcional da busca é `5c8a7c120aba1d6afd323621a7ec186776178bd6`. A infraestrutura posterior `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` ajusta apenas o ignore do ESLint para `.agents/skills/**` e não substitui essa referência funcional.
 
 ## 11. Critérios editoriais aprovados
 
@@ -379,8 +383,8 @@ Lote 0.1 — Consolidação ✅
 Lote 1 — Fundação — implementado
 Lote 2 — Documentos — concluído
 Lote 3 — Workflows — implementado e concluído
-Lote 4 — Busca
-Lote 5 — Descoberta e consolidação
+Lote 4 — Busca — concluído
+Lote 5 — Descoberta e consolidação — próxima frente
 Lote 6 — Home + Hubs + identidade visual
 Lote 7 — Refinamento visual e microinterações
 Lote 8 — Governança editorial
@@ -389,6 +393,6 @@ Lote 9 — Reauditoria Impeccable + regressão final
 
 Nenhum lote futuro é autorizado por este documento sem a respectiva tarefa e validação.
 
-### Marco anterior ao Lote 4
+### Registro do Lote 4
 
-Após o fechamento documental do Lote 3, instalar UI UX PRO MAX antes do Lote 4 — Busca. A ferramenta será usada pontualmente para a UX da busca, não substitui `DESIGN.md` e não constitui um Design System paralelo.
+UI UX PRO MAX foi instalada e usada pontualmente, de modo consultivo, para acessibilidade, teclado, responsividade e estado vazio da busca. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo. O uso no Lote 5 permanece opcional e condicionado a ganho real.

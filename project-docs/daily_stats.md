@@ -2,12 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 19 de agosto de 2026, fechamento documental do Lote 3 (UTC−03:00)
-> **Estado geral:** Lotes 1, 2 e 3 da Nova Arquitetura concluídos e sincronizados no GitHub.
-> **Fase atual:** preparação do Lote 4 — Busca.
-> **Commit mais recente confirmado:** `415a113` — `Revisão dos workflows`.
+> **Última atualização:** 21 de agosto de 2026, fechamento documental do Lote 4 (UTC−03:00)
+> **Estado geral:** Lotes 1, 2, 3 e 4 da Nova Arquitetura concluídos e sincronizados no GitHub.
+> **Fase atual:** fechamento documental do Lote 4; próxima frente Lote 5 — Discovery / consolidação.
+> **Commit mais recente confirmado:** `5b69be4` — `Ajusta lint para ignorar skills`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** concluir este fechamento documental, instalar UI UX PRO MAX e então iniciar o Lote 4 — Busca.
+> **Próxima ação principal:** revisar e versionar este fechamento documental antes de iniciar o Lote 5.
 
 ---
 
@@ -57,8 +57,8 @@ otaviomaiaaz/godocs-docs
 BRANCH
 main
 
-HEAD FINAL CONFIRMADO DO LOTE 3
-415a113 — Revisão dos workflows
+HEAD ATUAL CONFIRMADO
+5b69be4 — Ajusta lint para ignorar skills
 
 ESTADO DO LOTE 1
 Versionado
@@ -69,15 +69,18 @@ Hub + cinco páginas-filhas
 Compatibilidade histórica preservada
 Validação visual aprovada
 
-COLEÇÃO APÓS O LOTE 3
-21 documentos
+COLEÇÃO ATUAL
+21 documentos, 148 entradas e 127 seções
+Estabelecida após o Lote 3 e preservada pelo Lote 4
 
 COLEÇÃO DO LOTE 1 VERSIONADO
 9 documentos
 
+LOTE 4 — BUSCA
+Concluído; SHA funcional 5c8a7c
+
 PRÓXIMO LOTE
-Lote 4 — Busca
-Próxima etapa do redesign
+Lote 5 — Discovery / consolidação
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
@@ -86,8 +89,7 @@ AUDITORIA IMPECCABLE ANTERIOR
 Encerrada
 
 UI UX PRO MAX
-Não há confirmação de instalação
-Instalação planejada após o Lote 3, antes do Lote 4
+Instalada e usada pontualmente, de forma consultiva, no Lote 4
 
 VERCEL
 Último success explicitamente registrado: 700998c
@@ -154,7 +156,7 @@ Estado conhecido:
 | Banco de dados próprio da documentação | Não |
 | Autenticação própria da documentação | Não |
 
-### Último HEAD confirmado para a frente atual
+### Histórico de HEADs relevantes
 
 No início do Lote 2:
 
@@ -163,6 +165,8 @@ cc5f6e1 — Redesign - Implementação do Lote 1
 ```
 
 O Lote 2 foi desenvolvido sobre esse estado. As validações intermediárias ocorreram antes dos commits finais; o fechamento foi consolidado e sincronizado posteriormente em `0ae9420`.
+
+O checkpoint funcional do Lote 4 é `5c8a7c120aba1d6afd323621a7ec186776178bd6` — `Implementacao do Lote 4`; ele foi usado na validação visual. O `HEAD` atual, alinhado com `origin/main`, é `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` — `Ajusta lint para ignorar skills`, uma correção de infraestrutura posterior que não substitui a referência funcional da busca.
 
 ### Deploy
 
@@ -628,6 +632,51 @@ A validação manual no ambiente publicado foi aprovada para Hub Workflows, pág
 
 ---
 
+## 8.2 Lote 4 — Busca
+
+### Estado final
+
+**CONCLUÍDO, revisado e validado visualmente.** O SHA funcional é `5c8a7c120aba1d6afd323621a7ec186776178bd6` — `Implementacao do Lote 4`. O commit posterior `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` corrige exclusivamente a infraestrutura do ESLint e não substitui a referência funcional da busca.
+
+### Decisões consolidadas
+
+- índice estático `/search-index.json`, normalização de acentos, matching determinístico por palavras/prefixos, pesos e campos pesquisados preservados;
+- limite universal de 12 resultados e snippet de 220 caracteres preservados;
+- candidatos recebem score e ordenação completos antes da diversidade; cada documento canônico, identificado pelo href sem fragmento, contribui com no máximo três resultados;
+- a busca continua pelos candidatos elegíveis após o teto por documento, podendo preencher o limite de 12;
+- stopwords são conservadoras; `sem` foi preservado como termo semântico após a revisão focal, incluindo as consultas `sem login` e `enviar solicitação sem login`;
+- resultados exibem a classificação `Página` ou `Seção`, e o estado vazio orienta tentar outro termo ou uma busca mais curta;
+- sem IA, NLP, embeddings, autocomplete complexo ou mudança de arquitetura nesta fase.
+
+### Revisão, acessibilidade e validação
+
+A revisão focal encontrou dois P1: a remoção indevida de `sem` como ruído e cobertura insuficiente dos contratos de stopwords/diversidade. A correção preservou `sem` e adicionou testes para consultas somente com stopwords, intenção sem login, máximo de três por documento e preenchimento até 12 após a diversidade.
+
+Foram preservados Ctrl/Cmd+K, ArrowUp/ArrowDown, Enter, Escape, retorno de foco, combobox/listbox/options, ARIA e comportamento responsivo. A validação visual da busca incluiu desktop, mobile, claro/escuro e as consultas `sem login` e `enviar solicitação sem login`; não se infere associação de deployment além da evidência disponível.
+
+UI UX PRO MAX foi utilizada pontualmente como apoio consultivo para acessibilidade, teclado, responsividade e estado vazio. Não substituiu `PRODUCT.md`, `DESIGN.md`, `REDESIGN_ARCHITECTURE.md` ou a arquitetura existente.
+
+### Baseline final
+
+```text
+21 documentos
+148 entradas de busca
+127 seções
+252741 rawBytes
+29706 gzipBytes
+limit 12
+snippet 220
+20 arquivos de teste
+242/242 testes
+50 páginas estáticas
+Workflows 49/49 aliases
+Documentos 30/30 aliases
+```
+
+Validações aprovadas: `pnpm lint` (0 erros, 0 warnings), lint focal do Lote 4, `pnpm test`, `pnpm typecheck`, `pnpm build`, `pnpm search:benchmark` e `git diff --check`. A correção do lint adicionou exclusivamente `.agents/skills/**` ao ignore oficial do Flat Config; nenhuma skill foi alterada e o código real da aplicação continua no escopo.
+
+---
+
 ## 9. Inspeção visual manual do Lote 2 e nova decisão de UX
 
 Em 19/08/2026 foram fornecidos prints representativos de:
@@ -982,7 +1031,9 @@ deve ser consolidada quando as soluções forem efetivamente desenhadas e valida
 
 ---
 
-## 11. Documentos canônicos e atualizações necessárias
+## 11. Documentos canônicos — registro histórico do Lote 3
+
+As anotações desta seção registram a necessidade identificada no fechamento do Lote 3. O estado operacional atual foi atualizado nas seções 2, 8.2, 20, 22 e 26.
 
 ### `REDESIGN_ARCHITECTURE.md`
 
@@ -1000,11 +1051,11 @@ Deve refletir:
 - direção da revisão de paletas;
 - robustez estrutural sem poluição visual.
 
-Uma versão revisada desse documento foi preparada nesta frente de trabalho em 19/08/2026. A incorporação/versionamento no repositório deve ser confirmada no fluxo Git; não assumir que o arquivo gerado fora do repositório já esteja na `main`.
+Em 19/08/2026, uma versão revisada desse documento foi preparada; a nota é histórica. O documento está presente na `main` e foi atualizado neste fechamento do Lote 4.
 
 ### `daily_stats.md`
 
-Este arquivo deve registrar o estado atual descrito aqui:
+Naquele momento, este arquivo deveria registrar:
 
 - Lote 1 versionado;
 - Lote 2 concluído e sincronizado;
@@ -1100,7 +1151,7 @@ Passou de “placeholder sem conteúdo confirmado” para **frente planejada do 
 
 ---
 
-## 13. Busca — estado e decisões
+## 13. Busca — histórico e decisões anteriores ao Lote 4
 
 ### Baseline após Lote 1
 
@@ -1122,7 +1173,7 @@ Passou de “placeholder sem conteúdo confirmado” para **frente planejada do 
 35.862 bytes gzip
 ```
 
-### Baseline final após Lote 3
+### Baseline ao encerrar o Lote 3
 
 ```text
 21 documentos
@@ -1134,16 +1185,9 @@ limit 12
 snippet 220
 ```
 
-### Decisão deferida do Lote 0
+### Decisão do Lote 0 consolidada no Lote 4
 
-Ainda não existe limite definitivo distinto por viewport.
-
-Hipótese registrada para o Lote 4:
-
-- testar até 8 resultados no mobile;
-- testar até 10 no desktop;
-- comparar com o baseline atual de 12;
-- avaliar descoberta, densidade e qualidade antes de consolidar.
+A hipótese de limites distintos por viewport foi encerrada sem alteração: o limite universal de 12 e o snippet de 220 permaneceram. A busca foi consolidada com diversidade máxima de três resultados por documento, stopwords conservadoras e preservação de `sem` como termo semântico.
 
 ### Nova observação relacionada
 
@@ -1164,18 +1208,17 @@ Estado:
 
 ### UI UX PRO MAX
 
-Estado conhecido:
+Estado atual:
 
-- não há confirmação de instalação;
-- não instalar durante o fechamento do Lote 2;
-- não usar no Lote 3;
-- instalar **após o Lote 3 — Workflows e antes do Lote 4 — Busca**.
+- instalada e utilizada pontualmente no Lote 4;
+- uso consultivo para UX da busca, acessibilidade, teclado, responsividade e estado vazio;
+- não substitui `PRODUCT.md`, `DESIGN.md` ou `REDESIGN_ARCHITECTURE.md`.
 
 Plano atual:
 
 ```text
-Lote 4 — uso pontual para UX da busca
-Lote 5 — uso pontual/opcional
+Lote 4 — uso pontual concluído
+Lote 5 — uso pontual/opcional, se houver ganho real
 Lotes 6 e 7 — UI UX PRO MAX + Impeccable
 Lote 9 — Impeccable principal; UI UX PRO MAX somente se necessário
 ```
@@ -1227,7 +1270,7 @@ Impeccable: não
 UI UX PRO MAX: não
 ```
 
-O Lote 3 foi concluído. A instalação da UI UX PRO MAX continua sendo o próximo marco antes do Lote 4.
+O registro acima sobre o Lote 3 é histórico. UI UX PRO MAX foi instalada e usada pontualmente no Lote 4; o próximo marco é o Lote 5.
 
 ---
 
@@ -1314,7 +1357,7 @@ Objetivo:
 - decisões superadas;
 - transferência de contexto.
 
-O arquivo foi consolidado como memória canônica nesta atualização documental. Ele permanece não rastreado até a revisão humana e o próximo commit documental deliberado; não tratar essa pendência documental como pendência do Lote 2 de código.
+O arquivo está versionado como memória canônica do projeto. Neste fechamento documental, possui alterações locais ainda não commitadas, assim como `daily_stats.md` e `REDESIGN_ARCHITECTURE.md`; não tratar essa pendência documental como pendência do Lote 2 de código.
 
 ---
 
@@ -1335,7 +1378,7 @@ O arquivo foi consolidado como memória canônica nesta atualização documental
 
 - [x] `REDESIGN_ARCHITECTURE.md` atualizado com o estado concluído do Lote 2;
 - [x] `daily_stats.md` e `Memória.md` atualizados para o fechamento documental;
-- [ ] revisar e versionar o fechamento documental do Lote 3.
+- [x] fechamento documental do Lote 3 consolidado e versionado;
 
 ### P1 — Editorial
 
@@ -1368,13 +1411,13 @@ O arquivo foi consolidado como memória canônica nesta atualização documental
 
 ### P2 — Busca
 
-- [ ] testar hipótese de quantidade de resultados no Lote 4;
-- [ ] medir densidade e descoberta;
-- [ ] não alterar limite por suposição antes dos testes.
+- [x] Lote 4 concluído com limite universal de 12, snippet de 220 e diversidade máxima de três por documento;
+- [x] `sem` preservado após revisão focal e contratos de stopwords/diversidade cobertos;
+- [ ] não alterar a busca consolidada fora de tarefa específica.
 
 ### Governança
 
-- [ ] revalidar o estado real de `Memória.md` na `main` quando necessário;
+- [x] revalidar o estado real de `Memória.md` na `main` neste fechamento documental;
 - [ ] continuar consolidando decisões importantes nos arquivos canônicos;
 - [ ] evitar tratar snapshots antigos como estado atual.
 
@@ -1455,6 +1498,24 @@ Build: 36 páginas estáticas
 Busca: 141 entradas
 ```
 
+### Lote 3 — baseline final
+
+```text
+Documentos da coleção: 21
+Busca: 148 entradas, 127 seções
+Testes: 233/233
+Build: 50 páginas estáticas
+```
+
+### Lote 4 — baseline final
+
+```text
+Documentos da coleção: 21
+Busca: 148 entradas, 127 seções
+Testes: 242/242
+Build: 50 páginas estáticas
+```
+
 Esses números pertencem a snapshots diferentes. Não compará-los como se fossem a mesma suíte sem considerar o crescimento da implementação.
 
 ---
@@ -1481,21 +1542,20 @@ Lote 3 — Workflows ✅ concluído
 ├── validação técnica ✅
 └── validação visual manual ✅
 
-Lote 4 — Busca
-Lote 5 — Descoberta e consolidação
+Lote 4 — Busca ✅ concluído
+Lote 5 — Descoberta e consolidação — próxima frente
 Lote 6 — Home + Hubs + identidade visual
 Lote 7 — Refinamento visual e microinterações
 Lote 8 — Governança editorial
 Lote 9 — Reauditoria Impeccable + regressão final
 ```
 
-### Dependências importantes
+### Próximo marco
 
 ```text
-Lote 3 concluído e versionado
+Lote 4 concluído e versionado
 → fechamento documental
-→ instalar UI UX PRO MAX
-→ Lote 4 — Busca
+→ Lote 5 — Descoberta e consolidação
 ```
 
 ### Lotes 6 e 7
@@ -1534,19 +1594,15 @@ Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ## 22. Próximas ações recomendadas
 
-### 1. Revisar e versionar o fechamento documental do Lote 3
+### 1. Revisar e versionar este fechamento documental do Lote 4
 
-O Lote 3 está consolidado em `415a113`. Esta atualização documental deve ser revisada e versionada separadamente antes do próximo lote.
+O checkpoint funcional da busca é `5c8a7c`; a infraestrutura posterior está em `5b69be4`. Este fechamento deve ser revisado e versionado sem substituir essa distinção.
 
-### 2. Instalar UI UX PRO MAX
+### 2. Iniciar o Lote 5 — Discovery / consolidação
 
-Não há confirmação de instalação. Ela deve ser instalada após este fechamento documental e antes do Lote 4, de modo pontual, sem substituir `DESIGN.md`.
+Manter o Lote 4 como baseline consolidado. UI UX PRO MAX pode ser usada pontualmente, somente se houver ganho real.
 
-### 3. Iniciar o Lote 4 — Busca
-
-Preservar o baseline de 12 resultados e snippet de 220 caracteres até que uma decisão de busca seja validada.
-
-### 4. Manter Configurações como frente editorial separada
+### 3. Manter Configurações como frente editorial separada
 
 Não misturar publicação de Configurações com o fechamento técnico do Lote 2 sem uma tarefa específica.
 
@@ -1591,6 +1647,10 @@ Não misturar publicação de Configurações com o fechamento técnico do Lote 
 | 19/08/2026 | Auditoria focal | Três detalhes editoriais recuperados e contratos de teste fortalecidos |
 | 19/08/2026 | Validação visual | Ausência de `Explore Workflows` identificada no hub |
 | 19/08/2026 | `415a113` | Derivação genérica de filhos de hubs corrigida; `Explore Workflows` renderizado e validação final aprovada |
+| 20/08/2026 | UI UX PRO MAX | Instalada e consultada pontualmente para a UX da busca do Lote 4 |
+| 20/08/2026 | `5c8a7c` | Checkpoint funcional: Lote 4 — Busca implementado e validado visualmente |
+| 20/08/2026 | Revisão focal | `sem` preservado como termo semântico; testes de stopwords e diversidade fortalecidos para 242/242 |
+| 21/08/2026 | `5b69be4` | Infraestrutura: ESLint Flat Config ignora exclusivamente `.agents/skills/**`; lint final 0 erros e 0 warnings |
 
 ---
 
@@ -1653,25 +1713,25 @@ Ao iniciar uma nova sessão:
 
 ## 26. Estado ao encerrar esta atualização
 
-O HEAD final confirmado do Lote 3 é:
+O HEAD confirmado antes deste fechamento documental é:
 
 ```text
-415a113 — Revisão dos workflows
+5b69be4 — Ajusta lint para ignorar skills
 ```
 
-O Lote 3 está concluído e sincronizado com `origin/main`:
+Os Lotes 1, 2, 3 e 4 estão concluídos e sincronizados com `origin/main`; o SHA funcional do Lote 4 é `5c8a7c` e `5b69be4` é a infraestrutura posterior:
 
 ```text
 21 documentos
 148 entradas de busca
 127 seções
-233/233 testes
+242/242 testes
 50 páginas estáticas no build
 30/30 aliases de Documentos preservados
 49/49 aliases/anchors de Workflows preservados
 ```
 
-O hub de Workflows foi encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A próxima frente é o Lote 4 — Busca.
+O hub de Workflows permanece encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A busca do Lote 4 preserva limite de 12, snippet de 220, diversidade de três por documento e `sem` como termo semântico. A próxima frente é o Lote 5 — Discovery / consolidação.
 
 As decisões de arquitetura preservadas incluem:
 
@@ -1685,6 +1745,6 @@ As decisões de arquitetura preservadas incluem:
 - FAQ factual em etapa posterior;
 - revisão futura das paletas com prioridade para tema claro;
 - revisão visual sistêmica por tokens;
-- UI UX PRO MAX antes do Lote 4.
+- UI UX PRO MAX usada de modo consultivo no Lote 4; uso no Lote 5 somente se houver ganho real.
 
 Nenhum commit, push ou deployment é inferido por esta atualização documental.
