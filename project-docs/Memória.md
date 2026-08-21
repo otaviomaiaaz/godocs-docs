@@ -1,14 +1,14 @@
 # GoDocs Docs — Memória consolidada
 
 > **Última consolidação:** 21/08/2026
-> **Estado geral:** Lotes 1, 2, 3 e 4 concluídos; a próxima frente é o Lote 5 — Discovery / consolidação.
-> **Última implementação funcional aprovada:** `5c8a7c` — `Implementacao do Lote 4`.
+> **Estado geral:** Lotes 1, 2, 3, 4 e 5 concluídos; a próxima frente é o Lote 6 — Home + Hubs + identidade visual.
+> **Última implementação funcional aprovada:** `34ffcb9` — `Implementacao do Lote 5`.
 
 ## Estado atual
 
-O Lote 4 — Busca está concluído. O checkpoint funcional é `5c8a7c120aba1d6afd323621a7ec186776178bd6`; a correção posterior de infraestrutura `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` exclui `.agents/skills/**` do lint da aplicação e não substitui o SHA funcional da busca. `HEAD` e `origin/main` estavam alinhados em `5b69be4` antes deste fechamento documental. A associação desses SHAs a um deployment específico da Vercel não é inferida.
+O Lote 5 — Discovery / Consolidação está concluído no commit `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). Ele implementou Related / Próximos Passos como descoberta contextual curada, sem alterar a busca, a paginação hierárquica, URLs ou aliases. A associação desse SHA a um deployment específico da Vercel não é inferida.
 
-**Estado atual em uma frase:** Documentos e Workflows preservam compatibilidade histórica de `30/30` e `49/49`; a busca local determinística foi consolidada com diversidade por documento, stopwords conservadoras e baseline de `242/242` testes.
+**Estado atual em uma frase:** Documentos e Workflows preservam compatibilidade histórica de `30/30` e `49/49`; a busca local determinística mantém diversidade por documento e baseline de `250/250` testes, enquanto Related conecta somente contextos editoriais não sequenciais.
 
 ## Workflows concluído
 
@@ -48,20 +48,28 @@ Uma auditoria editorial comparou o artigo original (3.895 palavras) com a estrut
 - Teclado, foco, ARIA, responsividade e os temas claro/escuro foram preservados. A validação visual da busca incluiu `sem login` e `enviar solicitação sem login`.
 - UI UX PRO MAX foi usada apenas de modo consultivo para acessibilidade, teclado, responsividade e estado vazio; não substituiu `PRODUCT.md`, `DESIGN.md`, `REDESIGN_ARCHITECTURE.md` ou a arquitetura existente.
 
-## Baseline técnico final do Lote 4
+## Baseline técnico final do Lote 5
 
 ```text
 content:validate: 21 documentos válidos
 lint: 0 erros; 0 warnings
 typecheck: aprovado
-test: 20 arquivos, 242/242 testes
+test: 20 arquivos, 250/250 testes
 build: 50 páginas estáticas
-search: 148 entradas, 127 seções, 252741 rawBytes, 29706 gzipBytes
+search: 147 entradas, 126 seções, 250639 rawBytes, 29456 gzipBytes
 search: limite de 12 resultados e snippet de 220 caracteres
 git diff --check: aprovado
 ```
 
-Workflows mantém `49/49` aliases e Documentos `30/30`; SEO, sitemap, navegação e conteúdo público não sofreram alteração no Lote 4.
+Workflows mantém `49/49` aliases e Documentos `30/30`; SEO, sitemap, navegação e conteúdo público não sofreram alteração estrutural no Lote 5. Em comparação com o baseline do Lote 4 (`148` entradas e `127` seções), a redução para `147` e `126` decorre da remoção editorial intencional do heading manual `Próximos passos`, sem mudança no algoritmo da busca.
+
+## Lote 5 — Related / Próximos Passos concluído
+
+- `related` é opcional; omitido e `[]` são válidos. Quando usado, aceita de 1 a 4 destinos distintos, sem autorreferência, somente existentes e publicados.
+- A validação reutiliza `getAdjacentDocs()` de `lib/docs/navigation.ts` sobre a coleção publicada para bloquear previous/next; não há algoritmo paralelo e drafts não contaminam a paginação pública.
+- Curadoria inicial: `O que é o GoDocs? → Visão Geral`; `Visão Geral → Documentos, Favoritos`; `Logs e ações → Favoritos`. São 3 páginas, 4 relações e 0 relações automáticas.
+- O bloco manual `Próximos passos` de `O que é o GoDocs?` foi migrado com a paginação preservando `Primeiro Acesso` e Related apontando para `Visão Geral`. `RelatedLinks` permaneceu definido, sem uso nos MDX publicados, como observação não bloqueante.
+- A revisão focal encontrou dois P2 de cobertura, ambos corrigidos antes do commit: draft intercalado não altera a próxima página pública; relação contextual válida é aceita; e o schema cobre explicitamente 1 e 4 relações. Permanecem dois P3 não bloqueantes: teste de Tab completo e reavaliação futura de `RelatedLinks`.
 
 ## Roadmap
 
@@ -72,8 +80,8 @@ Lote 1   ✅
 Lote 2   ✅
 Lote 3   ✅
 Lote 4   ✅
-Lote 5   próxima frente
-Lote 6   pendente
+Lote 5   ✅
+Lote 6   próxima frente
 Lote 7   pendente
 Lote 8   pendente
 Lote 9   pendente
@@ -82,14 +90,14 @@ Lote 9   pendente
 ## Próximo marco
 
 ```text
-Lote 4 concluído e versionado
+Lote 5 concluído e versionado (`34ffcb9`)
 ↓
 fechamento documental
 ↓
-Lote 5 — Discovery / consolidação
+Lote 6 — Home + Hubs + identidade visual
 ```
 
-UI UX PRO MAX está instalada e foi utilizada pontualmente no Lote 4. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo; seu uso no Lote 5 permanece opcional e condicionado a ganho real.
+UI UX PRO MAX está instalada e foi utilizada pontualmente no Lote 4. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo; decisões visuais detalhadas permanecem reservadas ao Lote 6 e ao `DESIGN.md`.
 
 ## Cronologia relevante
 
@@ -103,7 +111,8 @@ UI UX PRO MAX está instalada e foi utilizada pontualmente no Lote 4. Ela não s
 | `5c8a7c` | Checkpoint funcional do Lote 4 — Busca, utilizado na validação visual. |
 | Revisão focal do Lote 4 | `sem` preservado como termo semântico; cobertura de stopwords e diversidade fortalecida. |
 | `5b69be4` | Infraestrutura: Flat Config do ESLint passou a ignorar exclusivamente `.agents/skills/**`. |
+| `34ffcb9` | Implementação do Lote 5: Related / Próximos Passos curado, contrato validado e P2 de testes corrigidos antes do commit. |
 
 ## Retomada segura
 
-Antes do Lote 5, confirmar o estado Git e a prioridade aprovada. Tratar MDX como fonte de rotas, navegação, breadcrumbs, busca, sitemap e geração estática; preservar alterações locais não relacionadas. A busca do Lote 4 é baseline consolidado e não deve receber mudanças fora de escopo.
+Antes do Lote 6, confirmar o estado Git e a prioridade aprovada. Tratar MDX como fonte de rotas, navegação, breadcrumbs, busca, sitemap e geração estática; preservar alterações locais não relacionadas. Related permanece manual, factual e limitado a contextos aprovados; a busca do Lote 4 continua preservada pelo baseline técnico do Lote 5.

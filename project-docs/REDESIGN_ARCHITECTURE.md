@@ -2,7 +2,7 @@
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
 > **Fase:** Redesign estrutural  
-> **Implementação:** Lotes 1, 2, 3 e 4 implementados e concluídos; Lote 5 é a próxima frente.
+> **Implementação:** Lotes 1, 2, 3, 4 e 5 implementados e concluídos; Lote 6 é a próxima frente.
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -264,14 +264,22 @@ Nos domínios já migrados, a paginação é **hierárquica e limitada ao domín
 
 ## 8. Related / Próximos Passos
 
-- Curadoria manual e factual.
-- Normalmente 1–3 links; máximo absoluto de 4.
-- Apenas páginas publicadas.
-- Não duplicar automaticamente a paginação.
-- Hub não lista todos os filhos em Related.
-- Não usar IA ou similaridade automática.
+- Implementado no Lote 5 como descoberta contextual complementar à paginação editorial e à busca transversal.
+- Curadoria manual e factual; normalmente 1–3 relações e máximo absoluto de 4.
+- `related` é opcional; omitido e `[]` são válidos. Quando utilizado, aceita somente destinos existentes, publicados, distintos e diferentes da própria página.
+- A ordem declarada no frontmatter é preservada. Não há recomendação automática, similaridade automática ou IA.
+- A validação reutiliza `getAdjacentDocs()` de `lib/docs/navigation.ts` sobre a coleção publicada para impedir repetição de previous/next; não existe algoritmo paralelo em `validation.ts`, e drafts não contaminam a experiência pública.
+- Hub não lista automaticamente todos os filhos em Related.
 
-A ativação pertence a lote posterior.
+Curadoria inicial implementada, sem convertê-la em regra universal futura:
+
+```text
+O que é o GoDocs? → Visão Geral
+Visão Geral → Documentos, Favoritos
+Logs e ações → Favoritos
+```
+
+O Lote 5 mantém 3 páginas com Related e 4 relações, sem alterar Busca, URLs, slugs, aliases ou a paginação canônica.
 
 
 ## 9. FAQ
@@ -304,7 +312,7 @@ O Lote 4 consolidou a busca local existente sem trocar sua arquitetura:
 - combobox, listbox, ARIA, foco, Ctrl/Cmd+K, setas, Enter e Escape permanecem contratos da busca;
 - não foram introduzidos IA, NLP, embeddings, operadores booleanos ou autocomplete complexo.
 
-Baseline consolidado:
+Baseline histórico do Lote 4:
 
 ```text
 21 documentos
@@ -317,6 +325,22 @@ Baseline consolidado:
 242/242 testes
 50 páginas estáticas
 ```
+
+Baseline final do Lote 5:
+
+```text
+21 documentos
+147 entradas
+126 seções
+250639 rawBytes
+29456 gzipBytes
+12 resultados
+220 caracteres de snippet
+250/250 testes
+50 páginas estáticas
+```
+
+A redução de uma entrada e uma seção decorre da remoção editorial intencional do heading/bloco manual `Próximos passos`; o algoritmo da busca permaneceu intacto.
 
 O SHA funcional da busca é `5c8a7c120aba1d6afd323621a7ec186776178bd6`. A infraestrutura posterior `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` ajusta apenas o ignore do ESLint para `.agents/skills/**` e não substitui essa referência funcional.
 
@@ -384,8 +408,8 @@ Lote 1 — Fundação — implementado
 Lote 2 — Documentos — concluído
 Lote 3 — Workflows — implementado e concluído
 Lote 4 — Busca — concluído
-Lote 5 — Descoberta e consolidação — próxima frente
-Lote 6 — Home + Hubs + identidade visual
+Lote 5 — Descoberta e consolidação — concluído
+Lote 6 — Home + Hubs + identidade visual — próxima frente
 Lote 7 — Refinamento visual e microinterações
 Lote 8 — Governança editorial
 Lote 9 — Reauditoria Impeccable + regressão final
@@ -395,4 +419,10 @@ Nenhum lote futuro é autorizado por este documento sem a respectiva tarefa e va
 
 ### Registro do Lote 4
 
-UI UX PRO MAX foi instalada e usada pontualmente, de modo consultivo, para acessibilidade, teclado, responsividade e estado vazio da busca. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo. O uso no Lote 5 permanece opcional e condicionado a ganho real.
+UI UX PRO MAX foi instalada e usada pontualmente, de modo consultivo, para acessibilidade, teclado, responsividade e estado vazio da busca. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo. No Lote 5, seu uso permaneceu opcional e condicionado a ganho real.
+
+### Registro do Lote 5
+
+O commit funcional é `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). A revisão focal encontrou P0: 0, P1: 0, P2: 2 e P3: 2; os dois P2 de cobertura foram corrigidos antes do commit. Permanecem P3 não bloqueantes: teste de sequência Tab completa em Related e reavaliação futura de `RelatedLinks`, sem uso nos MDX publicados.
+
+O Lote 5 validou 21 documentos, 20 arquivos/250 testes, 50 páginas estáticas e compatibilidade de `79/79` aliases. O Lote 6 é a próxima frente; suas decisões visuais detalhadas permanecem subordinadas ao `DESIGN.md` e à tarefa própria.

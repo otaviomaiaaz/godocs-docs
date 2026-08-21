@@ -2,12 +2,12 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 21 de agosto de 2026, fechamento documental do Lote 4 (UTC−03:00)
-> **Estado geral:** Lotes 1, 2, 3 e 4 da Nova Arquitetura concluídos e sincronizados no GitHub.
-> **Fase atual:** fechamento documental do Lote 4; próxima frente Lote 5 — Discovery / consolidação.
-> **Commit mais recente confirmado:** `5b69be4` — `Ajusta lint para ignorar skills`.
+> **Última atualização:** 21 de agosto de 2026, fechamento documental do Lote 5 (UTC−03:00)
+> **Estado geral:** Lotes 1, 2, 3, 4 e 5 da Nova Arquitetura concluídos e sincronizados no GitHub.
+> **Fase atual:** fechamento documental do Lote 5; próxima frente Lote 6 — Home + Hubs + identidade visual.
+> **Commit mais recente confirmado:** `34ffcb9` — `Implementacao do Lote 5`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** revisar e versionar este fechamento documental antes de iniciar o Lote 5.
+> **Próxima ação principal:** revisar e versionar este fechamento documental antes de iniciar o Lote 6.
 
 ---
 
@@ -58,7 +58,7 @@ BRANCH
 main
 
 HEAD ATUAL CONFIRMADO
-5b69be4 — Ajusta lint para ignorar skills
+34ffcb9 — Implementacao do Lote 5
 
 ESTADO DO LOTE 1
 Versionado
@@ -70,17 +70,17 @@ Compatibilidade histórica preservada
 Validação visual aprovada
 
 COLEÇÃO ATUAL
-21 documentos, 148 entradas e 127 seções
-Estabelecida após o Lote 3 e preservada pelo Lote 4
+21 documentos, 147 entradas e 126 seções
+Baseline final do Lote 5; redução editorial intencional de um heading manual
 
 COLEÇÃO DO LOTE 1 VERSIONADO
 9 documentos
 
-LOTE 4 — BUSCA
-Concluído; SHA funcional 5c8a7c
+LOTE 5 — DISCOVERY / CONSOLIDAÇÃO
+Concluído; SHA funcional 34ffcb9
 
 PRÓXIMO LOTE
-Lote 5 — Discovery / consolidação
+Lote 6 — Home + Hubs + identidade visual
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
@@ -1218,7 +1218,7 @@ Plano atual:
 
 ```text
 Lote 4 — uso pontual concluído
-Lote 5 — uso pontual/opcional, se houver ganho real
+Lote 5 — uso pontual/opcional concluído, sem criar Design System paralelo
 Lotes 6 e 7 — UI UX PRO MAX + Impeccable
 Lote 9 — Impeccable principal; UI UX PRO MAX somente se necessário
 ```
@@ -1270,7 +1270,7 @@ Impeccable: não
 UI UX PRO MAX: não
 ```
 
-O registro acima sobre o Lote 3 é histórico. UI UX PRO MAX foi instalada e usada pontualmente no Lote 4; o próximo marco é o Lote 5.
+O registro acima sobre o Lote 3 é histórico. UI UX PRO MAX foi instalada e usada pontualmente no Lote 4; o próximo marco é o Lote 6.
 
 ---
 
@@ -1543,8 +1543,8 @@ Lote 3 — Workflows ✅ concluído
 └── validação visual manual ✅
 
 Lote 4 — Busca ✅ concluído
-Lote 5 — Descoberta e consolidação — próxima frente
-Lote 6 — Home + Hubs + identidade visual
+Lote 5 — Descoberta e consolidação ✅ concluído
+Lote 6 — Home + Hubs + identidade visual — próxima frente
 Lote 7 — Refinamento visual e microinterações
 Lote 8 — Governança editorial
 Lote 9 — Reauditoria Impeccable + regressão final
@@ -1553,9 +1553,9 @@ Lote 9 — Reauditoria Impeccable + regressão final
 ### Próximo marco
 
 ```text
-Lote 4 concluído e versionado
+Lote 5 concluído e versionado (`34ffcb9`)
 → fechamento documental
-→ Lote 5 — Descoberta e consolidação
+→ Lote 6 — Home + Hubs + identidade visual
 ```
 
 ### Lotes 6 e 7
@@ -1594,13 +1594,13 @@ Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ## 22. Próximas ações recomendadas
 
-### 1. Revisar e versionar este fechamento documental do Lote 4
+### 1. Revisar e versionar este fechamento documental do Lote 5
 
-O checkpoint funcional da busca é `5c8a7c`; a infraestrutura posterior está em `5b69be4`. Este fechamento deve ser revisado e versionado sem substituir essa distinção.
+O commit funcional de Related / Próximos Passos é `34ffcb9`; este fechamento deve ser revisado e versionado sem inferir deployment.
 
-### 2. Iniciar o Lote 5 — Discovery / consolidação
+### 2. Iniciar o Lote 6 — Home + Hubs + identidade visual
 
-Manter o Lote 4 como baseline consolidado. UI UX PRO MAX pode ser usada pontualmente, somente se houver ganho real.
+Preservar o Lote 5 como baseline de Discovery; decisões visuais detalhadas continuam subordinadas a `DESIGN.md` e à tarefa específica.
 
 ### 3. Manter Configurações como frente editorial separada
 
@@ -1716,22 +1716,22 @@ Ao iniciar uma nova sessão:
 O HEAD confirmado antes deste fechamento documental é:
 
 ```text
-5b69be4 — Ajusta lint para ignorar skills
+34ffcb9 — Implementacao do Lote 5
 ```
 
-Os Lotes 1, 2, 3 e 4 estão concluídos e sincronizados com `origin/main`; o SHA funcional do Lote 4 é `5c8a7c` e `5b69be4` é a infraestrutura posterior:
+Os Lotes 1, 2, 3, 4 e 5 estão concluídos e sincronizados com `origin/main`; o SHA funcional do Lote 5 é `34ffcb9`:
 
 ```text
 21 documentos
-148 entradas de busca
-127 seções
-242/242 testes
+147 entradas de busca
+126 seções
+250/250 testes
 50 páginas estáticas no build
 30/30 aliases de Documentos preservados
 49/49 aliases/anchors de Workflows preservados
 ```
 
-O hub de Workflows permanece encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A busca do Lote 4 preserva limite de 12, snippet de 220, diversidade de três por documento e `sem` como termo semântico. A próxima frente é o Lote 5 — Discovery / consolidação.
+O hub de Workflows permanece encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A busca preserva limite de 12, snippet de 220, diversidade de três por documento e `sem` como termo semântico. Related está implementado de forma manual e factual em 3 páginas / 4 relações. A próxima frente é o Lote 6 — Home + Hubs + identidade visual.
 
 As decisões de arquitetura preservadas incluem:
 
@@ -1745,6 +1745,22 @@ As decisões de arquitetura preservadas incluem:
 - FAQ factual em etapa posterior;
 - revisão futura das paletas com prioridade para tema claro;
 - revisão visual sistêmica por tokens;
-- UI UX PRO MAX usada de modo consultivo no Lote 4; uso no Lote 5 somente se houver ganho real.
+- UI UX PRO MAX usada de modo consultivo sem criar Design System paralelo; decisões visuais detalhadas permanecem no Lote 6.
 
 Nenhum commit, push ou deployment é inferido por esta atualização documental.
+
+---
+
+## 27. Lote 5 — fechamento documental
+
+O Lote 5 — Discovery / Consolidação foi implementado e versionado em `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). A cronologia foi: auditoria de Discovery → Related identificado como núcleo → plano ajustado → implementação → revisão focal → dois P2 de testes → correção dos P2 → 250/250 → commit da implementação → fechamento documental.
+
+Related / Próximos Passos passou a complementar os demais mecanismos de descoberta: paginação mantém a continuidade editorial; Related conecta contextos curados e não sequenciais; Busca atende descoberta transversal por termo ou intenção. O contrato implementado mantém `related` opcional, de 1 a 4 destinos quando utilizado, sem duplicatas ou autorreferência, com destinos existentes e publicados, sem repetir previous/next e preservando a ordem declarada. Não há recomendação automática, similaridade ou IA.
+
+A validação usa a coleção publicada e reutiliza `getAdjacentDocs()` como fonte canônica para previous/next. A curadoria inicial contém 3 páginas e 4 relações: `O que é o GoDocs? → Visão Geral`; `Visão Geral → Documentos, Favoritos`; `Logs e ações → Favoritos`. A migração removeu o bloco manual `Próximos passos` de `O que é o GoDocs?`, preservou `Primeiro Acesso` na paginação e manteve o conteúdo funcional dos três artigos.
+
+O baseline atual validado é: 21 documentos, 147 entradas, 126 seções, 250639 rawBytes, 29456 gzipBytes, limite 12, snippet 220, 20 arquivos/250 testes e 50 páginas estáticas. A redução de uma entrada e uma seção frente ao Lote 4 resulta somente da remoção editorial intencional do bloco manual; a busca preserva algoritmo, diversidade máxima de três resultados por documento, stopwords, `sem`, Página/Seção e zero-resultados. Compatibilidade permanece em Documentos `30/30`, Workflows `49/49`, total `79/79`.
+
+A revisão focal encontrou dois P2 exclusivamente de cobertura: prova de que draft intercalado não contamina a paginação pública e limites positivos de 1 e 4 relações. Ambos foram corrigidos antes do commit. Permanecem como P3 não bloqueantes: teste completo de sequência Tab em Related e reavaliação futura do primitive `RelatedLinks`, que ficou sem uso nos MDX publicados e não foi removido por limpeza especulativa.
+
+A próxima frente é o Lote 6 — Home + Hubs + identidade visual. Nenhuma decisão visual detalhada, implementação de sidebar retrátil, TOC, paletas, temas, FAQ, IA, RAG, embeddings ou similaridade foi antecipada pelo Lote 5.
