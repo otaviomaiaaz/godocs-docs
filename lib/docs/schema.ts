@@ -99,6 +99,7 @@ export const docFrontmatterSchema = z
             "related deve conter slugs válidos, sem barras nas extremidades",
           ),
       )
+      .max(4, "related aceita no máximo quatro destinos")
       .default([]),
   })
   .superRefine((value, context) => {
@@ -122,6 +123,27 @@ export const docFrontmatterSchema = z
           message: `deve corresponder ao segmento "${expectedAncestors[index]}" do slug`,
         });
       }
+    });
+
+    const relatedSlugs = new Set<string>();
+    value.related.forEach((relatedSlug, index) => {
+      if (relatedSlug === value.slug) {
+        context.addIssue({
+          code: "custom",
+          path: ["related", index],
+          message: "related não pode apontar para a própria página",
+        });
+      }
+
+      if (relatedSlugs.has(relatedSlug)) {
+        context.addIssue({
+          code: "custom",
+          path: ["related", index],
+          message: `related não pode repetir o destino "${relatedSlug}"`,
+        });
+      }
+
+      relatedSlugs.add(relatedSlug);
     });
   });
 

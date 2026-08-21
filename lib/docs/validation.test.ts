@@ -32,6 +32,33 @@ async function writeDocument(
   await writeFile(filePath, source, "utf8");
 }
 
+function rootDocument({
+  name,
+  order,
+  related = [],
+  status = "published",
+}: {
+  name: string;
+  order: number;
+  related?: string[];
+  status?: "draft" | "published";
+}) {
+  const relatedFrontmatter =
+    related.length > 0 ? `related:\n${related.map((slug) => `  - ${slug}`).join("\n")}\n` : "";
+
+  return `---
+title: ${name}
+description: Documento de teste ${name}.
+slug: ${name}
+pageType: reference
+order: ${order}
+status: ${status}
+${relatedFrontmatter}---
+
+## Conteúdo
+`;
+}
+
 afterEach(async () => {
   await Promise.all(
     temporaryDirectories.splice(0).map((directory) =>
@@ -485,5 +512,101 @@ status: draft
         }),
       ]),
     );
+  });
+
+  it("rejeita related inexistente, não publicado e adjacente na paginação pública", async () => {
+    const workspace = await createWorkspace();
+
+    await Promise.all([
+      writeDocument(
+        workspace.contentDirectory,
+        "anterior.mdx",
+        rootDocument({ name: "anterior", order: 1 }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "atual.mdx",
+        rootDocument({
+          name: "atual",
+          order: 2,
+          related: ["ausente", "rascunho", "anterior", "proxima"],
+        }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "rascunho.mdx",
+        rootDocument({ name: "rascunho", order: 3, status: "draft" }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "proxima.mdx",
+        rootDocument({ name: "proxima", order: 4 }),
+      ),
+    ]);
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "link",
+          message: expect.stringContaining('documento inexistente "ausente"'),
+        }),
+        expect.objectContaining({
+          category: "link",
+          message: expect.stringContaining('documento não publicado "rascunho"'),
+        }),
+        expect.objectContaining({
+          category: "link",
+          message: expect.stringContaining('página anterior "anterior"'),
+        }),
+        expect.objectContaining({
+          category: "link",
+          message: expect.stringContaining('próxima página "proxima"'),
+        }),
+      ]),
+    );
+  });
+
+  it("aceita related contextual publicado que não é adjacente", async () => {
+    const workspace = await createWorkspace();
+
+    await Promise.all([
+      writeDocument(
+        workspace.contentDirectory,
+        "anterior.mdx",
+        rootDocument({ name: "anterior", order: 1 }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "atual.mdx",
+        rootDocument({ name: "atual", order: 2, related: ["contextual"] }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "rascunho.mdx",
+        rootDocument({ name: "rascunho", order: 3, status: "draft" }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "proxima.mdx",
+        rootDocument({ name: "proxima", order: 4 }),
+      ),
+      writeDocument(
+        workspace.contentDirectory,
+        "contextual.mdx",
+        rootDocument({ name: "contextual", order: 5 }),
+      ),
+    ]);
+
+    const result = await validateContentDirectory(workspace.contentDirectory, {
+      publicDirectory: workspace.publicDirectory,
+      workspaceDirectory: workspace.workspaceDirectory,
+    });
+
+    expect(result.issues).toEqual([]);
   });
 });

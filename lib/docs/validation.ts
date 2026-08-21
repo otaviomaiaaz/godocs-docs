@@ -9,7 +9,7 @@ import remarkParse from "remark-parse";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
 
-import { buildNavigation } from "@/lib/docs/navigation";
+import { buildNavigation, getAdjacentDocs } from "@/lib/docs/navigation";
 import {
   resolveCompatibleAnchor,
   validateAnchorCompatibilityManifest,
@@ -552,6 +552,20 @@ export async function validateContentDirectory(
     },
   );
 
+  const publishedDocuments = documents.filter(
+    (doc) => doc.metadata.status === "published",
+  );
+  const adjacentBySlug = new Map<
+    string,
+    ReturnType<typeof getAdjacentDocs>
+  >();
+
+  if (!issues.some((entry) => entry.category === "taxonomy")) {
+    publishedDocuments.forEach((doc) => {
+      adjacentBySlug.set(doc.slug, getAdjacentDocs(publishedDocuments, doc.slug));
+    });
+  }
+
   for (const doc of documents) {
     for (const relatedSlug of doc.metadata.related) {
       const related = docsBySlug.get(relatedSlug);
@@ -563,15 +577,31 @@ export async function validateContentDirectory(
             `related aponta para documento inexistente "${relatedSlug}"`,
           ),
         );
-      } else if (
-        doc.metadata.status === "published" &&
-        related.metadata.status !== "published"
-      ) {
+      } else if (related.metadata.status !== "published") {
         issues.push(
           issue(
             doc.filePath,
             "link",
             `related aponta para documento não publicado "${relatedSlug}"`,
+          ),
+        );
+      }
+
+      const { previous, next } = adjacentBySlug.get(doc.slug) ?? {};
+      if (relatedSlug === previous?.slug) {
+        issues.push(
+          issue(
+            doc.filePath,
+            "link",
+            `related não pode repetir a página anterior "${relatedSlug}"`,
+          ),
+        );
+      } else if (relatedSlug === next?.slug) {
+        issues.push(
+          issue(
+            doc.filePath,
+            "link",
+            `related não pode repetir a próxima página "${relatedSlug}"`,
           ),
         );
       }

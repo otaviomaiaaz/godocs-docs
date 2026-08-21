@@ -230,6 +230,51 @@ afterEach(() => {
 });
 
 describe("acessibilidade de páginas documentais completas", () => {
+  it("renderiza Related curado na ordem editorial e o omite quando vazio", async () => {
+    const relatedPages = [
+      {
+        expected: ["Visão Geral"],
+        slug: "o-que-e-o-godocs",
+      },
+      {
+        expected: ["Documentos", "Favoritos"],
+        slug: "funcionalidades/visao-geral",
+      },
+      {
+        expected: ["Favoritos"],
+        slug: "funcionalidades/documentos/logs-e-acoes",
+      },
+    ];
+
+    for (const page of relatedPages) {
+      const { container } = await renderDocumentPage({
+        breakpoint: "desktop",
+        height: 900,
+        slug: page.slug,
+        theme: "dark",
+        width: 1440,
+      });
+      const related = screen.getByRole("navigation", {
+        name: "Páginas relacionadas",
+      });
+
+      expect(within(related).getByRole("heading", { name: "Páginas relacionadas" })).toBeTruthy();
+      const links = within(related).getAllByRole("link");
+      expect(links.map((link) => link.querySelector("strong")?.textContent)).toEqual(
+        page.expected,
+      );
+      links[0]?.focus();
+      expect(document.activeElement).toBe(links[0]);
+      expect(container.querySelector(".article-related")).toBe(related);
+      cleanup();
+    }
+
+    await renderDocumentPage(scenarios[0]!);
+    expect(
+      screen.queryByRole("navigation", { name: "Páginas relacionadas" }),
+    ).toBeNull();
+  });
+
   it.each(scenarios)(
     "$slug em $theme/$breakpoint preserva Axe, landmarks e outline",
     async (scenario) => {

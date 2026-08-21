@@ -42,17 +42,35 @@ describe("conteúdo publicado", () => {
       },
       pageType: "reference",
       order: 1,
+      related: ["funcionalidades/visao-geral"],
     });
     expect(doc?.href).toBe("/docs/o-que-e-o-godocs");
     expect(doc?.source).not.toMatch(/^# /m);
     expect(doc?.headings.map((heading) => heading.title)).toEqual([
       "O que você pode fazer no GoDocs",
       "Um sistema adaptado ao seu ambiente",
-      "Próximos passos",
     ]);
+    expect(doc?.source).not.toContain("<RelatedLinks>");
     expect(doc?.searchableText).toContain(
       "Gestão Eletrônica de Documentos e Processos",
     );
+  });
+
+  it("declara somente a curadoria Related aprovada", async () => {
+    const docs = await loadPublishedDocs();
+
+    expect(
+      docs
+        .filter((doc) => doc.metadata.related.length > 0)
+        .map((doc) => [doc.slug, doc.metadata.related]),
+    ).toEqual([
+      ["o-que-e-o-godocs", ["funcionalidades/visao-geral"]],
+      [
+        "funcionalidades/visao-geral",
+        ["funcionalidades/documentos", "funcionalidades/favoritos"],
+      ],
+      ["funcionalidades/documentos/logs-e-acoes", ["funcionalidades/favoritos"]],
+    ]);
   });
 
   it("publica os dois hubs e os dezenove artigos com frontmatter, rotas e sumários aprovados", async () => {

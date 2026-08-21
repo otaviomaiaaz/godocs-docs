@@ -12,17 +12,17 @@ import { loadPublishedDocumentsFromDirectory } from "@/lib/docs/source";
 const contentDirectory = path.join(process.cwd(), "content", "docs");
 
 describe("baseline determinístico da busca", () => {
-  it("registra as métricas essenciais do conteúdo público após o Lote 3", async () => {
+  it("registra as métricas essenciais do conteúdo público após o Lote 5", async () => {
     const docs = await loadPublishedDocumentsFromDirectory(contentDirectory);
     const baseline = createSearchBaseline(docs);
 
     expect(baseline).toMatchObject({
       documents: 21,
-      entries: 148,
+      entries: 147,
       pages: 21,
-      sections: 127,
-      rawBytes: 252_741,
-      gzipBytes: 29_706,
+      sections: 126,
+      rawBytes: 250_639,
+      gzipBytes: 29_456,
       resultLimit: 12,
       snippetCharacters: 220,
     });
