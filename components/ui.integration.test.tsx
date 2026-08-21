@@ -280,10 +280,22 @@ describe("fluxos interativos", () => {
     expectComboboxPopupState(combobox, false);
 
     await user.clear(combobox);
+    await user.type(combobox, "como");
+    expect(
+      await screen.findByText("Digite ao menos dois caracteres para pesquisar."),
+    ).toBeTruthy();
+    expectComboboxPopupState(combobox, false);
+
+    await user.clear(combobox);
     await user.type(combobox, "inexistente");
     expect(
-      await screen.findByText('Nenhum resultado encontrado para “inexistente”.'),
+      await screen.findByText(
+        'Nenhum resultado encontrado para “inexistente”. Tente outro termo ou uma busca mais curta.',
+      ),
     ).toBeTruthy();
+    expect(screen.getByRole("status").textContent).toContain(
+      "Tente outro termo ou uma busca mais curta.",
+    );
     expectComboboxPopupState(combobox, false);
   });
 

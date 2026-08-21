@@ -136,6 +136,7 @@ function ResultOption({
     result.kind === "section"
       ? [result.pageTitle, result.section].filter(Boolean).join(" · ")
       : (result.section ?? "Documentação");
+  const kindLabel = result.kind === "page" ? "Página" : "Seção";
 
   return (
     <button
@@ -149,7 +150,10 @@ function ResultOption({
       type="button"
     >
       <span className="search-result__content">
-        <span className="search-result__section">{context}</span>
+        <span className="search-result__meta">
+          <span className="search-result__kind">{kindLabel}</span>
+          <span className="search-result__section">{context}</span>
+        </span>
         <strong>
           <HighlightedText query={query} text={result.title} />
         </strong>
@@ -347,9 +351,13 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
 
   const resultAnnouncement =
     indexState === "ready" && hasUsefulQuery
-      ? `${results.length} ${
-          results.length === 1 ? "resultado encontrado" : "resultados encontrados"
-        }`
+      ? results.length === 0
+        ? "Nenhum resultado encontrado. Tente outro termo ou uma busca mais curta."
+        : `${results.length} ${
+            results.length === 1
+              ? "resultado encontrado"
+              : "resultados encontrados"
+          }`
       : "";
   const groupedResults = [
     {
@@ -507,8 +515,9 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
                     Digite ao menos dois caracteres para pesquisar.
                   </p>
                 ) : results.length === 0 ? (
-                  <p aria-live="polite" className="search-hint">
-                    Nenhum resultado encontrado para “{query.trim()}”.
+                  <p className="search-hint">
+                    Nenhum resultado encontrado para “{query.trim()}”. Tente
+                    outro termo ou uma busca mais curta.
                   </p>
                 ) : (
                   <div

@@ -760,6 +760,7 @@ body:has(dialog[open]) {
 }
 
 .search-result small,
+.search-result__kind,
 .search-result__section {
   color: var(--text-muted);
   font-size: 12px;
@@ -776,8 +777,20 @@ body:has(dialog[open]) {
   white-space: normal;
 }
 
-.search-result__section {
+.search-result__meta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 2px;
+}
+
+.search-result__kind {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.search-result__section {
   overflow: hidden;
   color: var(--accent-text);
   text-overflow: ellipsis;

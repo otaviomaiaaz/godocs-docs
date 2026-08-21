@@ -1,13 +1,20 @@
+import path from "node:path";
+
 import { describe, expect, it } from "vitest";
 
 import {
+  createSearchIndex,
   createSearchEntry,
   getUsefulSearchTerms,
   hasUsefulSearchQuery,
   normalizeSearchText,
+  SEARCH_RESULTS_PER_DOCUMENT,
   searchDocuments,
   type SearchIndex,
 } from "@/lib/docs/search";
+import { loadPublishedDocumentsFromDirectory } from "@/lib/docs/source";
+
+const contentDirectory = path.join(process.cwd(), "content", "docs");
 
 const index: SearchIndex = {
   version: 2,
@@ -69,6 +76,44 @@ describe("busca local", () => {
     expect(hasUsefulSearchQuery("GoDocs")).toBe(true);
   });
 
+  it("ignora conectivos e termos interrogativos em consultas naturais", () => {
+    expect(getUsefulSearchTerms("Como criar um documento?")).toEqual([
+      "criar",
+      "documento",
+    ]);
+    expect(getUsefulSearchTerms("Quem pode acessar o workflow?")).toEqual([
+      "acessar",
+      "workflow",
+    ]);
+    expect(getUsefulSearchTerms("Enviar solicitação sem login")).toEqual([
+      "enviar",
+      "solicitacao",
+      "sem",
+      "login",
+    ]);
+    expect(getUsefulSearchTerms("com login")).toEqual(["login"]);
+  });
+
+  it.each(["como", "quem", "de", "para", "como que", "o que"])(
+    "não retorna documentos para consulta formada somente por stopwords: %s",
+    (query) => {
+      expect(getUsefulSearchTerms(query)).toEqual([]);
+      expect(hasUsefulSearchQuery(query)).toBe(false);
+      expect(searchDocuments(index, query)).toEqual([]);
+    },
+  );
+
+  it("preserva a intenção de busca sem login no conteúdo publicado", async () => {
+    const documents = await loadPublishedDocumentsFromDirectory(contentDirectory);
+    const searchIndex = createSearchIndex(documents);
+
+    for (const query of ["sem login", "enviar solicitação sem login"]) {
+      expect(searchDocuments(searchIndex, query)[0]?.href).toMatch(
+        /^\/docs\/funcionalidades\/workflows\/formulario-publico/,
+      );
+    }
+  });
+
   it("ignora consultas vazias, curtas ou formadas somente por pontuação", () => {
     for (const query of ["L", "'", "L'", "   "]) {
       expect(searchDocuments(index, query)).toEqual([]);
@@ -106,6 +151,58 @@ describe("busca local", () => {
     expect(results.map((result) => result.score)).toEqual(
       [...results.map((result) => result.score)].sort((a, b) => b - a),
     );
+  });
+
+  it("preenche o limite após aplicar a diversidade sobre o ranking completo", () => {
+    const repeatedDocumentIndex: SearchIndex = {
+      version: 2,
+      entries: [
+        ...Array.from({ length: SEARCH_RESULTS_PER_DOCUMENT + 5 }, (_, index) =>
+          createSearchEntry({
+            kind: "section",
+            title: `Configuração prioritária ${index}`,
+            description: "Ajustes disponíveis.",
+            href: `/docs/configuracao#secao-${index}`,
+            content: "Configuração.",
+          }),
+        ),
+        ...["alternativa-a", "alternativa-b", "alternativa-c"].flatMap(
+          (documentSlug) =>
+            Array.from({ length: SEARCH_RESULTS_PER_DOCUMENT }, (_, index) =>
+              createSearchEntry({
+                kind: "section",
+                title: `Alternativa ${documentSlug} ${index}`,
+                description: "Ajustes disponíveis.",
+                href: `/docs/${documentSlug}#secao-${index}`,
+                content: "Configuração.",
+              }),
+            ),
+        ),
+      ],
+    };
+
+    const results = searchDocuments(repeatedDocumentIndex, "configuracao", 12);
+    const resultCountsByDocument = results.reduce<Record<string, number>>(
+      (counts, result) => {
+        const documentHref = result.href.split("#", 1)[0] ?? result.href;
+        counts[documentHref] = (counts[documentHref] ?? 0) + 1;
+        return counts;
+      },
+      {},
+    );
+
+    expect(results).toHaveLength(12);
+    expect(resultCountsByDocument).toEqual({
+      "/docs/configuracao": SEARCH_RESULTS_PER_DOCUMENT,
+      "/docs/alternativa-a": SEARCH_RESULTS_PER_DOCUMENT,
+      "/docs/alternativa-b": SEARCH_RESULTS_PER_DOCUMENT,
+      "/docs/alternativa-c": SEARCH_RESULTS_PER_DOCUMENT,
+    });
+    expect(
+      results
+        .slice(0, SEARCH_RESULTS_PER_DOCUMENT)
+        .every((result) => result.href.startsWith("/docs/configuracao#")),
+    ).toBe(true);
   });
 
 });

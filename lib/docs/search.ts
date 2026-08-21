@@ -1,7 +1,38 @@
 import type { DocRecord } from "@/lib/docs/schema";
 
 export const SEARCH_RESULT_LIMIT = 12;
+export const SEARCH_RESULTS_PER_DOCUMENT = 3;
 export const SEARCH_SNIPPET_LENGTH = 220;
+
+const SEARCH_QUERY_NOISE_TERMS = new Set([
+  "a",
+  "ao",
+  "aos",
+  "as",
+  "com",
+  "como",
+  "da",
+  "das",
+  "de",
+  "do",
+  "dos",
+  "e",
+  "em",
+  "na",
+  "nas",
+  "no",
+  "nos",
+  "o",
+  "os",
+  "ou",
+  "para",
+  "pode",
+  "por",
+  "que",
+  "quem",
+  "um",
+  "uma",
+]);
 
 export type SearchIndexEntry = {
   kind: "page" | "section";
@@ -55,7 +86,9 @@ export function normalizeSearchText(value: string): string {
 export function getUsefulSearchTerms(value: string): string[] {
   return normalizeSearchText(value)
     .split(" ")
-    .filter((term) => term.length >= 2);
+    .filter(
+      (term) => term.length >= 2 && !SEARCH_QUERY_NOISE_TERMS.has(term),
+    );
 }
 
 export function hasUsefulSearchQuery(value: string): boolean {
@@ -174,6 +207,27 @@ function containsPhrase(value: string, terms: string[]): boolean {
   return ` ${value} `.includes(` ${terms.join(" ")} `);
 }
 
+function getDocumentHref(href: string): string {
+  return href.split("#", 1)[0] ?? href;
+}
+
+function limitResultsPerDocument(
+  results: SearchResult[],
+  limit: number,
+): SearchResult[] {
+  const resultCountByDocument = new Map<string, number>();
+
+  return results.filter((result) => {
+    const documentHref = getDocumentHref(result.href);
+    const resultCount = resultCountByDocument.get(documentHref) ?? 0;
+
+    if (resultCount >= limit) return false;
+
+    resultCountByDocument.set(documentHref, resultCount + 1);
+    return true;
+  });
+}
+
 export function searchDocuments(
   index: SearchIndex,
   rawQuery: string,
@@ -185,7 +239,7 @@ export function searchDocuments(
     return [];
   }
 
-  return index.entries
+  const rankedResults = index.entries
     .map<SearchResult | null>((document) => {
       const fields = document.normalized;
       const weightedFields: SearchField[] = [
@@ -255,6 +309,11 @@ export function searchDocuments(
     .sort(
       (a, b) =>
         b.score - a.score || a.title.localeCompare(b.title, "pt-BR"),
-    )
+    );
+
+  return limitResultsPerDocument(
+    rankedResults,
+    SEARCH_RESULTS_PER_DOCUMENT,
+  )
     .slice(0, limit);
 }
