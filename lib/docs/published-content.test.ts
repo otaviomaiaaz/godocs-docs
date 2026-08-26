@@ -136,6 +136,16 @@ describe("conteúdo publicado", () => {
     ]);
     expect(firstAccess?.source).toContain("<Steps>");
     expect(firstAccess?.source).toContain("<ExpectedResult>");
+    expect(firstAccess?.source).toContain(
+      'src="/docs/primeiro-acesso/primeiro-acesso-convite-email.png"',
+    );
+    expect(firstAccess?.source).toContain(
+      'src="/docs/primeiro-acesso/primeiro-acesso-criar-conta.png"',
+    );
+    expect(firstAccess?.source).toContain(
+      'src="/docs/primeiro-acesso/primeiro-acesso-selecao-ambiente.png"',
+    );
+    expect(firstAccess?.source.match(/loading="eager"/g)).toHaveLength(3);
 
     expect(overview?.metadata).toMatchObject({
       title: "Visão Geral",

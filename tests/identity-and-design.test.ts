@@ -788,6 +788,7 @@ describe("identidade e prevenção de regressões visuais", () => {
       "display: none",
     );
     expect(css).toContain('html[data-docs-sidebar="collapsed"]');
+    expect(css).toContain("calc(240px - 56px - 42px)");
   });
 
   it("não mantém interceptação personalizada de Tab nem X fora de dialog", async () => {

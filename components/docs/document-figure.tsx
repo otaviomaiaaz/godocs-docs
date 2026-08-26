@@ -13,6 +13,7 @@ type DocumentFigureProps = {
   width: number;
   height: number;
   caption?: string;
+  loading?: "eager" | "lazy";
   zoom?: boolean;
 };
 
@@ -22,6 +23,7 @@ export function DocumentFigure({
   width,
   height,
   caption,
+  loading,
   zoom = true,
 }: DocumentFigureProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +43,7 @@ export function DocumentFigure({
     <Image
       alt={alt}
       height={height}
+      loading={loading}
       sizes="(max-width: 767px) calc(100vw - 40px), 760px"
       src={src}
       width={width}
@@ -94,6 +97,7 @@ export function DocumentFigure({
                 <Image
                   alt={alt}
                   height={height}
+                  loading={loading}
                   sizes="94vw"
                   src={src}
                   width={width}

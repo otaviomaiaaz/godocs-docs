@@ -1655,13 +1655,20 @@ body:has(dialog[open]) {
 
 @media (min-width: 1320px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    grid-template-columns: 56px minmax(560px, var(--content-width)) 220px;
+    /* Reserve the released sidebar space at the trailing edge so the rail
+       retains the expanded sidebar's left structural axis. */
+    grid-template-columns:
+      56px minmax(560px, var(--content-width)) 220px
+      calc(240px - 56px - 42px);
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1319px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    grid-template-columns: 56px minmax(560px, var(--content-width));
+    /* The trailing reservation also accounts for the additional grid gap. */
+    grid-template-columns:
+      56px minmax(560px, var(--content-width))
+      calc(240px - 56px - 42px);
   }
 }
 
