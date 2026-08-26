@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
 
 import { cleanup, render, screen } from "@testing-library/react";
+import axe from "axe-core";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { HubNavigation, type HubNavigationItem } from "@/components/docs/hub-navigation";
+import { getAllDocs } from "@/lib/docs/source";
 
 const items: HubNavigationItem[] = [
   {
@@ -86,5 +88,52 @@ describe("HubNavigation", () => {
     expect(screen.getAllByRole("listitem").at(-1)?.getAttribute("class")).toContain(
       "hub-navigation__item--wide",
     );
+  });
+
+  it("keeps an even Funcionalidades directory equivalent, without a wide card", async () => {
+    const docs = await getAllDocs();
+    const functionalityItems = docs
+      .filter(
+        (doc) =>
+          doc.segments.length === 2 && doc.segments[0] === "funcionalidades",
+      )
+      .sort((first, second) => first.metadata.order - second.metadata.order)
+      .map((doc) => ({
+        description: doc.metadata.cardDescription ?? doc.metadata.description,
+        href: doc.href,
+        slug: doc.slug,
+        title: doc.metadata.navTitle ?? doc.metadata.title,
+      }));
+
+    const { container } = render(
+      <HubNavigation
+        items={functionalityItems}
+        title="Explore Funcionalidades"
+        variant="functionalities"
+      />,
+    );
+
+    expect(screen.getAllByRole("link")).toHaveLength(6);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
+    expect(
+      screen
+        .getAllByRole("listitem")
+        .some((item) => item.classList.contains("hub-navigation__item--wide")),
+    ).toBe(false);
+    expect(screen.getByRole("region").className).toContain(
+      "hub-navigation--functionalities",
+    );
+    expect(container.querySelectorAll("img")).toHaveLength(0);
+    expect(container.querySelectorAll(".hub-navigation__arrow")).toHaveLength(6);
+    expect(
+      [...container.querySelectorAll(".hub-navigation__arrow")].every(
+        (arrow) => arrow.getAttribute("aria-hidden") === "true",
+      ),
+    ).toBe(true);
+
+    const results = await axe.run(container, {
+      rules: { "color-contrast": { enabled: false } },
+    });
+    expect(results.violations).toEqual([]);
   });
 });

@@ -7,6 +7,7 @@ import "./globals.css";
 
 import { DocsHeader } from "@/components/docs-header";
 import { buildNavigation } from "@/lib/docs/navigation";
+import { SIDEBAR_INITIALIZATION_SCRIPT } from "@/lib/sidebar-initialization";
 import { getAllDocs } from "@/lib/docs/source";
 import {
   absoluteUrl,
@@ -56,7 +57,7 @@ export const viewport: Viewport = {
   colorScheme: "dark light",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#232222" },
-    { media: "(prefers-color-scheme: light)", color: "#F7F7F6" },
+    { media: "(prefers-color-scheme: light)", color: "#EFEEEA" },
   ],
 };
 
@@ -71,6 +72,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: SIDEBAR_INITIALIZATION_SCRIPT }}
+          id="sidebar-initialization"
+        />
         <Script
           id="theme-initialization"
           src="/theme-initialization.js"

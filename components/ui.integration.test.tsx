@@ -14,6 +14,7 @@ import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Brand } from "@/components/brand";
+import { DocsSidebar } from "@/components/docs/docs-sidebar";
 import { MobileNavDrawer } from "@/components/docs/mobile-nav-drawer";
 import { DocsHeader } from "@/components/docs-header";
 import { NavigationTree } from "@/components/navigation-tree";
@@ -23,9 +24,42 @@ import {
   createSearchEntry,
   type SearchIndex,
 } from "@/lib/docs/search";
+import type { DocNavigationGroup } from "@/lib/docs/navigation";
 
 const push = vi.fn();
 const pathname = { value: "/" };
+
+const sidebarGroups: DocNavigationGroup[] = [
+  {
+    id: "funcionalidades",
+    title: "Funcionalidades",
+    description: "Funcionalidades publicadas.",
+    order: 1,
+    items: [
+      {
+        id: "funcionalidades/documentos",
+        label: "Documentos",
+        href: "/docs/funcionalidades/documentos",
+        pageType: "hub",
+        children: [
+          {
+            id: "funcionalidades/documentos/pastas",
+            label: "Pastas",
+            href: "/docs/funcionalidades/documentos/pastas",
+            children: [],
+          },
+        ],
+      },
+      {
+        id: "funcionalidades/workflows",
+        label: "Workflows",
+        href: "/docs/funcionalidades/workflows",
+        pageType: "hub",
+        children: [],
+      },
+    ],
+  },
+];
 
 vi.mock("next/navigation", () => ({
   usePathname: () => pathname.value,
@@ -96,6 +130,7 @@ beforeEach(() => {
   push.mockReset();
   pathname.value = "/";
   window.localStorage.clear();
+  document.documentElement.removeAttribute("data-docs-sidebar");
   installMatchMedia();
   Object.defineProperty(window, "scrollY", {
     configurable: true,
@@ -125,6 +160,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
   document.body.innerHTML = "";
   document.documentElement.removeAttribute("data-theme");
+  document.documentElement.removeAttribute("data-docs-sidebar");
 });
 
 describe("fluxos interativos", () => {
@@ -537,6 +573,123 @@ describe("fluxos interativos", () => {
     ).toBe("page");
   });
 
+  it("recolhe a sidebar com semântica acessível e mantém a árvore montada", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    document.documentElement.dataset.docsSidebar = "expanded";
+    const user = userEvent.setup();
+
+    const { container } = renderInSiteShell(
+      <DocsSidebar groups={sidebarGroups} />,
+    );
+    const toggle = await screen.findByRole("button", {
+      name: "Recolher navegação lateral",
+    });
+    const navigationId = toggle.getAttribute("aria-controls");
+    const navigation = document.getElementById(navigationId ?? "");
+
+    expect((toggle as HTMLButtonElement).disabled).toBe(false);
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(navigation?.hidden).toBe(false);
+    expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
+    expect((await axe.run(container)).violations).toEqual([]);
+
+    toggle.focus();
+    await user.click(toggle);
+
+    expect(document.activeElement).toBe(toggle);
+    expect(toggle.getAttribute("aria-label")).toBe(
+      "Expandir navegação lateral",
+    );
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
+    expect(window.localStorage.getItem("godocs-docs-sidebar")).toBe(
+      "collapsed",
+    );
+    expect(navigation?.hidden).toBe(true);
+    expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+
+    await user.click(toggle);
+
+    expect(document.activeElement).toBe(toggle);
+    expect(toggle.getAttribute("aria-label")).toBe(
+      "Recolher navegação lateral",
+    );
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(navigation?.hidden).toBe(false);
+    expect(window.localStorage.getItem("godocs-docs-sidebar")).toBe(
+      "expanded",
+    );
+  });
+
+  it("preserva o estado dos branches ao recolher e reabrir a sidebar", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    document.documentElement.dataset.docsSidebar = "expanded";
+    const user = userEvent.setup();
+
+    renderInSiteShell(<DocsSidebar groups={sidebarGroups} />);
+
+    const branchToggle = screen.getByRole("button", {
+      name: "Recolher Documentos",
+    });
+    await user.click(branchToggle);
+    expect(branchToggle.getAttribute("aria-expanded")).toBe("false");
+
+    const sidebarToggle = screen.getByRole("button", {
+      name: "Recolher navegação lateral",
+    });
+    await user.click(sidebarToggle);
+    await user.click(sidebarToggle);
+
+    expect(
+      screen
+        .getByRole("button", { name: "Expandir Documentos" })
+        .getAttribute("aria-expanded"),
+    ).toBe("false");
+    expect(screen.queryByRole("link", { name: "Pastas" })).toBeNull();
+  });
+
+  it("mantém a sidebar funcional quando localStorage está indisponível", async () => {
+    document.documentElement.dataset.docsSidebar = "expanded";
+    const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("storage indisponível");
+    });
+    const user = userEvent.setup();
+
+    renderInSiteShell(<DocsSidebar groups={sidebarGroups} />);
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação lateral",
+    });
+    await user.click(toggle);
+
+    expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(toggle.getAttribute("aria-label")).toBe(
+      "Expandir navegação lateral",
+    );
+    setItem.mockRestore();
+  });
+
+  it("preserva expanded e collapsed durante rerenders de rota", async () => {
+    document.documentElement.dataset.docsSidebar = "expanded";
+    const user = userEvent.setup();
+    const view = renderInSiteShell(<DocsSidebar groups={sidebarGroups} />);
+
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação lateral",
+    });
+    pathname.value = "/docs/funcionalidades/workflows";
+    view.rerender(<DocsSidebar groups={sidebarGroups} />);
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+
+    await user.click(toggle);
+    pathname.value = "/docs/funcionalidades/documentos";
+    view.rerender(<DocsSidebar groups={sidebarGroups} />);
+
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
+  });
+
   it("torna o hub explícito da seção navegável e marca a página atual", () => {
     pathname.value = "/docs/funcionalidades";
 
@@ -623,6 +776,28 @@ describe("fluxos interativos", () => {
     expect(document.getElementById("site-shell")?.hasAttribute("inert")).toBe(
       false,
     );
+  });
+
+  it("mantém o drawer completo e independente da preferência desktop", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    document.documentElement.dataset.docsSidebar = "collapsed";
+    window.localStorage.setItem("godocs-docs-sidebar", "collapsed");
+    const user = userEvent.setup();
+
+    renderInSiteShell(<MobileNavDrawer groups={sidebarGroups} />);
+    await user.click(
+      screen.getByRole("button", {
+        name: "Abrir navegação da documentação",
+      }),
+    );
+
+    expect(screen.getByRole("dialog", { name: "Navegação" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Pastas" })).toBeTruthy();
+    expect(window.localStorage.getItem("godocs-docs-sidebar")).toBe(
+      "collapsed",
+    );
+    expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
   });
 
   it("fecha o drawer ao entrar no breakpoint desktop", async () => {

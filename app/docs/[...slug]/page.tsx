@@ -5,7 +5,10 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import { ArticleShell } from "@/components/docs/article-shell";
-import { HubNavigation } from "@/components/docs/hub-navigation";
+import {
+  HubNavigation,
+  type HubNavigationItem,
+} from "@/components/docs/hub-navigation";
 import { mdxComponents } from "@/components/docs/mdx-components";
 import {
   buildBreadcrumbs,
@@ -13,6 +16,7 @@ import {
   getAdjacentDocs,
 } from "@/lib/docs/navigation";
 import { getAllDocs, getDocBySlug } from "@/lib/docs/source";
+import type { DocRecord } from "@/lib/docs/schema";
 import { absoluteUrl, SITE_LOCALE, SITE_NAME } from "@/lib/site";
 
 type DocPageProps = {
@@ -20,6 +24,17 @@ type DocPageProps = {
 };
 
 export const dynamicParams = true;
+
+export function getHubNavigationItems(
+  children: DocRecord[],
+): HubNavigationItem[] {
+  return children.map((child) => ({
+    description: child.metadata.cardDescription ?? child.metadata.description,
+    href: child.href,
+    slug: child.slug,
+    title: child.metadata.navTitle ?? child.metadata.title,
+  }));
+}
 
 export async function generateStaticParams() {
   const docs = await getAllDocs();
@@ -86,7 +101,7 @@ export default async function DocPage({ params }: DocPageProps) {
       Boolean(candidate),
     );
   const hubChildren =
-    doc.metadata.pageType === "hub" && doc.segments.length > 1
+    doc.metadata.pageType === "hub"
       ? docs
           .filter(
             (candidate) =>
@@ -120,13 +135,9 @@ export default async function DocPage({ params }: DocPageProps) {
       />
       {hubChildren.length > 0 ? (
         <HubNavigation
-          items={hubChildren.map((child) => ({
-            description: child.metadata.cardDescription ?? child.metadata.description,
-            href: child.href,
-            slug: child.slug,
-            title: child.metadata.title,
-          }))}
+          items={getHubNavigationItems(hubChildren)}
           title={`Explore ${doc.metadata.title}`}
+          variant={doc.slug === "funcionalidades" ? "functionalities" : undefined}
         />
       ) : null}
     </ArticleShell>

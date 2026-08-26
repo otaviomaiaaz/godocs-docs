@@ -136,6 +136,9 @@ describe("home orientada ao conteúdo", () => {
     expect(
       within(featureGrid as HTMLElement).queryByText("Em breve"),
     ).toBeNull();
+    expect(
+      (featureGrid as HTMLElement).querySelectorAll(".doc-card__icon"),
+    ).toHaveLength(6);
     expect(screen.queryByText("Guias mais acessados")).toBeNull();
     expect(screen.queryByText("Organizar documentos")).toBeNull();
   });
@@ -186,5 +189,6 @@ describe("home orientada ao conteúdo", () => {
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*?transform:\s*none;/,
     );
     expect(redesignCss).not.toContain(".featured-guides");
+    expect(redesignCss).not.toContain("-webkit-line-clamp");
   });
 });

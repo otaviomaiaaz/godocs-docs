@@ -11,11 +11,19 @@ export type HubNavigationItem = {
 type HubNavigationProps = {
   items: HubNavigationItem[];
   title: string;
+  variant?: "functionalities";
 };
 
-export function HubNavigation({ items, title }: HubNavigationProps) {
+export function HubNavigation({ items, title, variant }: HubNavigationProps) {
   return (
-    <section aria-labelledby="hub-navigation-title" className="hub-navigation">
+    <section
+      aria-labelledby="hub-navigation-title"
+      className={
+        variant === "functionalities"
+          ? "hub-navigation hub-navigation--functionalities"
+          : "hub-navigation"
+      }
+    >
       <h2 id="hub-navigation-title">{title}</h2>
       <ul className="hub-navigation__list">
         {items.map((item, index) => (

@@ -447,9 +447,10 @@ describe("identidade e prevenção de regressões visuais", () => {
   });
 
   it("separa marca, acento operacional e estados em tokens semânticos", async () => {
-    const [css, icon] = await Promise.all([
+    const [css, icon, layout] = await Promise.all([
       readFile(path.join(projectRoot, "app", "globals.css"), "utf8"),
       readFile(path.join(projectRoot, "app", "icon.svg"), "utf8"),
+      readFile(path.join(projectRoot, "app", "layout.tsx"), "utf8"),
     ]);
 
     expect(css).toContain("--brand-logo: #ff8c42");
@@ -458,7 +459,7 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(css).toContain("--text-on-accent: #1a1a1a");
     expect(css).toContain("--background: #232222");
     expect(css).toContain("--surface: #2a2a2a");
-    expect(css).toContain("--background: #f7f7f6");
+    expect(css).toContain("--background: #efeeea");
     expect(css).toContain("--accent-subtle:");
     expect(css).toContain("--disabled-surface:");
     expect(css).not.toMatch(/--brand(?:-hover|-active|-text|-subtle|-border)?:/);
@@ -466,6 +467,74 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(icon).toContain('fill="#232222"');
     expect(icon).toContain('stroke="#FF7600"');
     expect(icon).not.toMatch(/#1b1b1b|#ff7900/i);
+    expect(layout).toContain('color: "#EFEEEA"');
+  });
+
+  it("aplica o contrato de tokens do Bloco A sem recalibrar o tema escuro", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+    const contracts = {
+      ":root": {
+        "--background": "#232222",
+        "--surface": "#2a2a2a",
+        "--surface-elevated": "#313237",
+        "--surface-interactive": "#292929",
+        "--surface-hover": "#313237",
+        "--navigation-surface": "var(--background)",
+        "--divider": "#3f3f3f",
+        "--surface-border": "#4d4d4d",
+        "--border-strong": "#737373",
+        "--text-muted": "#a1a1a1",
+      },
+      'html[data-theme="light"]': {
+        "--background": "#efeeea",
+        "--surface": "#faf9f7",
+        "--surface-elevated": "#ffffff",
+        "--surface-interactive": "#e9e8e3",
+        "--surface-hover": "#fff0e6",
+        "--navigation-surface": "#e8e7e2",
+        "--divider": "#c8c7c1",
+        "--surface-border": "#b3b2ac",
+        "--border-strong": "#7f807b",
+        "--text-muted": "#666b70",
+      },
+    } as const;
+
+    for (const [selector, tokens] of Object.entries(contracts)) {
+      for (const [token, value] of Object.entries(tokens)) {
+        expect(cssProperty(css, selector, token)).toBe(value);
+      }
+
+      expect(cssProperty(css, selector, "--border")).toBe(
+        "var(--surface-border)",
+      );
+      expect(cssProperty(css, selector, "--control-border")).toBe(
+        "var(--border-strong)",
+      );
+    }
+
+    expect(cssProperty(css, ":root", "--radius-compact")).toBe("6px");
+    expect(cssProperty(css, ":root", "--radius-sm")).toBe("8px");
+    expect(cssProperty(css, ":root", "--radius-md")).toBe("12px");
+    expect(cssProperty(css, ":root", "--radius-lg")).toBe("16px");
+    expect(cssProperty(css, ":root", "--radius-xl")).toBe("20px");
+    expect(css).toMatch(
+      /\.search-trigger kbd,\s*\.search-field kbd\s*\{[^}]*border-radius:\s*var\(--radius-compact\)/,
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "background: var(--navigation-surface)",
+    );
+    expect(cssProperty(css, ":root", "--shadow-card-lift")).toBe(
+      "0 8px 22px rgba(0, 0, 0, 0.1)",
+    );
+    expect(
+      cssProperty(css, 'html[data-theme="light"]', "--shadow-card-lift"),
+    ).toBe("0 8px 22px rgba(35, 25, 16, 0.05)");
+    expect(css).not.toContain("--home-card-shadow");
+    expect(css).not.toContain("--home-card-shadow-hover");
+    expect(css).not.toContain("0 12px 28px");
   });
 
   it("distingue divisores, superfícies, controles e níveis de texto com contraste", async () => {
@@ -475,7 +544,8 @@ describe("identidade e prevenção de regressões visuais", () => {
     );
 
     for (const themeSelector of [":root", 'html[data-theme="light"]']) {
-      const background = resolveCssColor(css, themeSelector, "--surface");
+      const canvas = resolveCssColor(css, themeSelector, "--background");
+      const surface = resolveCssColor(css, themeSelector, "--surface");
       const interactiveBackground = resolveCssColor(
         css,
         themeSelector,
@@ -492,18 +562,29 @@ describe("identidade e prevenção de regressões visuais", () => {
         "--text-secondary",
       );
       const muted = resolveCssColor(css, themeSelector, "--text-muted");
+      const primary = resolveCssColor(css, themeSelector, "--text-primary");
+      const accent = resolveCssColor(css, themeSelector, "--accent-text");
 
       expect(cssProperty(css, themeSelector, "--divider")).not.toBe(
         cssProperty(css, themeSelector, "--surface-border"),
       );
       expect(secondary).not.toBe(muted);
-      expect(contrastRatio(controlBorder, background)).toBeGreaterThanOrEqual(3);
+      expect(contrastRatio(controlBorder, surface)).toBeGreaterThanOrEqual(3);
       expect(
         contrastRatio(controlBorder, interactiveBackground),
       ).toBeGreaterThanOrEqual(3);
-      expect(contrastRatio(secondary, background)).toBeGreaterThanOrEqual(4.5);
-      expect(contrastRatio(muted, background)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(primary, canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(secondary, canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(muted, canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(accent, canvas)).toBeGreaterThanOrEqual(4.5);
     }
+
+    expect(
+      cssRuleBlock(
+        css,
+        'html[data-theme="light"] .shortcut-control',
+      ),
+    ).toContain("color: var(--text-secondary)");
 
     for (const selector of [
       ".icon-button",
@@ -659,6 +740,54 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(cssRuleBlock(css, ".doc-card--coming-soon")).not.toContain(
       "transform",
     );
+  });
+
+  it("remove o track do TOC no shell intermediário e preserva o drawer", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+    const intermediateStart = css.indexOf("@media (max-width: 1319px)");
+    const compactHeaderStart = css.indexOf(
+      "@media (max-width: 1279px)",
+      intermediateStart,
+    );
+    const drawerStart = css.indexOf(
+      "@media (max-width: 1023px)",
+      compactHeaderStart,
+    );
+    const intermediateCss = css.slice(intermediateStart, compactHeaderStart);
+    const drawerCss = css.slice(
+      drawerStart,
+      css.indexOf("@media (max-width: 767px)", drawerStart),
+    );
+    const intermediateQueries = [
+      ...css.matchAll(/@media \(max-width: 1319px\)/g),
+    ];
+
+    expect(cssRuleBlock(css, ".article-layout")).toContain(
+      "grid-template-columns: 240px minmax(560px, var(--content-width)) 220px",
+    );
+    expect(intermediateStart).toBeGreaterThanOrEqual(0);
+    expect(compactHeaderStart).toBeGreaterThan(intermediateStart);
+    expect(cssRuleBlock(intermediateCss, ".article-layout")).toContain(
+      "grid-template-columns: 240px minmax(560px, var(--content-width))",
+    );
+    expect(cssRuleBlock(intermediateCss, ".table-of-contents")).toContain(
+      "display: none",
+    );
+    expect(intermediateQueries).toHaveLength(2);
+    const progressiveTocCss = css.slice(intermediateQueries[1]?.index ?? 0);
+    expect(cssRuleBlock(progressiveTocCss, ".article-toc-mobile")).toContain(
+      "display: block",
+    );
+    expect(cssRuleBlock(drawerCss, ".article-layout")).toContain(
+      "display: block",
+    );
+    expect(cssRuleBlock(drawerCss, ".docs-sidebar")).toContain(
+      "display: none",
+    );
+    expect(css).toContain('html[data-docs-sidebar="collapsed"]');
   });
 
   it("não mantém interceptação personalizada de Tab nem X fora de dialog", async () => {
