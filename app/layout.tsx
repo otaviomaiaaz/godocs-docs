@@ -7,7 +7,6 @@ import "./globals.css";
 
 import { DocsHeader } from "@/components/docs-header";
 import { buildNavigation } from "@/lib/docs/navigation";
-import { SIDEBAR_INITIALIZATION_SCRIPT } from "@/lib/sidebar-initialization";
 import { getAllDocs } from "@/lib/docs/source";
 import {
   absoluteUrl,
@@ -72,10 +71,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{ __html: SIDEBAR_INITIALIZATION_SCRIPT }}
-          id="sidebar-initialization"
-        />
         <Script
           id="theme-initialization"
           src="/theme-initialization.js"

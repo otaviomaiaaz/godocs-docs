@@ -984,13 +984,18 @@ body:has(dialog[open]) {
   top: calc(var(--header-height) + 32px);
   align-self: start;
   max-height: calc(100dvh - var(--header-height) - 64px);
-  overflow-y: auto;
 }
 
 .docs-sidebar {
+  z-index: 20;
   padding-right: 18px;
   border-right: 1px solid var(--divider);
   background: var(--navigation-surface);
+  overflow: visible;
+}
+
+.table-of-contents {
+  overflow-y: auto;
 }
 
 .docs-sidebar__controls {
@@ -1002,6 +1007,13 @@ body:has(dialog[open]) {
 .docs-sidebar__toggle {
   min-width: 44px;
   min-height: 44px;
+  border-color: transparent;
+  background: transparent;
+}
+
+.docs-sidebar__toggle:hover {
+  border-color: var(--divider);
+  background: var(--surface-hover);
 }
 
 .docs-sidebar__toggle-icon--expand {
@@ -1010,6 +1022,12 @@ body:has(dialog[open]) {
 
 .docs-sidebar__navigation[hidden] {
   display: none;
+}
+
+.docs-sidebar__navigation {
+  max-height: calc(100dvh - var(--header-height) - 116px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .article {
@@ -1633,6 +1651,7 @@ body:has(dialog[open]) {
 
 @media (min-width: 1024px) {
   html[data-docs-sidebar="collapsed"] .docs-sidebar {
+    min-height: calc(100dvh - var(--header-height) - 64px);
     padding-right: 0;
   }
 
@@ -1640,8 +1659,18 @@ body:has(dialog[open]) {
     justify-content: center;
   }
 
-  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
-    display: none;
+  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation:not([hidden]) {
+    position: absolute;
+    z-index: 30;
+    top: -8px;
+    left: calc(100% + 8px);
+    width: 240px;
+    max-height: calc(100dvh - var(--header-height) - 48px);
+    padding: 16px 18px 18px;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-md);
+    background: var(--navigation-surface);
+    box-shadow: var(--shadow-card-lift);
   }
 
   html[data-docs-sidebar="collapsed"] .docs-sidebar__toggle-icon--collapse {
@@ -1655,20 +1684,21 @@ body:has(dialog[open]) {
 
 @media (min-width: 1320px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    /* Reserve the released sidebar space at the trailing edge so the rail
-       retains the expanded sidebar's left structural axis. */
+    /* The 46px balance track preserves the rail axis while the article uses
+       the remaining released sidebar width up to the 50rem reading guardrail. */
     grid-template-columns:
-      56px minmax(560px, var(--content-width)) 220px
-      calc(240px - 56px - 42px);
+      56px minmax(560px, 50rem) 220px
+      46px;
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1319px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    /* The trailing reservation also accounts for the additional grid gap. */
+    /* Match the expanded shell span so the rail stays anchored while the
+       article grows into the released width. */
     grid-template-columns:
-      56px minmax(560px, var(--content-width))
-      calc(240px - 56px - 42px);
+      56px minmax(560px, 50rem)
+      46px;
   }
 }
 

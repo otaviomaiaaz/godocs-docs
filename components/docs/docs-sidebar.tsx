@@ -1,8 +1,18 @@
 "use client";
 
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  type PointerEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
+import { useDocsSidebarState } from "@/components/docs/docs-sidebar-state";
 import { NavigationTree } from "@/components/navigation-tree";
 import type { DocNavigationGroup } from "@/lib/docs/navigation";
 
@@ -10,74 +20,133 @@ type DocsSidebarProps = {
   groups: DocNavigationGroup[];
 };
 
-type SidebarState = "expanded" | "collapsed";
-
 const NAVIGATION_ID = "docs-sidebar-navigation";
-const STORAGE_KEY = "godocs-docs-sidebar";
-const sidebarStateListeners = new Set<() => void>();
-
-function getDocumentSidebarState(): SidebarState | null {
-  return document.documentElement.dataset.docsSidebar === "collapsed"
-    ? "collapsed"
-    : "expanded";
-}
-
-function getServerSidebarState(): SidebarState | null {
-  return null;
-}
-
-function subscribeToSidebarState(listener: () => void) {
-  sidebarStateListeners.add(listener);
-  return () => {
-    sidebarStateListeners.delete(listener);
-  };
-}
-
-function applyDocumentSidebarState(nextState: SidebarState) {
-  document.documentElement.dataset.docsSidebar = nextState;
-  sidebarStateListeners.forEach((listener) => listener());
-}
+const GHOST_MENU_CLOSE_DELAY = 120;
 
 export function DocsSidebar({ groups }: DocsSidebarProps) {
-  const sidebarStateSnapshot = useSyncExternalStore(
-    subscribeToSidebarState,
-    getDocumentSidebarState,
-    getServerSidebarState,
+  const pathname = usePathname();
+  const { sidebarState, setSidebarState } = useDocsSidebarState();
+  const [ghostMenuPathname, setGhostMenuPathname] = useState<string | null>(
+    null,
+  );
+  const closeTimeoutRef = useRef<number | null>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const dismissedByEscapeRef = useRef(false);
+
+  useEffect(
+    () => () => {
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
+    },
+    [],
   );
 
   if (groups.length === 0) return null;
 
-  const sidebarState = sidebarStateSnapshot ?? "expanded";
   const isExpanded = sidebarState === "expanded";
-  const isAligned = sidebarStateSnapshot !== null;
+  const isGhostMenuOpen = !isExpanded && ghostMenuPathname === pathname;
   const actionLabel = isExpanded
-    ? "Recolher navegação lateral"
-    : "Expandir navegação lateral";
+    ? "Recolher navegação"
+    : "Expandir navegação";
 
-  function handleToggle() {
-    if (!isAligned) return;
-
-    const nextState: SidebarState = isExpanded ? "collapsed" : "expanded";
-
-    applyDocumentSidebarState(nextState);
-
-    try {
-      window.localStorage.setItem(STORAGE_KEY, nextState);
-    } catch {
-      // A preferência continua válida durante a sessão atual.
+  function cancelScheduledClose() {
+    if (closeTimeoutRef.current !== null) {
+      window.clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
     }
   }
 
+  function openGhostMenu() {
+    if (isExpanded || dismissedByEscapeRef.current) return;
+
+    cancelScheduledClose();
+    setGhostMenuPathname(pathname);
+  }
+
+  function closeGhostMenu() {
+    cancelScheduledClose();
+    setGhostMenuPathname(null);
+  }
+
+  function scheduleGhostMenuClose() {
+    cancelScheduledClose();
+    closeTimeoutRef.current = window.setTimeout(() => {
+      setGhostMenuPathname(null);
+      closeTimeoutRef.current = null;
+    }, GHOST_MENU_CLOSE_DELAY);
+  }
+
+  function handleToggle(event: MouseEvent<HTMLButtonElement>) {
+    const nextState = isExpanded ? "collapsed" : "expanded";
+
+    dismissedByEscapeRef.current = false;
+    setSidebarState(nextState);
+
+    if (nextState === "collapsed" && event.detail === 0) {
+      setGhostMenuPathname(pathname);
+    } else {
+      closeGhostMenu();
+    }
+  }
+
+  function handlePointerEnter(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType === "touch") return;
+
+    dismissedByEscapeRef.current = false;
+    openGhostMenu();
+  }
+
+  function handlePointerLeave(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType === "touch" || !isGhostMenuOpen) return;
+    scheduleGhostMenuClose();
+  }
+
+  function handleFocus(event: FocusEvent<HTMLElement>) {
+    if (event.target === toggleRef.current || isGhostMenuOpen) {
+      openGhostMenu();
+    }
+  }
+
+  function handleBlur(event: FocusEvent<HTMLElement>) {
+    if (
+      !event.currentTarget.contains(event.relatedTarget as Node | null)
+    ) {
+      dismissedByEscapeRef.current = false;
+      closeGhostMenu();
+    }
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
+    if (event.key !== "Escape" || !isGhostMenuOpen) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    dismissedByEscapeRef.current = true;
+    closeGhostMenu();
+    toggleRef.current?.focus({ preventScroll: true });
+  }
+
   return (
-    <aside aria-label="Navegação lateral" className="docs-sidebar">
-      <div className="docs-sidebar__controls">
+    <aside
+      aria-label="Navegação lateral"
+      className="docs-sidebar"
+      onBlur={handleBlur}
+      onFocus={handleFocus}
+      onKeyDown={handleKeyDown}
+      onPointerLeave={handlePointerLeave}
+    >
+      <div
+        className="docs-sidebar__controls"
+        onPointerEnter={handlePointerEnter}
+      >
         <button
           aria-controls={NAVIGATION_ID}
           aria-expanded={isExpanded}
           aria-label={actionLabel}
           className="icon-button docs-sidebar__toggle"
-          disabled={!isAligned}
           onClick={handleToggle}
+          ref={toggleRef}
           title={actionLabel}
           type="button"
         >
@@ -94,12 +163,15 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
         </button>
       </div>
       <nav
+        aria-hidden={!isExpanded && !isGhostMenuOpen ? "true" : undefined}
         aria-label="Navegação da documentação"
         className="docs-sidebar__navigation"
-        hidden={!isExpanded}
+        data-ghost-menu={isGhostMenuOpen ? "open" : undefined}
+        hidden={!isExpanded && !isGhostMenuOpen}
         id={NAVIGATION_ID}
+        onPointerEnter={handlePointerEnter}
       >
-        <NavigationTree groups={groups} />
+        <NavigationTree groups={groups} onNavigate={closeGhostMenu} />
       </nav>
     </aside>
   );

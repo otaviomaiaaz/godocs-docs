@@ -788,7 +788,14 @@ describe("identidade e prevenção de regressões visuais", () => {
       "display: none",
     );
     expect(css).toContain('html[data-docs-sidebar="collapsed"]');
-    expect(css).toContain("calc(240px - 56px - 42px)");
+    expect(css).toContain("56px minmax(560px, 50rem) 220px");
+    expect(css).toContain("56px minmax(560px, 50rem)");
+    expect(css).toContain("46px");
+    expect(css).toContain(
+      'html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation:not([hidden])',
+    );
+    expect(css).toContain("position: absolute");
+    expect(css).toContain("width: 240px");
   });
 
   it("não mantém interceptação personalizada de Tab nem X fora de dialog", async () => {

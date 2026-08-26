@@ -4,6 +4,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import DocPage, { getHubNavigationItems } from "./page";
+import { DocsSidebarStateProvider } from "@/components/docs/docs-sidebar-state";
 import { getAllDocs } from "@/lib/docs/source";
 
 vi.mock("next/navigation", () => ({
@@ -19,12 +20,15 @@ vi.mock("next-mdx-remote/rsc", () => ({
 describe("DocPage", () => {
   afterEach(cleanup);
 
-  it("renders the canonical Workflows hub navigation on the published route", async () => {
-    render(
-      await DocPage({
-        params: Promise.resolve({ slug: ["funcionalidades", "workflows"] }),
-      }),
+  async function renderPage(slug: string[]) {
+    const page = await DocPage({ params: Promise.resolve({ slug }) });
+    return render(
+      <DocsSidebarStateProvider>{page}</DocsSidebarStateProvider>,
     );
+  }
+
+  it("renders the canonical Workflows hub navigation on the published route", async () => {
+    await renderPage(["funcionalidades", "workflows"]);
 
     const navigation = screen
       .getByRole("heading", { level: 2, name: "Explore Workflows" })
@@ -60,11 +64,7 @@ describe("DocPage", () => {
       )
       .sort((first, second) => first.metadata.order - second.metadata.order);
 
-    render(
-      await DocPage({
-        params: Promise.resolve({ slug: ["funcionalidades"] }),
-      }),
-    );
+    await renderPage(["funcionalidades"]);
 
     const navigation = screen
       .getByRole("heading", { level: 2, name: "Explore Funcionalidades" })

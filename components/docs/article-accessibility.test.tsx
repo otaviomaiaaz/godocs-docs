@@ -8,6 +8,7 @@ import remarkGfm from "remark-gfm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ArticleShell } from "@/components/docs/article-shell";
+import { DocsSidebarStateProvider } from "@/components/docs/docs-sidebar-state";
 import { mdxComponents } from "@/components/docs/mdx-components";
 import { DocsHeader } from "@/components/docs-header";
 import {
@@ -190,16 +191,18 @@ async function renderDocumentPage(scenario: PageScenario) {
         Pular para o conteúdo
       </a>
       <DocsHeader navigation={navigation} />
-      <ArticleShell
-        breadcrumbs={buildBreadcrumbs(doc, docs)}
-        doc={doc}
-        navigation={navigation}
-        next={next}
-        previous={previous}
-        related={related}
-      >
-        {content}
-      </ArticleShell>
+      <DocsSidebarStateProvider>
+        <ArticleShell
+          breadcrumbs={buildBreadcrumbs(doc, docs)}
+          doc={doc}
+          navigation={navigation}
+          next={next}
+          previous={previous}
+          related={related}
+        >
+          {content}
+        </ArticleShell>
+      </DocsSidebarStateProvider>
     </div>,
   );
 
