@@ -788,13 +788,16 @@ describe("identidade e prevenção de regressões visuais", () => {
       "display: none",
     );
     expect(css).toContain('html[data-docs-sidebar="collapsed"]');
-    expect(css).toContain("grid-template-columns: minmax(560px, 50rem) 220px");
-    expect(css).toContain("grid-template-columns: minmax(560px, 50rem)");
+    expect(css).toContain("grid-template-columns: minmax(560px, 48rem) 220px");
+    expect(css).toContain("grid-template-columns: minmax(560px, 48rem)");
     expect(css).toContain(
       'html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation[data-ghost-menu="open"]',
     );
     expect(css).toContain("position: fixed");
-    expect(css).toContain("width: 292px");
+    expect(css).toContain("width: 280px");
+    expect(css).toContain("padding: 88px 20px 24px");
+    expect(css).toContain("z-index: 2");
+    expect(css).toContain("z-index: 1");
     expect(css).toContain("transform: translateX(-100%)");
     expect(css).toContain("transform: translateX(0)");
     expect(css).toContain("border-right: 0");

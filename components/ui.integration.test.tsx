@@ -733,6 +733,34 @@ describe("fluxos interativos", () => {
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
   });
 
+  it("mantém o toggle operável acima do menu fantasma e expande ao clicar", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    const user = userEvent.setup();
+    renderInSiteShell(renderSidebar());
+
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação",
+    });
+    await user.click(toggle);
+    fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
+
+    const navigation = document.getElementById(
+      toggle.getAttribute("aria-controls") ?? "",
+    );
+    expect(navigation?.dataset.ghostMenu).toBe("open");
+    expect(toggle.isConnected).toBe(true);
+    expect(toggle.tabIndex).toBe(0);
+
+    toggle.focus();
+    expect(document.activeElement).toBe(toggle);
+    await user.click(toggle);
+
+    expect(document.documentElement.dataset.docsSidebar).toBe("expanded");
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(toggle.getAttribute("aria-label")).toBe("Recolher navegação");
+    expect(navigation?.dataset.ghostMenu).toBe("closed");
+  });
+
   it("abre o menu fantasma por foco, fecha com Escape e não cria focus trap", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
@@ -746,6 +774,13 @@ describe("fluxos interativos", () => {
     fireEvent.focus(toggle);
 
     expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
+    const navigation = document.getElementById(
+      toggle.getAttribute("aria-controls") ?? "",
+    );
+    await user.tab();
+    expect(navigation?.contains(document.activeElement)).toBe(true);
+    await user.tab({ shift: true });
+    expect(document.activeElement).toBe(toggle);
     await user.keyboard("{Escape}");
 
     expect(document.activeElement).toBe(toggle);
