@@ -89,7 +89,7 @@ html[data-theme="light"] {
   --surface-elevated: #ffffff;
   --surface-interactive: #e9e8e3;
   --surface-hover: #fff0e6;
-  --navigation-surface: color-mix(in srgb, var(--background) 72%, var(--surface-interactive));
+  --navigation-surface: var(--background);
   --divider: #c8c7c1;
   --surface-border: #b3b2ac;
   --border: var(--surface-border);
@@ -994,6 +994,10 @@ body:has(dialog[open]) {
   overflow: visible;
 }
 
+html[data-theme="light"] .docs-sidebar {
+  border-right-color: color-mix(in srgb, var(--divider) 56%, var(--background));
+}
+
 .table-of-contents {
   overflow-y: auto;
 }
@@ -1716,6 +1720,7 @@ body:has(dialog[open]) {
   }
 
   html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
+    border-right-color: color-mix(in srgb, var(--divider) 56%, var(--background));
     box-shadow: none;
   }
 
