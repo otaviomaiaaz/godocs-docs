@@ -748,6 +748,7 @@ describe("fluxos interativos", () => {
       toggle.getAttribute("aria-controls") ?? "",
     );
     expect(navigation?.dataset.ghostMenu).toBe("open");
+    expect(toggle.closest("aside")?.dataset.ghostMenu).toBe("open");
     expect(toggle.isConnected).toBe(true);
     expect(toggle.tabIndex).toBe(0);
 
@@ -759,6 +760,7 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
     expect(toggle.getAttribute("aria-label")).toBe("Recolher navegação");
     expect(navigation?.dataset.ghostMenu).toBe("closed");
+    expect(toggle.closest("aside")?.dataset.ghostMenu).toBe("closed");
   });
 
   it("abre o menu fantasma por foco, fecha com Escape e não cria focus trap", async () => {

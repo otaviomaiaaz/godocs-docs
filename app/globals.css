@@ -1666,6 +1666,16 @@ body:has(dialog[open]) {
     padding-bottom: 0;
   }
 
+  html[data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle {
+    border-color: var(--divider);
+    background: var(--surface-interactive);
+  }
+
+  html[data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle:hover {
+    border-color: var(--surface-border);
+    background: var(--surface-hover);
+  }
+
   html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
     position: fixed;
     z-index: 1;

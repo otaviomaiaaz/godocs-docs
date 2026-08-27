@@ -798,6 +798,11 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(css).toContain("padding: 88px 20px 24px");
     expect(css).toContain("z-index: 2");
     expect(css).toContain("z-index: 1");
+    expect(css).toContain(
+      'html[data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle',
+    );
+    expect(css).toContain("border-color: var(--divider)");
+    expect(css).toContain("background: var(--surface-interactive)");
     expect(css).toContain("transform: translateX(-100%)");
     expect(css).toContain("transform: translateX(0)");
     expect(css).toContain("border-right: 0");

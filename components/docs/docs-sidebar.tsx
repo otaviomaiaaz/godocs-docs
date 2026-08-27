@@ -137,6 +137,7 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     <aside
       aria-label="Navegação lateral"
       className="docs-sidebar"
+      data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}
       data-sidebar-state={sidebarState}
       onBlur={handleBlur}
       onFocus={handleFocus}
