@@ -494,7 +494,7 @@ describe("identidade e prevenção de regressões visuais", () => {
         "--surface-elevated": "#ffffff",
         "--surface-interactive": "#e9e8e3",
         "--surface-hover": "#fff0e6",
-        "--navigation-surface": "#e8e7e2",
+        "--navigation-surface": "color-mix(in srgb, var(--background) 72%, var(--surface-interactive))",
         "--divider": "#c8c7c1",
         "--surface-border": "#b3b2ac",
         "--border-strong": "#7f807b",
@@ -803,6 +803,10 @@ describe("identidade e prevenção de regressões visuais", () => {
     );
     expect(css).toContain("border-color: var(--divider)");
     expect(css).toContain("background: var(--surface-interactive)");
+    expect(css).toContain(
+      'html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar__navigation',
+    );
+    expect(css).toContain("box-shadow: none");
     expect(css).toContain("transform: translateX(-100%)");
     expect(css).toContain("transform: translateX(0)");
     expect(css).toContain("border-right: 0");

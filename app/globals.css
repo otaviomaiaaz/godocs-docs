@@ -89,7 +89,7 @@ html[data-theme="light"] {
   --surface-elevated: #ffffff;
   --surface-interactive: #e9e8e3;
   --surface-hover: #fff0e6;
-  --navigation-surface: #e8e7e2;
+  --navigation-surface: color-mix(in srgb, var(--background) 72%, var(--surface-interactive));
   --divider: #c8c7c1;
   --surface-border: #b3b2ac;
   --border: var(--surface-border);
@@ -1676,6 +1676,16 @@ body:has(dialog[open]) {
     background: var(--surface-hover);
   }
 
+  html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle {
+    border-color: var(--divider);
+    background: var(--surface);
+  }
+
+  html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle:hover {
+    border-color: var(--surface-border);
+    background: var(--surface-interactive);
+  }
+
   html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
     position: fixed;
     z-index: 1;
@@ -1703,6 +1713,10 @@ body:has(dialog[open]) {
     transform: translateX(0);
     pointer-events: auto;
     transition-delay: 0s;
+  }
+
+  html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
+    box-shadow: none;
   }
 
   html[data-docs-sidebar="collapsed"] .docs-sidebar__toggle-icon--collapse {
