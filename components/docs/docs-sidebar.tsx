@@ -30,6 +30,7 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     null,
   );
   const closeTimeoutRef = useRef<number | null>(null);
+  const navigationRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const dismissedByEscapeRef = useRef(false);
 
@@ -72,6 +73,11 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
   function scheduleGhostMenuClose() {
     cancelScheduledClose();
     closeTimeoutRef.current = window.setTimeout(() => {
+      if (navigationRef.current?.contains(document.activeElement)) {
+        closeTimeoutRef.current = null;
+        return;
+      }
+
       setGhostMenuPathname(null);
       closeTimeoutRef.current = null;
     }, GHOST_MENU_CLOSE_DELAY);
@@ -131,6 +137,7 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     <aside
       aria-label="Navegação lateral"
       className="docs-sidebar"
+      data-sidebar-state={sidebarState}
       onBlur={handleBlur}
       onFocus={handleFocus}
       onKeyDown={handleKeyDown}
@@ -166,10 +173,11 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
         aria-hidden={!isExpanded && !isGhostMenuOpen ? "true" : undefined}
         aria-label="Navegação da documentação"
         className="docs-sidebar__navigation"
-        data-ghost-menu={isGhostMenuOpen ? "open" : undefined}
-        hidden={!isExpanded && !isGhostMenuOpen}
+        data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}
         id={NAVIGATION_ID}
+        inert={!isExpanded && !isGhostMenuOpen ? true : undefined}
         onPointerEnter={handlePointerEnter}
+        ref={navigationRef}
       >
         <NavigationTree groups={groups} onNavigate={closeGhostMenu} />
       </nav>

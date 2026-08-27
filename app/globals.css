@@ -1020,10 +1020,6 @@ body:has(dialog[open]) {
   display: none;
 }
 
-.docs-sidebar__navigation[hidden] {
-  display: none;
-}
-
 .docs-sidebar__navigation {
   max-height: calc(100dvh - var(--header-height) - 116px);
   overflow-y: auto;
@@ -1651,26 +1647,53 @@ body:has(dialog[open]) {
 
 @media (min-width: 1024px) {
   html[data-docs-sidebar="collapsed"] .docs-sidebar {
-    min-height: calc(100dvh - var(--header-height) - 64px);
-    padding-right: 0;
+    position: fixed;
+    z-index: 30;
+    top: calc(var(--header-height) + 32px);
+    left: var(--page-padding-desktop);
+    width: 44px;
+    min-height: 0;
+    max-height: none;
+    padding: 0;
+    border-right: 0;
+    background: transparent;
   }
 
   html[data-docs-sidebar="collapsed"] .docs-sidebar__controls {
-    justify-content: center;
+    justify-content: flex-start;
+    padding-bottom: 0;
   }
 
-  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation:not([hidden]) {
-    position: absolute;
+  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
+    position: fixed;
     z-index: 30;
-    top: -8px;
-    left: calc(100% + 8px);
-    width: 240px;
-    max-height: calc(100dvh - var(--header-height) - 48px);
-    padding: 16px 18px 18px;
-    border: 1px solid var(--surface-border);
-    border-radius: var(--radius-md);
+    top: var(--header-height);
+    bottom: 0;
+    left: 0;
+    width: 292px;
+    max-height: none;
+    padding: 32px 22px 24px;
+    border: 0;
+    border-right: 1px solid var(--divider);
+    border-radius: 0;
     background: var(--navigation-surface);
     box-shadow: var(--shadow-card-lift);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    pointer-events: none;
+    transition:
+      transform var(--duration-interaction) var(--ease),
+      opacity var(--duration-base) var(--ease),
+      visibility 0s linear var(--duration-interaction);
+  }
+
+  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation[data-ghost-menu="open"] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    pointer-events: auto;
+    transition-delay: 0s;
   }
 
   html[data-docs-sidebar="collapsed"] .docs-sidebar__toggle-icon--collapse {
@@ -1684,21 +1707,17 @@ body:has(dialog[open]) {
 
 @media (min-width: 1320px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    /* The 46px balance track preserves the rail axis while the article uses
-       the remaining released sidebar width up to the 50rem reading guardrail. */
-    grid-template-columns:
-      56px minmax(560px, 50rem) 220px
-      46px;
+    grid-template-columns: minmax(560px, 50rem) 220px;
   }
 }
 
 @media (min-width: 1024px) and (max-width: 1319px) {
   html[data-docs-sidebar="collapsed"] .article-layout {
-    /* Match the expanded shell span so the rail stays anchored while the
-       article grows into the released width. */
-    grid-template-columns:
-      56px minmax(560px, 50rem)
-      46px;
+    grid-template-columns: minmax(560px, 50rem);
+  }
+
+  html[data-docs-sidebar="collapsed"] .docs-sidebar {
+    left: var(--page-padding-tablet);
   }
 }
 
@@ -1916,6 +1935,11 @@ body:has(dialog[open]) {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation {
+    transform: none;
+    transition: none;
   }
 
   *,

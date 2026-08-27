@@ -45,7 +45,12 @@ describe("contrato de estado da sidebar documental", () => {
 
     expect(sidebar.match(/<NavigationTree/g)).toHaveLength(1);
     expect(sidebar).toContain("onNavigate={closeGhostMenu}");
-    expect(sidebar).toContain("hidden={!isExpanded && !isGhostMenuOpen}");
+    expect(sidebar).toContain(
+      "inert={!isExpanded && !isGhostMenuOpen ? true : undefined}",
+    );
+    expect(sidebar).toContain(
+      'data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}',
+    );
     expect(sidebar).not.toMatch(/localStorage|sessionStorage|setExpanded/);
   });
 });

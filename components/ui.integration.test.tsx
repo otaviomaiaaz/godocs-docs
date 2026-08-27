@@ -594,7 +594,8 @@ describe("fluxos interativos", () => {
     const navigation = document.getElementById(navigationId ?? "");
 
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
-    expect(navigation?.hidden).toBe(false);
+    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
+    expect(navigation?.hasAttribute("inert")).toBe(false);
     expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
     expect((await axe.run(container)).violations).toEqual([]);
 
@@ -606,7 +607,9 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
     expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
     expect(window.localStorage.length).toBe(0);
-    expect(navigation?.hidden).toBe(true);
+    expect(navigation?.getAttribute("aria-hidden")).toBe("true");
+    expect(navigation?.hasAttribute("inert")).toBe(true);
+    expect(navigation?.dataset.ghostMenu).toBe("closed");
     expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
 
@@ -615,7 +618,8 @@ describe("fluxos interativos", () => {
     expect(document.activeElement).toBe(toggle);
     expect(toggle.getAttribute("aria-label")).toBe("Recolher navegação");
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
-    expect(navigation?.hidden).toBe(false);
+    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
+    expect(navigation?.hasAttribute("inert")).toBe(false);
     expect(window.localStorage.length).toBe(0);
   });
 
@@ -708,19 +712,24 @@ describe("fluxos interativos", () => {
       toggle.getAttribute("aria-controls") ?? "",
     );
 
-    expect(navigation?.hidden).toBe(true);
+    expect(navigation?.getAttribute("aria-hidden")).toBe("true");
+    expect(navigation?.hasAttribute("inert")).toBe(true);
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
-    expect(navigation?.hidden).toBe(false);
+    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
+    expect(navigation?.hasAttribute("inert")).toBe(false);
     expect(navigation?.dataset.ghostMenu).toBe("open");
 
     const sidebar = toggle.closest("aside");
     fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
     fireEvent.pointerEnter(navigation!, { pointerType: "mouse" });
     await new Promise((resolve) => window.setTimeout(resolve, 150));
-    expect(navigation?.hidden).toBe(false);
+    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
 
     fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
-    await waitFor(() => expect(navigation?.hidden).toBe(true));
+    await waitFor(() =>
+      expect(navigation?.getAttribute("aria-hidden")).toBe("true"),
+    );
+    expect(navigation?.hasAttribute("inert")).toBe(true);
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
   });
 
