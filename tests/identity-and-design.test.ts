@@ -457,9 +457,9 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(css).toContain("--accent-primary: #ff7600");
     expect(css).toContain("--accent-text: #a84b00");
     expect(css).toContain("--text-on-accent: #1a1a1a");
-    expect(css).toContain("--background: #232222");
-    expect(css).toContain("--surface: #2a2a2a");
-    expect(css).toContain("--background: #efeeea");
+    expect(css).toContain("--background: #151515");
+    expect(css).toContain("--surface: #202020");
+    expect(css).toContain("--background: #f6f7f9");
     expect(css).toContain("--accent-subtle:");
     expect(css).toContain("--disabled-surface:");
     expect(css).not.toMatch(/--brand(?:-hover|-active|-text|-subtle|-border)?:/);
@@ -467,38 +467,43 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(icon).toContain('fill="#232222"');
     expect(icon).toContain('stroke="#FF7600"');
     expect(icon).not.toMatch(/#1b1b1b|#ff7900/i);
-    expect(layout).toContain('color: "#EFEEEA"');
+    expect(layout).toContain('color: "#F6F7F9"');
   });
 
-  it("aplica o contrato de tokens do Bloco A sem recalibrar o tema escuro", async () => {
+  it("aplica o contrato cromático A2 Contrast Refined nos dois temas", async () => {
     const css = await readFile(
       path.join(projectRoot, "app", "globals.css"),
       "utf8",
     );
     const contracts = {
       ":root": {
-        "--background": "#232222",
-        "--surface": "#2a2a2a",
-        "--surface-elevated": "#313237",
-        "--surface-interactive": "#292929",
-        "--surface-hover": "#313237",
-        "--navigation-surface": "var(--background)",
-        "--divider": "#3f3f3f",
-        "--surface-border": "#4d4d4d",
+        "--accent-primary": "#ff7a1a",
+        "--focus-ring": "#ff8a3d",
+        "--background": "#151515",
+        "--surface": "#202020",
+        "--surface-elevated": "#2c2c2c",
+        "--surface-interactive": "#262626",
+        "--surface-hover": "#292929",
+        "--navigation-surface": "#1a1a1a",
+        "--divider": "#3a3a3a",
+        "--surface-border": "#4b4b4b",
         "--border-strong": "#737373",
         "--text-muted": "#a1a1a1",
       },
       'html[data-theme="light"]': {
-        "--background": "#efeeea",
-        "--surface": "#faf9f7",
+        "--accent-primary": "#ff7600",
+        "--background": "#f6f7f9",
+        "--surface": "#ffffff",
         "--surface-elevated": "#ffffff",
-        "--surface-interactive": "#e9e8e3",
-        "--surface-hover": "#fff0e6",
-        "--navigation-surface": "var(--background)",
-        "--divider": "#c8c7c1",
-        "--surface-border": "#b3b2ac",
-        "--border-strong": "#7f807b",
-        "--text-muted": "#666b70",
+        "--surface-interactive": "#e9edf1",
+        "--surface-hover": "#e8ecf0",
+        "--navigation-surface": "#f1f3f5",
+        "--divider": "#d8dde3",
+        "--surface-border": "#bec7d1",
+        "--border-strong": "#7e8994",
+        "--text-primary": "#17202a",
+        "--text-secondary": "#435160",
+        "--text-muted": "#66717d",
       },
     } as const;
 
@@ -531,10 +536,15 @@ describe("identidade e prevenção de regressões visuais", () => {
     );
     expect(
       cssProperty(css, 'html[data-theme="light"]', "--shadow-card-lift"),
-    ).toBe("0 8px 22px rgba(35, 25, 16, 0.05)");
+    ).toBe("0 8px 22px rgba(23, 32, 42, 0.05)");
     expect(css).not.toContain("--home-card-shadow");
     expect(css).not.toContain("--home-card-shadow-hover");
     expect(css).not.toContain("0 12px 28px");
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain("box-shadow: none");
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "background-image: none",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain("filter: none");
   });
 
   it("distingue divisores, superfícies, controles e níveis de texto com contraste", async () => {
@@ -672,6 +682,34 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(cssRuleBlock(css, ":focus-visible")).toContain(
       "outline: 2px solid var(--focus-ring)",
     );
+  });
+
+  it("mantém hover genérico neutro e reserva o acento para estados semânticos", async () => {
+    const css = await readFile(
+      path.join(projectRoot, "app", "globals.css"),
+      "utf8",
+    );
+
+    for (const selector of [
+      ".icon-button:hover",
+      ".search-trigger:hover",
+      ".doc-card--active:hover,\n.doc-card--active:focus-visible",
+      ".article-pagination__link:hover",
+      ".learning-path a.learning-path__card:hover,\n.learning-path a.learning-path__card:focus-visible",
+    ]) {
+      const rule = cssRuleBlock(css, selector);
+      expect(rule).toContain("var(--surface-hover)");
+      expect(rule).not.toContain("var(--accent-subtle)");
+      expect(rule).not.toContain("var(--accent-border)");
+    }
+
+    for (const selector of [
+      '.navigation-tree__link[aria-current="page"]',
+      '.search-result[aria-selected="true"]',
+      '.table-of-contents a[aria-current="location"]',
+    ]) {
+      expect(cssRuleBlock(css, selector)).toMatch(/var\(--accent-/);
+    }
   });
 
   it("centraliza a escala tipográfica e a aplica aos papéis principais", async () => {

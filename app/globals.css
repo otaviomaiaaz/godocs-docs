@@ -2,24 +2,24 @@
 
 :root {
   --brand-logo: #ff8c42;
-  --accent-primary: #ff7600;
+  --accent-primary: #ff7a1a;
   --accent-hover: #f06e00;
   --accent-pressed: #eb6a00;
   --accent-text: #ff7600;
   --accent-subtle: #472f21;
   --accent-border: #b95b1a;
-  --focus-ring: #ff7600;
+  --focus-ring: #ff8a3d;
   --focus-shadow: #4c321f;
   --selection-background: #5a351e;
 
-  --background: #232222;
-  --surface: #2a2a2a;
-  --surface-elevated: #313237;
-  --surface-interactive: #292929;
-  --surface-hover: #313237;
-  --navigation-surface: var(--background);
-  --divider: #3f3f3f;
-  --surface-border: #4d4d4d;
+  --background: #151515;
+  --surface: #202020;
+  --surface-elevated: #2c2c2c;
+  --surface-interactive: #262626;
+  --surface-hover: #292929;
+  --navigation-surface: #1a1a1a;
+  --divider: #3a3a3a;
+  --surface-border: #4b4b4b;
   --border: var(--surface-border);
   --border-strong: #737373;
   --control-border: var(--border-strong);
@@ -76,6 +76,7 @@
 }
 
 html[data-theme="light"] {
+  --accent-primary: #ff7600;
   --accent-hover: #8f3f00;
   --accent-pressed: #783500;
   --accent-text: #a84b00;
@@ -84,28 +85,28 @@ html[data-theme="light"] {
   --focus-ring: #a84b00;
   --focus-shadow: #fff0e6;
   --selection-background: #ffdcc4;
-  --background: #efeeea;
-  --surface: #faf9f7;
+  --background: #f6f7f9;
+  --surface: #ffffff;
   --surface-elevated: #ffffff;
-  --surface-interactive: #e9e8e3;
-  --surface-hover: #fff0e6;
-  --navigation-surface: var(--background);
-  --divider: #c8c7c1;
-  --surface-border: #b3b2ac;
+  --surface-interactive: #e9edf1;
+  --surface-hover: #e8ecf0;
+  --navigation-surface: #f1f3f5;
+  --divider: #d8dde3;
+  --surface-border: #bec7d1;
   --border: var(--surface-border);
-  --border-strong: #7f807b;
+  --border-strong: #7e8994;
   --control-border: var(--border-strong);
-  --text-primary: #1a1a1a;
-  --text-secondary: #4f5459;
-  --text-muted: #666b70;
+  --text-primary: #17202a;
+  --text-secondary: #435160;
+  --text-muted: #66717d;
   --disabled-surface: #f0f0ee;
   --disabled-text: #8a8a8a;
   --overlay: rgba(24, 24, 24, 0.42);
-  --code-background: #f0f0ee;
+  --code-background: var(--surface-interactive);
   --success: #217a45;
   --danger: #b42318;
-  --shadow-elevated: 0 24px 70px rgba(35, 25, 16, 0.14);
-  --shadow-card-lift: 0 8px 22px rgba(35, 25, 16, 0.05);
+  --shadow-elevated: 0 20px 56px rgba(23, 32, 42, 0.14);
+  --shadow-card-lift: 0 8px 22px rgba(23, 32, 42, 0.05);
 }
 
 * {
@@ -223,9 +224,9 @@ a {
 }
 
 .icon-button:hover {
-  border-color: var(--accent-border);
+  border-color: var(--surface-border);
   background: var(--surface-hover);
-  color: var(--accent-hover);
+  color: var(--text-primary);
 }
 
 .icon-button:active {
@@ -337,7 +338,7 @@ html[data-theme="light"] .brand-logo__image--light {
 }
 
 .search-trigger:hover {
-  border-color: var(--accent-border);
+  border-color: var(--surface-border);
   background: var(--surface-hover);
   color: var(--text-secondary);
 }
@@ -422,7 +423,7 @@ html[data-theme="light"] .shortcut-control {
 
 .doc-card--active:hover,
 .doc-card--active:focus-visible {
-  border-color: var(--accent-border);
+  border-color: var(--surface-border);
   background-color: var(--surface-hover);
   box-shadow: var(--shadow-card-lift);
   transform: translateY(-2px);
@@ -458,16 +459,9 @@ html[data-theme="light"] .shortcut-control {
     background-color var(--duration-interaction) var(--ease);
 }
 
-.doc-card--active:hover .doc-card__icon,
 .doc-card--active:focus-visible .doc-card__icon,
-.doc-card--coming-soon:hover .doc-card__icon,
 .doc-card--coming-soon:focus-visible .doc-card__icon {
   border-color: var(--accent-border);
-  background: color-mix(
-    in srgb,
-    var(--accent-primary) 20%,
-    var(--surface)
-  );
 }
 
 .doc-card__body {
@@ -532,7 +526,7 @@ html[data-theme="light"] .shortcut-control {
 .doc-card--active:focus-visible .doc-card__indicator--arrow,
 .doc-card--coming-soon:hover .doc-card__indicator--arrow,
 .doc-card--coming-soon:focus-visible .doc-card__indicator--arrow {
-  color: var(--accent-text);
+  color: var(--text-secondary);
   transform: translateX(3px);
 }
 
@@ -567,16 +561,8 @@ html[data-theme="light"] .shortcut-control {
 
 .doc-card--coming-soon:hover,
 .doc-card--coming-soon:focus-visible {
-  border-color: color-mix(
-    in srgb,
-    var(--accent-border) 62%,
-    var(--surface-border)
-  );
-  background-color: color-mix(
-    in srgb,
-    var(--surface) 94%,
-    var(--accent-subtle)
-  );
+  border-color: var(--surface-border);
+  background-color: var(--surface-hover);
 }
 
 .doc-card--coming-soon:focus-visible {
@@ -991,6 +977,9 @@ body:has(dialog[open]) {
   padding-right: 18px;
   border-right: 1px solid var(--divider);
   background: var(--navigation-surface);
+  background-image: none;
+  box-shadow: none;
+  filter: none;
   overflow: visible;
 }
 
@@ -1564,8 +1553,8 @@ html[data-theme="light"] .docs-sidebar {
 }
 
 .article-pagination__link:hover {
-  border-color: var(--accent-border);
-  background: var(--surface);
+  border-color: var(--surface-border);
+  background: var(--surface-hover);
 }
 
 .article-pagination__link--next {
@@ -2692,8 +2681,8 @@ html[data-theme="light"] .docs-sidebar {
 
 .search-trigger--hero:hover,
 .search-trigger--hero:focus-visible {
-  border-color: var(--accent-border);
-  background: var(--surface);
+  border-color: var(--surface-border);
+  background: var(--surface-hover);
 }
 
 .search-trigger--hero .search-trigger__label {
@@ -2828,8 +2817,8 @@ html[data-theme="light"] .docs-sidebar {
 .learning-path a.learning-path__card:hover,
 .learning-path a.learning-path__card:focus-visible {
   padding-left: 18px;
-  border-color: var(--accent-border);
-  background: color-mix(in srgb, var(--surface) 92%, var(--accent-subtle));
+  border-color: var(--surface-border);
+  background: var(--surface-hover);
   box-shadow: var(--shadow-card-lift);
   transform: translateY(-1px);
 }
@@ -2896,7 +2885,7 @@ html[data-theme="light"] .docs-sidebar {
 
 .learning-path a.learning-path__card:hover .learning-path__arrow,
 .learning-path a.learning-path__card:focus-visible .learning-path__arrow {
-  color: var(--accent-text);
+  color: var(--text-secondary);
   transform: translateX(3px);
 }
 
@@ -2935,16 +2924,8 @@ html[data-theme="light"] .docs-sidebar {
 
 .feature-grid .doc-card--coming-soon:hover,
 .feature-grid .doc-card--coming-soon:focus-visible {
-  border-color: color-mix(
-    in srgb,
-    var(--accent-border) 62%,
-    var(--surface-border)
-  );
-  background: color-mix(
-    in srgb,
-    var(--surface) 92%,
-    var(--accent-subtle)
-  );
+  border-color: var(--surface-border);
+  background: var(--surface-hover);
 }
 
 .feature-grid .doc-card__indicator--badge {
