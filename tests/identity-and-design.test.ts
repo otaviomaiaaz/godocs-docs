@@ -142,11 +142,13 @@ function pixelAt(image: DecodedPng, x: number, y: number) {
 }
 
 function cssRuleBlock(css: string, selector: string): string {
-  const selectorStart = css.indexOf(`${selector} {`);
+  const normalizedCss = css.replaceAll("\r\n", "\n");
+  const normalizedSelector = selector.replaceAll("\r\n", "\n");
+  const selectorStart = normalizedCss.indexOf(`${normalizedSelector} {`);
   expect(selectorStart).toBeGreaterThanOrEqual(0);
-  const blockStart = css.indexOf("{", selectorStart);
-  const blockEnd = css.indexOf("}", blockStart);
-  return css.slice(blockStart + 1, blockEnd);
+  const blockStart = normalizedCss.indexOf("{", selectorStart);
+  const blockEnd = normalizedCss.indexOf("}", blockStart);
+  return normalizedCss.slice(blockStart + 1, blockEnd);
 }
 
 function cssProperty(css: string, selector: string, property: string): string {
