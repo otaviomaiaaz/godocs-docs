@@ -24,9 +24,9 @@ O sucesso significa que as informações são claras e fáceis de encontrar, que
 
 ## Positioning
 
-O GoDocs Docs é a referência oficial voltada aos usuários finais do GoDocs 4. Reúne orientação inicial e documentação prática das funcionalidades em uma experiência pública, pesquisável e organizada para aprendizado e consulta durante o trabalho.
+O GoDocs Docs é a referência oficial voltada aos usuários finais do GoDocs 4. Reúne orientação inicial e documentação prática das funcionalidades em uma experiência autenticada, pesquisável e organizada para aprendizado e consulta durante o trabalho.
 
-O Notion não é um canal alternativo para os leitores: ele é utilizado somente de forma interna para autoria, organização e preparação do conteúdo. O conteúdo passa a fazer parte da experiência pública quando é versionado e publicado no GoDocs Docs.
+O Notion não é um canal alternativo para os leitores: ele é utilizado somente de forma interna para autoria, organização e preparação do conteúdo. O conteúdo passa a fazer parte da experiência autenticada quando é versionado e publicado no GoDocs Docs.
 
 ## Operating Context
 
@@ -34,15 +34,16 @@ Os usuários consultam a documentação ao realizar o primeiro acesso, aprender 
 
 O uso do GoDocs acontece em ambientes e workspaces configurados para cada organização. Funcionalidades e ações disponíveis podem variar conforme o ambiente, os módulos habilitados e as permissões atribuídas ao usuário.
 
-O conteúdo pode ser preparado internamente no Notion e é publicado no GoDocs Docs para consulta dos leitores. O Notion não faz parte da experiência pública da documentação.
+O conteúdo pode ser preparado internamente no Notion e é publicado no GoDocs Docs para consulta de leitores autenticados. O Notion não faz parte da experiência de leitura da documentação.
 
 ## Capabilities and Constraints
 
-- A aplicação documenta o GoDocs 4, mas não integra seu código, APIs, autenticação ou serviços privados.
-- O conteúdo público é escrito em português do Brasil e armazenado no repositório em arquivos Markdown/MDX.
+- A aplicação documenta o GoDocs 4, mas não integra seu código ou APIs privadas; a evolução aprovada do Editor acrescentará autenticação própria para proteger a documentação e controlar autoria.
+- O conteúdo publicado é escrito em português do Brasil e armazenado no repositório em arquivos Markdown/MDX.
 - A mesma coleção normalizada de conteúdo alimenta artigos, rotas, navegação, busca local da documentação, sumário e paginação.
 - O site oferece busca local na documentação, temas claro e escuro e experiência responsiva e acessível.
-- A aplicação atual não utiliza banco de dados ou CMS em tempo de execução; o Notion permanece uma ferramenta interna de preparação editorial.
+- A aplicação atual não utiliza banco de dados ou CMS em tempo de execução; o Notion permanece uma ferramenta interna de preparação editorial. O Editor e sua persistência serão introduzidos progressivamente em lotes próprios.
+- A leitura da documentação exigirá sessão autenticada. Não haverá cadastro público irrestrito: o MVP adotará convite e os usuários autenticados sem papel administrativo terão acesso somente de leitura.
 - A documentação deve preservar diferenças entre ambientes, módulos e permissões quando elas afetarem o procedimento descrito.
 - A documentação deve ser escrita de forma compatível com o caráter white-label do GoDocs, evitando exemplos, nomes, processos ou estruturas específicos de uma única organização quando não fizerem parte do funcionamento geral do produto.
 - Quando uma ação depender de permissão, perfil, responsabilidade ou configuração, a documentação deve deixar essa dependência clara e evitar generalizar que todos os usuários podem executar a ação.
@@ -71,7 +72,7 @@ O conteúdo pode ser preparado internamente no Notion e é publicado no GoDocs D
 2. **Clareza antes de promoção:** a interface e o texto existem para encontrar, compreender e aplicar informação.
 3. **Verdade antes de completude:** é preferível registrar uma lacuna ou variação de contexto a inventar um comportamento do GoDocs.
 4. **Aprendizado e consulta no mesmo canal:** a documentação deve acolher iniciantes sem dificultar a leitura rápida de usuários experientes.
-5. **Uma fonte pública coerente:** artigos, navegação, busca e demais formas de descoberta devem derivar do mesmo conteúdo publicado.
+5. **Uma fonte publicada coerente:** artigos, navegação, busca e demais formas de descoberta devem derivar do mesmo conteúdo publicado.
 6. **Detalhamento proporcional à complexidade:** conteúdos simples devem ser breves e suficientes; funcionalidades, processos ou decisões com maior complexidade, dependências, permissões ou consequências devem receber o contexto necessário para serem compreendidos com segurança.
 7. **Neutralidade white-label:** exemplos e explicações devem funcionar em diferentes organizações e não transformar configurações específicas de um ambiente em regras universais do GoDocs.
 8. **Permissões com contexto:** ações de criação, consulta, edição, movimentação, exclusão e configuração devem ser tratadas de acordo com o perfil, a responsabilidade e as permissões aplicáveis, sem presumir acesso uniforme.
