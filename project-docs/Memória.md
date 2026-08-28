@@ -1,21 +1,18 @@
 # GoDocs Docs — Memória consolidada
 
 > **Última consolidação:** 28/08/2026
-> **Estado geral:** produção e desenvolvimento separados; E1 preservado somente no fluxo de desenvolvimento.
+> **Estado geral:** `main` e `develop` são bases estáveis sem E1; o Editor está preservado e pausado em `feature/editor`.
 > **Baseline remoto de produção confirmado:** `ee9b6b1` — `Corrige configuração do pnpm no Vercel`.
 > **Snapshot local do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
 
 ## Separação consolidada de ambientes
 
 - `main` é produção e permanece sem o E1. A pasta `godocs-docs` fica associada a essa branch.
-- `feature/editor` contém o snapshot integral do E1 e recebe a continuação funcional do Editor.
-- `develop` é integração/testes e recebe o E1 por merge rastreável. A pasta irmã `godocs-docs-dev` é o worktree de desenvolvimento.
-- Funcionalidades futuras nascem em `feature/*`; somente mudanças aprovadas são promovidas isoladamente para `main`.
-- Supabase Production e Supabase Development são projetos separados. Migrations, usuários fictícios, owner de teste e operações mutáveis do Editor permanecem em Development até aprovação específica.
-- Vercel Production acompanha `main`; `develop` e `feature/*` usam Preview/Staging com variáveis próprias de desenvolvimento.
+- `develop` é a base estável de desenvolvimento, alinhada à `main` e sem o E1. A pasta irmã `godocs-docs-dev` permanece seu worktree.
+- `feature/editor` contém o snapshot integral do E1 e está pausada; não deve ser integrada em `develop` até uma decisão explícita de retomada.
+- Funcionalidades futuras e independentes nascem em `feature/*` a partir de `develop`; somente mudanças aprovadas são promovidas isoladamente para `main`.
+- Supabase, migrations, usuários fictícios, bootstrap e variáveis Preview do Editor não são pendências imediatas. Serão tratados somente quando `feature/editor` for retomada.
 - Esta reorganização é local: não houve push, deploy, alteração de secrets externos, migration em produção nem bootstrap de owner.
-
-Pendências externas: criar/configurar Supabase Development, aplicar ali a migration `202608280001_identity_and_access.sql`, criar um usuário fictício e executar o bootstrap controlado, configurar variáveis Preview do Vercel e confirmar no painel que a Production Branch é `main`.
 
 ## Estado atual
 
@@ -103,11 +100,11 @@ Lote 9   pendente
 ## Próximo marco
 
 ```text
-separação local concluída
+Editor preservado e pausado em feature/editor
 ↓
-configurar Supabase Development e variáveis Preview do Vercel
+desenvolver a próxima melhoria independente em feature/*
 ↓
-validar o E1 em Preview sem alterar produção
+retomar o Editor e o Supabase somente quando autorizado
 ```
 
 UI UX PRO MAX está instalada e foi utilizada pontualmente no Lote 4. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo; decisões visuais detalhadas permanecem reservadas ao Lote 6 e ao `DESIGN.md`.

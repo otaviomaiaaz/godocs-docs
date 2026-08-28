@@ -2,13 +2,13 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 28 de agosto de 2026, separação local de produção e desenvolvimento (UTC−03:00)
-> **Estado geral:** `main` preserva a produção sem E1; `feature/editor` preserva o E1; `develop` integra o E1 para testes.
-> **Fase atual:** reorganização local concluída; infraestrutura externa de Development/Preview ainda pendente.
+> **Última atualização:** 28 de agosto de 2026, Editor pausado e `develop` realinhada à base estável (UTC−03:00)
+> **Estado geral:** `main` e `develop` não contêm E1; `feature/editor` preserva o E1 congelado.
+> **Fase atual:** `develop` pronta para a próxima melhoria independente; Editor e infraestrutura associada pausados.
 > **Baseline remoto de produção confirmado:** `ee9b6b1` — `Corrige configuração do pnpm no Vercel`.
 > **Snapshot local do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** configurar Supabase Development e variáveis Preview do Vercel; depois validar o E1 fora da produção.
+> **Próxima ação principal:** iniciar somente uma melhoria independente aprovada a partir de `develop`, em uma nova `feature/*`.
 
 ---
 
@@ -60,11 +60,10 @@ godocs-docs → main
 baseline sem E1: ee9b6b1
 
 AMBIENTE DE DESENVOLVIMENTO LOCAL
-godocs-docs-dev → develop / feature/*
+godocs-docs-dev → develop, alinhada à main e sem E1
 
 EDITOR E1
-feature/editor → be80a03
-develop → integração rastreável do E1
+feature/editor → be80a03, preservada e pausada
 
 ESTADO DO LOTE 1
 Versionado
@@ -86,7 +85,7 @@ LOTE 5 — DISCOVERY / CONSOLIDAÇÃO
 Concluído; SHA funcional 34ffcb9
 
 PRÓXIMO PASSO
-Supabase Development + variáveis Preview do Vercel + validação isolada do E1
+Melhoria independente aprovada, criada a partir de develop em feature/*
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
@@ -100,7 +99,7 @@ Instalada e usada pontualmente, de forma consultiva, no Lote 4
 VERCEL
 Último success explicitamente registrado: 700998c
 Production Branch deve permanecer main
-develop e feature/* devem usar Preview/Staging
+Nenhuma alteração de Preview/Supabase é necessária enquanto o Editor estiver pausado
 Nenhum deploy foi executado nesta reorganização
 ```
 
@@ -158,14 +157,14 @@ Estado conhecido:
 | Item | Situação |
 |---|---|
 | Produção | `main` / `godocs-docs` |
-| Integração | `develop` / `godocs-docs-dev` |
-| Editor | `feature/editor`, E1 preservado em `be80a03` |
+| Desenvolvimento | `develop` / `godocs-docs-dev`, alinhada à `main` e sem E1 |
+| Editor | `feature/editor`, E1 preservado e pausado em `be80a03` |
 | Deploy | Vercel |
 | Conteúdo | Markdown/MDX local |
 | CMS público | Não |
 | Supabase Production | não alterado nesta reorganização |
-| Supabase Development | criação/configuração externa pendente |
-| Autenticação do E1 | implementada somente nas branches de desenvolvimento |
+| Supabase Development | não criar/configurar enquanto o Editor estiver pausado |
+| Autenticação do E1 | preservada somente em `feature/editor` |
 
 ### Histórico de HEADs relevantes
 

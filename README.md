@@ -27,8 +27,8 @@ godocs-docs-dev
 ```
 
 - `main` recebe somente mudanças finalizadas, testadas e aprovadas.
-- `develop` integra features para validação conjunta; não deve ser promovida inteira quando contiver trabalho ainda não aprovado.
-- `feature/editor` preserva o E1 do Editor e é a branch para sua continuação.
+- `develop` é a base estável para integração e validação de melhorias independentes; não deve ser promovida inteira quando contiver trabalho ainda não aprovado.
+- `feature/editor` preserva o E1 do Editor, que está pausado. Não a integre em `develop` nem inicie trabalho do Editor até uma decisão explícita de retomada.
 - Para trabalhar em uma feature, use `godocs-docs-dev`, confirme `git status --short --branch` e troque para a branch necessária. Não desenvolva na pasta de produção.
 
 Fluxo recomendado:
@@ -42,19 +42,9 @@ Se a feature já estiver misturada a outras integrações, crie uma branch de pr
 
 ## Configuração local e serviços externos
 
-Arquivos `.env*` reais são ignorados pelo Git. Nas branches que contêm o E1, copie `.env.example` para `.env.local` somente no worktree de desenvolvimento e use um projeto Supabase Development separado. Não reutilize chaves, usuários ou dados de produção.
+Arquivos `.env*` reais continuam ignorados pelo Git. Enquanto o Editor estiver pausado, não crie `.env.local`, projeto Supabase, usuário de teste, migration ou bootstrap para ele. A configuração registrada no snapshot `feature/editor` será retomada somente quando essa frente voltar a ser autorizada.
 
-O ambiente de desenvolvimento do E1 exige:
-
-```dotenv
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-DOCS_ACCESS_MODE=authenticated
-```
-
-`SUPABASE_SECRET_KEY` (ou a chave legada `SUPABASE_SERVICE_ROLE_KEY`) e `DOCS_OWNER_BOOTSTRAP_USER_ID` são temporários e exclusivamente server-side para o bootstrap controlado do owner de desenvolvimento. Consulte `project-docs/EDITOR_E1_SETUP.md` na `feature/editor`/`develop` antes de configurar o Supabase; não execute esse procedimento contra produção sem aprovação própria.
-
-No Vercel, a configuração externa deve manter `main` como **Production Branch**. `develop` e `feature/*` usam Preview Deployments e variáveis de Preview apontando para Supabase Development. Variáveis de Production apontam exclusivamente para Supabase Production. Um domínio de staging pode ser associado a `develop`, desde que não substitua o domínio de produção e tenha proteção de preview apropriada.
+No Vercel, mantenha `main` como **Production Branch**. Esta pausa não exige alterar variáveis, Preview Deployments, domínios ou secrets. Melhorias futuras e independentes podem usar `feature/*` e Preview Deployments sem introduzir dependência de Supabase.
 
 ## Adicionar um documento
 

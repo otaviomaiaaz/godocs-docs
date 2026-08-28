@@ -143,7 +143,8 @@ Ao concluir, informe de forma concisa:
 
 - Antes de alterar arquivos, confirme a pasta, a branch, o `HEAD` e o estado do working tree.
 - `main` representa produção. Não desenvolva diretamente nela e não adicione funcionalidades incompletas, migrations experimentais ou dependências exclusivas de trabalho não aprovado.
-- `develop` é a branch de integração e testes. Funcionalidades devem nascer em `feature/*`; o Editor continua em `feature/editor`.
+- `develop` é a base estável de integração e testes, alinhada à `main`. Funcionalidades em andamento devem nascer em `feature/*`.
+- O Editor está pausado: `feature/editor` preserva o E1, mas não deve ser integrada em `develop` nem receber desenvolvimento até uma autorização explícita de retomada.
 - A pasta `godocs-docs` permanece no worktree de produção, em `main`. A pasta irmã `godocs-docs-dev` é o worktree de desenvolvimento, normalmente em `develop` ou na `feature/*` ativa.
 - Não promova `develop` inteiro para `main` quando ele contiver frentes ainda não aprovadas. Promova somente a feature aprovada por PR isolada ou por commits selecionados sobre uma branch criada a partir de `main`.
 - Ambientes de desenvolvimento e preview nunca devem usar credenciais privilegiadas nem banco de produção para operações mutáveis.
