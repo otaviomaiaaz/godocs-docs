@@ -138,3 +138,14 @@ Ao concluir, informe de forma concisa:
 - decisões técnicas relevantes;
 - validações executadas e resultados;
 - limitações, riscos ou pendências reais.
+
+## 11. Ambientes, branches e publicação
+
+- Antes de alterar arquivos, confirme a pasta, a branch, o `HEAD` e o estado do working tree.
+- `main` representa produção. Não desenvolva diretamente nela e não adicione funcionalidades incompletas, migrations experimentais ou dependências exclusivas de trabalho não aprovado.
+- `develop` é a branch de integração e testes. Funcionalidades devem nascer em `feature/*`; o Editor continua em `feature/editor`.
+- A pasta `godocs-docs` permanece no worktree de produção, em `main`. A pasta irmã `godocs-docs-dev` é o worktree de desenvolvimento, normalmente em `develop` ou na `feature/*` ativa.
+- Não promova `develop` inteiro para `main` quando ele contiver frentes ainda não aprovadas. Promova somente a feature aprovada por PR isolada ou por commits selecionados sobre uma branch criada a partir de `main`.
+- Ambientes de desenvolvimento e preview nunca devem usar credenciais privilegiadas nem banco de produção para operações mutáveis.
+- Não aplique migrations em Supabase Production, não execute bootstrap de owner, não altere secrets do Vercel e não faça push ou deploy sem autorização explícita para a operação e para o ambiente correto.
+- Arquivos `.env*` reais permanecem locais e ignorados. Somente exemplos sem valores sensíveis podem ser versionados.

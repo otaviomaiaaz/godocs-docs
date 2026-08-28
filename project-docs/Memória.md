@@ -1,12 +1,25 @@
 # GoDocs Docs — Memória consolidada
 
-> **Última consolidação:** 21/08/2026
-> **Estado geral:** Lotes 1, 2, 3, 4 e 5 concluídos; a próxima frente é o Lote 6 — Home + Hubs + identidade visual.
-> **Última implementação funcional aprovada:** `34ffcb9` — `Implementacao do Lote 5`.
+> **Última consolidação:** 28/08/2026
+> **Estado geral:** produção e desenvolvimento separados; E1 preservado somente no fluxo de desenvolvimento.
+> **Baseline remoto de produção confirmado:** `ee9b6b1` — `Corrige configuração do pnpm no Vercel`.
+> **Snapshot local do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
+
+## Separação consolidada de ambientes
+
+- `main` é produção e permanece sem o E1. A pasta `godocs-docs` fica associada a essa branch.
+- `feature/editor` contém o snapshot integral do E1 e recebe a continuação funcional do Editor.
+- `develop` é integração/testes e recebe o E1 por merge rastreável. A pasta irmã `godocs-docs-dev` é o worktree de desenvolvimento.
+- Funcionalidades futuras nascem em `feature/*`; somente mudanças aprovadas são promovidas isoladamente para `main`.
+- Supabase Production e Supabase Development são projetos separados. Migrations, usuários fictícios, owner de teste e operações mutáveis do Editor permanecem em Development até aprovação específica.
+- Vercel Production acompanha `main`; `develop` e `feature/*` usam Preview/Staging com variáveis próprias de desenvolvimento.
+- Esta reorganização é local: não houve push, deploy, alteração de secrets externos, migration em produção nem bootstrap de owner.
+
+Pendências externas: criar/configurar Supabase Development, aplicar ali a migration `202608280001_identity_and_access.sql`, criar um usuário fictício e executar o bootstrap controlado, configurar variáveis Preview do Vercel e confirmar no painel que a Production Branch é `main`.
 
 ## Estado atual
 
-O Lote 5 — Discovery / Consolidação está concluído no commit `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). Ele implementou Related / Próximos Passos como descoberta contextual curada, sem alterar a busca, a paginação hierárquica, URLs ou aliases. A associação desse SHA a um deployment específico da Vercel não é inferida.
+O histórico dos lotes editoriais e visuais permanece preservado. O Lote 5 — Discovery / Consolidação foi concluído no commit `34ffcb9eae1c155b66f07abc7efa2cdb68195471`; depois dele, os lotes visuais e o E0 chegaram ao baseline `ee9b6b1`. A associação desse SHA a um deployment específico da Vercel não é inferida.
 
 **Estado atual em uma frase:** Documentos e Workflows preservam compatibilidade histórica de `30/30` e `49/49`; a busca local determinística mantém diversidade por documento e baseline de `250/250` testes, enquanto Related conecta somente contextos editoriais não sequenciais.
 
@@ -90,11 +103,11 @@ Lote 9   pendente
 ## Próximo marco
 
 ```text
-Lote 5 concluído e versionado (`34ffcb9`)
+separação local concluída
 ↓
-fechamento documental
+configurar Supabase Development e variáveis Preview do Vercel
 ↓
-Lote 6 — Home + Hubs + identidade visual
+validar o E1 em Preview sem alterar produção
 ```
 
 UI UX PRO MAX está instalada e foi utilizada pontualmente no Lote 4. Ela não substitui `DESIGN.md` nem constitui um Design System paralelo; decisões visuais detalhadas permanecem reservadas ao Lote 6 e ao `DESIGN.md`.

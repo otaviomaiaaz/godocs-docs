@@ -2,12 +2,13 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 21 de agosto de 2026, fechamento documental do Lote 5 (UTC−03:00)
-> **Estado geral:** Lotes 1, 2, 3, 4 e 5 da Nova Arquitetura concluídos e sincronizados no GitHub.
-> **Fase atual:** fechamento documental do Lote 5; próxima frente Lote 6 — Home + Hubs + identidade visual.
-> **Commit mais recente confirmado:** `34ffcb9` — `Implementacao do Lote 5`.
+> **Última atualização:** 28 de agosto de 2026, separação local de produção e desenvolvimento (UTC−03:00)
+> **Estado geral:** `main` preserva a produção sem E1; `feature/editor` preserva o E1; `develop` integra o E1 para testes.
+> **Fase atual:** reorganização local concluída; infraestrutura externa de Development/Preview ainda pendente.
+> **Baseline remoto de produção confirmado:** `ee9b6b1` — `Corrige configuração do pnpm no Vercel`.
+> **Snapshot local do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
 > **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** revisar e versionar este fechamento documental antes de iniciar o Lote 6.
+> **Próxima ação principal:** configurar Supabase Development e variáveis Preview do Vercel; depois validar o E1 fora da produção.
 
 ---
 
@@ -54,11 +55,16 @@ GoDocs Docs
 REPOSITÓRIO
 otaviomaiaaz/godocs-docs
 
-BRANCH
-main
+AMBIENTE DE PRODUÇÃO LOCAL
+godocs-docs → main
+baseline sem E1: ee9b6b1
 
-HEAD ATUAL CONFIRMADO
-34ffcb9 — Implementacao do Lote 5
+AMBIENTE DE DESENVOLVIMENTO LOCAL
+godocs-docs-dev → develop / feature/*
+
+EDITOR E1
+feature/editor → be80a03
+develop → integração rastreável do E1
 
 ESTADO DO LOTE 1
 Versionado
@@ -79,8 +85,8 @@ COLEÇÃO DO LOTE 1 VERSIONADO
 LOTE 5 — DISCOVERY / CONSOLIDAÇÃO
 Concluído; SHA funcional 34ffcb9
 
-PRÓXIMO LOTE
-Lote 6 — Home + Hubs + identidade visual
+PRÓXIMO PASSO
+Supabase Development + variáveis Preview do Vercel + validação isolada do E1
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
@@ -93,7 +99,9 @@ Instalada e usada pontualmente, de forma consultiva, no Lote 4
 
 VERCEL
 Último success explicitamente registrado: 700998c
-Estado do SHA atual não confirmado
+Production Branch deve permanecer main
+develop e feature/* devem usar Preview/Staging
+Nenhum deploy foi executado nesta reorganização
 ```
 
 ### Observação sobre “publicado”
@@ -149,12 +157,15 @@ Estado conhecido:
 
 | Item | Situação |
 |---|---|
-| Branch principal | `main` |
+| Produção | `main` / `godocs-docs` |
+| Integração | `develop` / `godocs-docs-dev` |
+| Editor | `feature/editor`, E1 preservado em `be80a03` |
 | Deploy | Vercel |
 | Conteúdo | Markdown/MDX local |
 | CMS público | Não |
-| Banco de dados próprio da documentação | Não |
-| Autenticação própria da documentação | Não |
+| Supabase Production | não alterado nesta reorganização |
+| Supabase Development | criação/configuração externa pendente |
+| Autenticação do E1 | implementada somente nas branches de desenvolvimento |
 
 ### Histórico de HEADs relevantes
 
@@ -166,7 +177,7 @@ cc5f6e1 — Redesign - Implementação do Lote 1
 
 O Lote 2 foi desenvolvido sobre esse estado. As validações intermediárias ocorreram antes dos commits finais; o fechamento foi consolidado e sincronizado posteriormente em `0ae9420`.
 
-O checkpoint funcional do Lote 4 é `5c8a7c120aba1d6afd323621a7ec186776178bd6` — `Implementacao do Lote 4`; ele foi usado na validação visual. O `HEAD` atual, alinhado com `origin/main`, é `5b69be4e0fb08ceb4832f6f8973bd8c2886ada38` — `Ajusta lint para ignorar skills`, uma correção de infraestrutura posterior que não substitui a referência funcional da busca.
+O checkpoint funcional do Lote 4 é `5c8a7c120aba1d6afd323621a7ec186776178bd6` — `Implementacao do Lote 4`; ele foi usado na validação visual. Em 28/08/2026, o baseline remoto revalidado de produção é `ee9b6b1823e56e2f42520a0aee524a7788ff8475`, alinhado a `origin/main` antes do commit documental local desta reorganização. O E1 foi preservado separadamente em `be80a0309d0c1daaef6dd55d8172510bd94ce0c4`.
 
 ### Deploy
 
