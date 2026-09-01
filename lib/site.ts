@@ -7,6 +7,10 @@ export const SITE_URL = new URL(
 );
 export const SITE_LOCALE = "pt_BR";
 
+export const APP_VERSION = (
+  process.env.NEXT_PUBLIC_APP_VERSION || "dev"
+).replace(/^v/, "");
+
 export const SITE_BASE_PATH = "/docs";
 
 export function absoluteUrl(path = "/"): string {

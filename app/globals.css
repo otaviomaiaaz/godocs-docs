@@ -3144,3 +3144,15 @@ html[data-theme="light"] .docs-sidebar {
     transform: none;
   }
 }
+
+.doc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border, #d5d8de);
+  font-size: 13px;
+  color: var(--muted-foreground, #6f819b);
+}

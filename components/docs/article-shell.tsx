@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Breadcrumbs } from "@/components/docs/breadcrumbs";
 import { AnchorCompatibility } from "@/components/docs/anchor-compatibility";
 import { DocsSidebar } from "@/components/docs/docs-sidebar";
+import { DocFooter } from "@/components/docs/doc-footer";
 import { Pagination } from "@/components/docs/pagination";
 import { TableOfContents } from "@/components/docs/table-of-contents";
 import { CalendarDays, Clock3, ShieldCheck, Tag } from "lucide-react";
@@ -102,6 +103,7 @@ export function ArticleShell({
             </nav>
           ) : null}
           <Pagination next={next} previous={previous} />
+          <DocFooter updatedAt={doc.metadata.updatedAt} />
         </article>
 
         {hasToc ? <TableOfContents headings={doc.headings} /> : null}

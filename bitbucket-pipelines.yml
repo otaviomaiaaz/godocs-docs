@@ -82,7 +82,10 @@ definitions:
             else
               SITE_URL="${SITE_URL_STAGE:-https://app.stg.godocs4.com.br}"
             fi
-            echo "== canal=$CHANNEL  site=$SITE_URL"
+            # Versao no rodape: a tag da release quando houver, senao o sha curto —
+            # o mesmo criterio do front, para o rodape nunca dizer `vdev` na VM.
+            APP_VERSION="${BITBUCKET_TAG:-${BITBUCKET_COMMIT:0:7}}"
+            echo "== canal=$CHANNEL  site=$SITE_URL  versao=$APP_VERSION"
 
             IMAGE="$REGISTRY/$IMAGE_NAME"
             REGISTRY_HOST="${REGISTRY%%/*}"
@@ -104,6 +107,7 @@ definitions:
               --cache-from "$IMAGE:$CHANNEL" \
               --build-arg BUILDKIT_INLINE_CACHE=1 \
               --build-arg NEXT_PUBLIC_SITE_URL="$SITE_URL" \
+              --build-arg NEXT_PUBLIC_APP_VERSION="$APP_VERSION" \
               "${BUILD_TAGS[@]}" .
 
             docker push "$IMAGE:$BITBUCKET_COMMIT"

@@ -33,6 +33,10 @@ ENV NODE_ENV=production
 # host de produção (lib/site.ts).
 ARG NEXT_PUBLIC_SITE_URL=""
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+# Versao exibida no rodape, mesmas regras do front: sem valor vira `dev`, e o
+# `v` inicial e removido na leitura (lib/site.ts).
+ARG NEXT_PUBLIC_APP_VERSION=""
+ENV NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION
 # `pnpm build` roda o prebuild (content:validate) e o postbuild
 # (scripts/prepare-standalone.mjs, que copia .next/static e /public para dentro
 # do standalone).
