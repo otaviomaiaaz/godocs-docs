@@ -28,11 +28,25 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Domínio público da doc, POR CANAL. `NEXT_PUBLIC_*` é inlinada pelo `next build`,
+# então é build-time: é dela que saem canonical, og:url e o sitemap. Vazio = o
+# host de produção (lib/site.ts).
+ARG NEXT_PUBLIC_SITE_URL=""
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 # `pnpm build` roda o prebuild (content:validate) e o postbuild
 # (scripts/prepare-standalone.mjs, que copia .next/static e /public para dentro
 # do standalone).
 RUN --mount=type=cache,id=next,target=/app/.next/cache \
   pnpm build
+
+# --- sharp ----------------------------------------------------------------
+# Instalado FORA do standalone: o package.json que o Next gera carrega os
+# `overrides` do pnpm (`gray-matter>js-yaml`), sintaxe que o npm recusa com
+# EINVALIDTAGNAME. Num diretorio limpo o npm resolve sozinho os binarios da
+# plataforma do runner (musl) e a libvips irma.
+FROM node:22-alpine AS sharp
+WORKDIR /sharp
+RUN npm install --omit=dev sharp@0.35.3
 
 # --- Runner ---------------------------------------------------------------
 FROM node:22-alpine AS runner
@@ -46,6 +60,16 @@ RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+
+# O `sharp` é o que faz o otimizador redimensionar; sem ele o Next devolve o
+# arquivo ORIGINAL (as capturas dos artigos somam 12 MB). O tracing do Next o
+# copia para o standalone, mas deixa para trás a libvips irmã do layout do pnpm,
+# e o require morre em ERR_DLOPEN_FAILED. Instalar aqui resolve a plataforma do
+# runner (musl) e traz os dois.
+RUN rm -rf node_modules/sharp node_modules/@img
+COPY --from=sharp --chown=nextjs:nodejs /sharp/node_modules /opt/sharp/node_modules
+ENV NODE_PATH=/opt/sharp/node_modules
+
 
 USER nextjs
 EXPOSE 3000
