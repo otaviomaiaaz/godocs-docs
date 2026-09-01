@@ -14,6 +14,7 @@ type DocumentFigureProps = {
   height: number;
   caption?: string;
   loading?: "eager" | "lazy";
+  size?: "default" | "instructional";
   zoom?: boolean;
 };
 
@@ -24,6 +25,7 @@ export function DocumentFigure({
   height,
   caption,
   loading,
+  size = "default",
   zoom = true,
 }: DocumentFigureProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +46,11 @@ export function DocumentFigure({
       alt={alt}
       height={height}
       loading={loading}
-      sizes="(max-width: 767px) calc(100vw - 40px), 760px"
+      sizes={
+        size === "instructional"
+          ? "(max-width: 767px) calc(100vw - 40px), 34rem"
+          : "(max-width: 767px) calc(100vw - 40px), 760px"
+      }
       src={src}
       width={width}
     />
@@ -52,7 +58,13 @@ export function DocumentFigure({
 
   return (
     <>
-      <figure className="article-figure">
+      <figure
+        className={
+          size === "instructional"
+            ? "article-figure article-figure--instructional"
+            : "article-figure"
+        }
+      >
         {zoom ? (
           <button
             aria-label={`Ampliar imagem: ${alt}`}
