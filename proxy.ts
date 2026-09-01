@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { SITE_BASE_PATH } from "@/lib/site";
+
 export const config = {
   matcher: [
     "/",
@@ -17,7 +19,12 @@ export async function proxy(request: NextRequest) {
   const cookie = request.headers.get("cookie");
   if (cookie && (await hasValidSession(cookie))) return NextResponse.next();
 
-  return NextResponse.redirect(new URL(LOGIN_PATH, request.nextUrl.origin));
+  const login = new URL(LOGIN_PATH, request.nextUrl.origin);
+  login.searchParams.set(
+    "redirect",
+    `${SITE_BASE_PATH}${request.nextUrl.pathname}${request.nextUrl.search}`,
+  );
+  return NextResponse.redirect(login);
 }
 
 async function hasValidSession(cookie: string): Promise<boolean> {

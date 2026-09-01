@@ -13,7 +13,11 @@ function request(
   };
   return {
     headers: { get: (key: string) => headers[key] ?? null },
-    nextUrl: { origin: "https://cliente.godocs4.com.br", pathname },
+    nextUrl: {
+      origin: "https://cliente.godocs4.com.br",
+      pathname,
+      search: "",
+    },
   } as unknown as Parameters<typeof proxy>[0];
 }
 
@@ -38,7 +42,7 @@ describe("gate de sessão da doc", () => {
 
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe(
-      "https://cliente.godocs4.com.br/login",
+      "https://cliente.godocs4.com.br/login?redirect=%2Fdocs%2Fprimeiro-acesso",
     );
   });
 
