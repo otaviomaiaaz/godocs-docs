@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+.agents
+.codex
+.impeccable
+project-docs
+tests
+coverage
+Dockerfile
+.dockerignore
+npm-debug.log
+*.local
+.env*
