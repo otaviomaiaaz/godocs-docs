@@ -17,6 +17,7 @@ function request(
       origin: "https://cliente.godocs4.com.br",
       pathname,
       search: "",
+      searchParams: new URLSearchParams(),
     },
   } as unknown as Parameters<typeof proxy>[0];
 }

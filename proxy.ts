@@ -1,6 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { SITE_BASE_PATH } from "@/lib/site";
+import {
+  isPageRequest,
+  recordDocOpen,
+  resolveOrigin,
+  sessionIdFrom,
+} from "@/lib/telemetry";
 
 export const config = {
   matcher: [
@@ -17,7 +23,10 @@ export async function proxy(request: NextRequest) {
   if (request.headers.get("host") === null) return NextResponse.next();
 
   const cookie = request.headers.get("cookie");
-  if (cookie && (await hasValidSession(cookie))) return NextResponse.next();
+  if (cookie && (await hasValidSession(cookie))) {
+    await trackOpen(request, cookie);
+    return NextResponse.next();
+  }
 
   const login = new URL(LOGIN_PATH, request.nextUrl.origin);
   login.searchParams.set(
@@ -25,6 +34,21 @@ export async function proxy(request: NextRequest) {
     `${SITE_BASE_PATH}${request.nextUrl.pathname}${request.nextUrl.search}`,
   );
   return NextResponse.redirect(login);
+}
+
+async function trackOpen(request: NextRequest, cookie: string) {
+  if (!isPageRequest(request.nextUrl.pathname)) return;
+
+  recordDocOpen({
+    route: `${SITE_BASE_PATH}${request.nextUrl.pathname}`,
+    origin: resolveOrigin(
+      request.headers.get("referer"),
+      request.headers.get("host"),
+      request.nextUrl.searchParams.get("origem"),
+      SITE_BASE_PATH,
+    ),
+    sessionId: await sessionIdFrom(cookie),
+  });
 }
 
 async function hasValidSession(cookie: string): Promise<boolean> {
