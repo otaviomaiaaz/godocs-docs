@@ -21,8 +21,8 @@ describe("baseline determinístico da busca", () => {
       entries: 146,
       pages: 21,
       sections: 125,
-      rawBytes: 248_918,
-      gzipBytes: 29_229,
+      rawBytes: 245_726,
+      gzipBytes: 29_001,
       resultLimit: 12,
       snippetCharacters: 220,
     });

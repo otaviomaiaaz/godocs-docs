@@ -145,6 +145,7 @@ describe("conteúdo publicado", () => {
     expect(firstAccess?.source).toContain(
       'src="/docs/primeiro-acesso/primeiro-acesso-selecao-ambiente.png"',
     );
+    expect(firstAccess?.source.match(/size="instructional"/g)).toHaveLength(3);
     expect(firstAccess?.source.match(/loading="eager"/g)).toHaveLength(3);
 
     expect(overview?.metadata).toMatchObject({
@@ -178,7 +179,8 @@ describe("conteúdo publicado", () => {
 
     expect(smartSearch?.metadata).toMatchObject({
       title: "Busca Inteligente",
-      cardDescription: "Encontre documentos com busca semântica e filtros.",
+      cardDescription:
+        "Pesquise documentos por conteúdo, significado e filtros. Disponível em ambientes com o serviço contratado.",
       section: {
         id: "funcionalidades",
         order: 20,
@@ -187,6 +189,10 @@ describe("conteúdo publicado", () => {
     });
     expect(smartSearch?.href).toBe(
       "/docs/funcionalidades/busca-inteligente",
+    );
+    expect(smartSearch?.source).toContain('title="Disponibilidade"');
+    expect(smartSearch?.source).toContain(
+      "A **Busca Inteligente** é um serviço adicional do GoDocs e fica disponível nos ambientes que possuem o serviço contratado.",
     );
     expect(smartSearch?.headings.map((heading) => heading.title)).toEqual([
       "Realizando uma pesquisa",
@@ -265,7 +271,7 @@ describe("conteúdo publicado", () => {
         "Workflows",
         5,
         "Conheça a seção Workflows e encontre orientações para organizar processos, cards, fases, formulários e automações no GoDocs.",
-        "Crie e acompanhe processos organizados em workflows.",
+        "Crie e acompanhe processos com cards, fases e automações. Disponível em ambientes com o serviço contratado.",
       ],
       [
         reports,
@@ -288,6 +294,10 @@ describe("conteúdo publicado", () => {
     }
 
     expect(workflows?.metadata.pageType).toBe("hub");
+    expect(workflows?.source).toContain('title="Disponibilidade"');
+    expect(workflows?.source).toContain(
+      "**Workflows** é um serviço adicional do GoDocs e precisa estar contratado para ficar disponível no ambiente. As ações exibidas também podem variar conforme as permissões do usuário.",
+    );
     expect(
       docs
         .filter((doc) => doc.slug.startsWith("funcionalidades/workflows/"))

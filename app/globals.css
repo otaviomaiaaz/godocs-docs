@@ -1391,6 +1391,12 @@ html[data-theme="light"] .docs-sidebar {
   margin: 30px 0;
 }
 
+.article-figure--instructional {
+  width: min(100%, 34rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .article-figure figcaption {
   margin-top: 10px;
   color: var(--text-muted);
