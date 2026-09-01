@@ -2766,6 +2766,7 @@ html[data-theme="light"] .docs-sidebar {
   gap: var(--home-grid-gap);
   border-top: 0;
   counter-reset: none;
+  perspective: 1200px;
 }
 
 .learning-path::before {
@@ -2788,6 +2789,8 @@ html[data-theme="light"] .docs-sidebar {
 }
 
 .learning-path a.learning-path__card {
+  --learning-card-tilt-x: 0deg;
+  --learning-card-tilt-y: 0deg;
   position: relative;
   display: grid;
   height: 100%;
@@ -2803,17 +2806,19 @@ html[data-theme="light"] .docs-sidebar {
   border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text-primary);
+  transform: translateY(0) scale(1) rotateX(0deg) rotateY(0deg);
+  transform-style: preserve-3d;
   transition:
-    border-color var(--duration-base) var(--ease),
-    background-color var(--duration-base) var(--ease),
-    box-shadow var(--duration-base) var(--ease),
-    transform var(--duration-base) var(--ease);
+    border-color 280ms var(--ease),
+    background-color 280ms var(--ease),
+    box-shadow 280ms var(--ease),
+    transform 280ms var(--ease);
 }
 
 .learning-path a.learning-path__card::before {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 2px;
+  width: 1px;
   background: var(--accent-primary);
   content: "";
   opacity: 0;
@@ -2822,16 +2827,32 @@ html[data-theme="light"] .docs-sidebar {
 
 .learning-path a.learning-path__card:hover,
 .learning-path a.learning-path__card:focus-visible {
-  padding-left: 18px;
   border-color: var(--surface-border);
   background: var(--surface-hover);
   box-shadow: var(--shadow-card-lift);
   transform: translateY(-1px);
 }
 
-.learning-path a.learning-path__card:hover::before,
+.learning-path a.learning-path__card:focus-visible {
+  border-color: var(--focus-ring);
+  background: color-mix(in srgb, var(--surface-hover) 64%, var(--surface));
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-3px) scale(1.018);
+}
+
 .learning-path a.learning-path__card:focus-visible::before {
   opacity: 1;
+}
+
+.learning-path a.learning-path__card:focus-visible .learning-path__content {
+  transform: translateZ(14px);
+}
+
+.learning-path a.learning-path__card:focus-visible .learning-path__icon {
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--accent-subtle) 78%, var(--surface));
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent-primary) 16%, transparent);
+  transform: translateY(-2px) translateZ(16px) scale(1.08) rotate(-3deg);
 }
 
 .learning-path__step {
@@ -2847,6 +2868,8 @@ html[data-theme="light"] .docs-sidebar {
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
+  transform: translateZ(10px);
+  transition: transform 280ms var(--ease);
 }
 
 .learning-path__icon {
@@ -2858,6 +2881,12 @@ html[data-theme="light"] .docs-sidebar {
   border-radius: var(--radius-sm);
   background: var(--accent-subtle);
   color: var(--accent-text);
+  transition:
+    background-color 320ms var(--ease),
+    border-color 320ms var(--ease),
+    box-shadow 320ms var(--ease),
+    color 320ms var(--ease),
+    transform 320ms var(--ease);
 }
 
 .learning-path__body {
@@ -2885,14 +2914,13 @@ html[data-theme="light"] .docs-sidebar {
   align-self: center;
   color: var(--text-muted);
   transition:
-    color var(--duration-fast) var(--ease),
-    transform var(--duration-fast) var(--ease);
+    color 220ms var(--ease),
+    transform 220ms var(--ease);
 }
 
-.learning-path a.learning-path__card:hover .learning-path__arrow,
 .learning-path a.learning-path__card:focus-visible .learning-path__arrow {
-  color: var(--text-secondary);
-  transform: translateX(3px);
+  color: var(--accent-text);
+  transform: translateX(5px) translateZ(14px);
 }
 
 .feature-grid {
@@ -2900,6 +2928,7 @@ html[data-theme="light"] .docs-sidebar {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   gap: var(--home-grid-gap);
+  perspective: 1200px;
 }
 
 .feature-grid > li {
@@ -2913,15 +2942,173 @@ html[data-theme="light"] .docs-sidebar {
   padding: 16px 18px;
 }
 
-.feature-grid .doc-card--active:hover,
-.feature-grid .doc-card--active:focus-visible {
-  box-shadow: var(--shadow-card-lift);
-  transform: translateY(-1px);
+.feature-grid .doc-card--feature {
+  --doc-card-tilt-x: 0deg;
+  --doc-card-tilt-y: 0deg;
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  transform: translateY(0) rotateX(0deg) rotateY(0deg);
+  transform-style: preserve-3d;
+}
+
+.feature-grid .doc-card--feature .doc-card__icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border-color: color-mix(
+    in srgb,
+    var(--accent-border) 62%,
+    var(--surface-border)
+  );
+  background: color-mix(in srgb, var(--accent-subtle) 58%, var(--surface));
+  transition:
+    border-color 320ms var(--ease),
+    background-color 320ms var(--ease),
+    box-shadow 320ms var(--ease),
+    color 320ms var(--ease),
+    transform 320ms var(--ease);
+}
+
+.feature-grid .doc-card--feature .doc-card__body {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 8px;
+  transform: translateZ(12px);
+  transition: transform 280ms var(--ease);
+}
+
+.feature-grid .doc-card--feature .doc-card__title-row {
+  gap: 8px;
+}
+
+.feature-grid .doc-card--feature h3 {
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.feature-grid .doc-card--feature .doc-card__body p {
+  line-height: 1.6;
+}
+
+.feature-grid .doc-card--feature .doc-card__access {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  margin-top: 0;
+  color: var(--accent-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.feature-grid .doc-card--feature .doc-card__access-copy {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.feature-grid .doc-card--feature .doc-card__access-underline {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 320ms var(--ease);
+}
+
+.feature-grid .doc-card--feature .doc-card__access .doc-card__indicator--arrow {
+  margin-top: 0;
+  color: currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .feature-grid .doc-card--feature.doc-card--active:hover {
+    border-color: var(--accent-border);
+    background-color: color-mix(in srgb, var(--surface-hover) 64%, var(--surface));
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-4px) scale(1.028) rotateX(var(--doc-card-tilt-x)) rotateY(var(--doc-card-tilt-y));
+    will-change: transform;
+  }
+
+  .feature-grid .doc-card--feature.doc-card--active:hover .doc-card__icon {
+    border-color: var(--accent-border);
+    background: color-mix(in srgb, var(--accent-subtle) 78%, var(--surface));
+    box-shadow: 0 10px 20px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+    color: var(--accent-text);
+    transform: translateY(-2px) translateZ(18px) scale(1.08) rotate(-3deg);
+  }
+
+  .learning-path a.learning-path__card:hover {
+    border-color: var(--accent-border);
+    background: color-mix(in srgb, var(--surface-hover) 64%, var(--surface));
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-4px) scale(1.022) rotateX(var(--learning-card-tilt-x)) rotateY(var(--learning-card-tilt-y));
+    will-change: transform;
+  }
+
+  .learning-path a.learning-path__card:hover::before {
+    opacity: 1;
+  }
+
+  .learning-path a.learning-path__card:hover .learning-path__content {
+    transform: translateZ(14px);
+  }
+
+  .learning-path a.learning-path__card:hover .learning-path__icon {
+    border-color: var(--accent-border);
+    background: color-mix(in srgb, var(--accent-subtle) 78%, var(--surface));
+    box-shadow: 0 8px 18px color-mix(in srgb, var(--accent-primary) 16%, transparent);
+    transform: translateY(-2px) translateZ(16px) scale(1.08) rotate(-3deg);
+  }
+
+  .learning-path a.learning-path__card:hover .learning-path__arrow {
+    color: var(--accent-text);
+    transform: translateX(5px) translateZ(14px);
+  }
+}
+
+.feature-grid .doc-card--feature.doc-card--active:focus-visible {
+  border-color: var(--focus-ring);
+  background-color: color-mix(in srgb, var(--surface-hover) 64%, var(--surface));
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-4px) scale(1.018);
+}
+
+.feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__icon {
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--accent-subtle) 78%, var(--surface));
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-text);
+  transform: translateY(-2px) translateZ(18px) scale(1.08) rotate(-3deg);
+}
+
+.feature-grid .doc-card--feature.doc-card--active:hover .doc-card__access-underline,
+.feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__access-underline {
+  transform: scaleX(1);
+}
+
+.feature-grid .doc-card--feature.doc-card--active:hover .doc-card__access .doc-card__indicator--arrow,
+.feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__access .doc-card__indicator--arrow {
+  transform: translateX(4px);
 }
 
 .feature-grid .doc-card--active:active {
   box-shadow: none;
-  transform: translateY(0);
+  transform: translateY(-1px) scale(0.995);
 }
 
 .feature-grid .doc-card--coming-soon {
@@ -3113,6 +3300,12 @@ html[data-theme="light"] .docs-sidebar {
     min-height: 104px;
   }
 
+  .feature-grid .doc-card--feature {
+    min-height: 176px;
+    gap: 10px;
+    padding: 16px;
+  }
+
   .home-faq__empty {
     min-height: 0;
     align-items: flex-start;
@@ -3139,8 +3332,25 @@ html[data-theme="light"] .docs-sidebar {
 @media (prefers-reduced-motion: reduce) {
   .learning-path a.learning-path__card:hover,
   .learning-path a.learning-path__card:focus-visible,
+  .learning-path a.learning-path__card:hover .learning-path__content,
+  .learning-path a.learning-path__card:focus-visible .learning-path__content,
+  .learning-path a.learning-path__card:hover .learning-path__icon,
+  .learning-path a.learning-path__card:focus-visible .learning-path__icon,
   .learning-path a.learning-path__card:hover .learning-path__arrow,
   .learning-path a.learning-path__card:focus-visible .learning-path__arrow {
+    transform: none;
+  }
+
+  .feature-grid .doc-card--feature.doc-card--active:hover,
+  .feature-grid .doc-card--feature.doc-card--active:focus-visible,
+  .feature-grid .doc-card--feature.doc-card--active:active,
+  .feature-grid .doc-card--feature.doc-card--active:hover .doc-card__icon,
+  .feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__icon,
+  .feature-grid .doc-card--feature.doc-card--active:hover .doc-card__access .doc-card__indicator--arrow,
+  .feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__access .doc-card__indicator--arrow,
+  .feature-grid .doc-card--feature.doc-card--active:hover .doc-card__access-underline,
+  .feature-grid .doc-card--feature.doc-card--active:focus-visible .doc-card__access-underline {
+    box-shadow: none;
     transform: none;
   }
 }
