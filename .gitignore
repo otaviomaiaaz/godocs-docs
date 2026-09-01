@@ -43,3 +43,6 @@
 # Python cache
 __pycache__/
 *.py[cod]
+
+# release tooling (svu, git-cliff) baixada por scripts/release.sh
+.release-tools

@@ -1,0 +1,149 @@
+# CI do godocs4-client-docs (Bitbucket Pipelines).
+#
+# Mesmo contrato dos outros apps do GoDocs4 (ver docs/CICD.md no godocs4-deploy):
+#   PR                → qualidade (audit/content/lint/typecheck/unit)
+#   push em develop   → qualidade → build :<sha> + :stage → deploy STAGE
+#   tag vX.Y.Z        → qualidade → build :vX.Y.Z + :prod + :latest → deploy PROD
+#
+# Estratégia (a mesma da landing e do godocs4-syncer): trunk = `develop`; a PROD
+# só sai da TAG, criada localmente por ./scripts/release.sh (bump do package.json
+# + CHANGELOG na develop, depois `--tag`). A branch `main` não participa do deploy.
+#
+# Duas etapas por deploy:
+#   1. Build & push — runner CLOUD (services: docker). Publica no Harbor a tag
+#      imutável :<git-sha> (rollback) e a tag móvel do canal (:stage / :prod).
+#   2. Deploy       — runner SHELL self-hosted que vive na VM. Só chama
+#      scripts/v2-redeploy.sh no godocs4-deploy, que dá `docker compose pull/up -d`
+#      no serviço `docs` da stack godocs2. Nada é buildado na VM.
+#
+# A doc mora sob /docs no MESMO domínio da SPA — o basePath=/docs é build-time
+# (next.config.ts), então trocar o path exige uma imagem nova, não só env na VM.
+#
+# Repository variables (Repository settings → Pipelines → Repository variables):
+#   REGISTRY            host/projeto do Harbor, ex. harbor.fabrica.io/godocs
+#   REGISTRY_USER       robot com push no projeto (robot$godocs+ci)
+#   REGISTRY_PASSWORD   (Secured) token do robot de push
+# Deployment variables (Repository settings → Deployments):
+#   DEPLOYDIR           caminho do checkout do godocs4-deploy em cada VM
+
+image: node:22
+
+definitions:
+  caches:
+    # FORA do clone (~, não $BITBUCKET_CLONE_DIR): o store dentro da árvore do
+    # projeto faz o ESLint varrer as dependências extraídas.
+    pnpm: ~/.local/share/pnpm/store
+  yaml-anchors:
+    - &pnpm-setup |
+      corepack enable
+      corepack prepare --activate
+      pnpm install --frozen-lockfile
+  steps:
+    - step: &quality
+        name: Auditoria, conteúdo, lint, typecheck e testes
+        caches:
+          - pnpm
+        script:
+          - *pnpm-setup
+          - pnpm audit:prod
+          - pnpm content:validate
+          - pnpm lint
+          - pnpm typecheck
+          - pnpm test
+    - step: &build
+        name: Build & push (Harbor)
+        image: atlassian/default-image:4
+        services:
+          - docker
+        caches:
+          - docker
+        script:
+          - |
+            set -euo pipefail
+            IMAGE_NAME=godocs4-docs
+
+            # Contexto: tag vX.Y.Z → prod (release); branch develop → stage.
+            if [ -n "${BITBUCKET_TAG:-}" ]; then
+              CHANNEL=prod
+              VERSION_TAG="$BITBUCKET_TAG"
+            else
+              CHANNEL=stage
+              VERSION_TAG=""
+            fi
+            echo "== canal=$CHANNEL"
+
+            IMAGE="$REGISTRY/$IMAGE_NAME"
+            REGISTRY_HOST="${REGISTRY%%/*}"
+            echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" --password-stdin
+
+            # Runner cloud é efêmero: semeia o BuildKit com a última imagem do
+            # canal (--cache-from) e assa o manifesto inline na nova, para o
+            # próximo build reaproveitar as camadas (o `pnpm install`, sobretudo).
+            export DOCKER_BUILDKIT=1
+            docker pull "$IMAGE:$CHANNEL" || true
+            BUILD_TAGS=(-t "$IMAGE:$BITBUCKET_COMMIT" -t "$IMAGE:$CHANNEL")
+            # Em release (contexto de tag) também marca :vX.Y.Z e :latest. :latest =
+            # última release estável de prod, fallback final do compose
+            # (${IMAGE_TAG_DOCS:-${IMAGE_TAG:-latest}}). Stage NÃO mexe em :latest.
+            if [ -n "$VERSION_TAG" ]; then
+              BUILD_TAGS+=(-t "$IMAGE:$VERSION_TAG" -t "$IMAGE:latest")
+            fi
+            docker build \
+              --cache-from "$IMAGE:$CHANNEL" \
+              --build-arg BUILDKIT_INLINE_CACHE=1 \
+              "${BUILD_TAGS[@]}" .
+
+            docker push "$IMAGE:$BITBUCKET_COMMIT"
+            docker push "$IMAGE:$CHANNEL"
+            # if/fi (e não `[ ... ] && ...`): sendo o ÚLTIMO comando sob `set -e`, a
+            # forma curta sairia com status 1 nos builds de stage (VERSION_TAG vazia)
+            # e reprovaria o step inteiro.
+            if [ -n "$VERSION_TAG" ]; then
+              docker push "$IMAGE:$VERSION_TAG"
+              docker push "$IMAGE:latest"
+            fi
+  services:
+    docker:
+      memory: 3072
+
+pipelines:
+  pull-requests:
+    "**":
+      - step: *quality
+  branches:
+    develop:
+      - step: *quality
+      - step: *build
+      - step:
+          name: Deploy stage
+          deployment: staging
+          clone:
+            enabled: false
+          runs-on:
+            - self.hosted
+            - linux.shell
+            - godocs4.stage
+          script:
+            - cd "$DEPLOYDIR"
+            - git config --global --add safe.directory "$DEPLOYDIR"
+            - git pull --ff-only
+            - ./scripts/v2-redeploy.sh stage godocs4-docs "$BITBUCKET_COMMIT"
+  # Prod: disparado pela tag de versão (criada por ./scripts/release.sh --tag na develop).
+  tags:
+    "v*":
+      - step: *quality
+      - step: *build
+      - step:
+          name: Deploy prod
+          deployment: production
+          clone:
+            enabled: false
+          runs-on:
+            - self.hosted
+            - linux.shell
+            - godocs4.prod
+          script:
+            - cd "$DEPLOYDIR"
+            - git config --global --add safe.directory "$DEPLOYDIR"
+            - git pull --ff-only
+            - ./scripts/v2-redeploy.sh prod godocs4-docs "$BITBUCKET_TAG"

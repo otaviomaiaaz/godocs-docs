@@ -1,0 +1,53 @@
+# git-cliff — configuração de CHANGELOG (conventional commits, em PT).
+# Usado localmente por scripts/release.sh:
+#   git-cliff --tag "$NEXT" -o CHANGELOG.md
+# Doc: https://git-cliff.org/docs/configuration
+
+[changelog]
+header = """
+# Changelog
+
+Todas as mudanças notáveis deste projeto são documentadas aqui.
+Formato baseado em conventional commits; versionamento semântico (SemVer).\n
+"""
+# Template de cada release. Renderiza grupos (feat, fix, ...) por versão.
+body = """
+{% if version %}\
+## [{{ version | trim_start_matches(pat="v") }}] — {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+## [Não lançado]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first | upper_first }}\
+{% endfor %}
+{% endfor %}\n
+"""
+trim = true
+footer = ""
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+# Mapeia o prefixo do commit para um grupo legível em PT.
+commit_parsers = [
+  { message = "^feat", group = "Funcionalidades" },
+  { message = "^fix", group = "Correções" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Refatorações" },
+  { message = "^docs", group = "Documentação" },
+  { message = "^style", group = "Estilo" },
+  { message = "^test", group = "Testes" },
+  { message = "^build", group = "Build" },
+  { message = "^ci", group = "CI" },
+  { message = "^chore\\(release\\)", skip = true },
+  { message = "^chore", group = "Tarefas" },
+  { message = ".*", group = "Outros" },
+]
+protect_breaking_commits = true
+filter_commits = false
+tag_pattern = "v[0-9]*"
+topo_order = false
+sort_commits = "oldest"
