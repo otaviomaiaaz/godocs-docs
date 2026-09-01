@@ -53,6 +53,7 @@ describe("DocCard", () => {
         icon={BookOpen}
         status="comingSoon"
         title="Próximo guia"
+        variant="feature"
       />,
     );
 
@@ -70,6 +71,7 @@ describe("DocCard", () => {
     expect(card?.getAttribute("href")).toBe("/docs/proximo-guia");
     expect(card?.getAttribute("data-status")).toBe("comingSoon");
     expect(screen.getByText("Em breve")).toBeTruthy();
+    expect(screen.queryByText("Acessar")).toBeNull();
     expect(
       card?.querySelector(
         ".doc-card__actions > .doc-card__indicator--badge",
@@ -80,6 +82,32 @@ describe("DocCard", () => {
     );
     expect(
       card?.querySelector(".doc-card__indicator--arrow"),
+    ).toBeTruthy();
+  });
+
+  it("mantém a ação visual de recurso dentro do mesmo link ativo", () => {
+    const { container } = render(
+      <DocCard
+        description="Explicação do recurso."
+        href="/docs/recurso"
+        icon={BookOpen}
+        status="active"
+        title="Recurso"
+        variant="feature"
+      />,
+    );
+
+    const card = container.querySelector(".doc-card--feature");
+
+    expect(card?.tagName).toBe("A");
+    expect(card?.querySelector(".doc-card__access")?.textContent).toContain(
+      "Acessar",
+    );
+    expect(
+      card?.querySelector(".doc-card__access-underline"),
+    ).toBeTruthy();
+    expect(
+      card?.querySelector(".doc-card__access .doc-card__indicator--arrow"),
     ).toBeTruthy();
   });
 });
