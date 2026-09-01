@@ -3,7 +3,7 @@ export const SITE_HOME_TITLE = "Documentação do GoDocs";
 export const SITE_DESCRIPTION =
   "Encontre orientações para acessar, organizar documentos e utilizar os recursos do sistema.";
 export const SITE_URL = new URL(
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://app.godocs4.com.br",
+  process.env.NEXT_PUBLIC_SITE_URL || "https://app.godocs4.com.br",
 );
 export const SITE_LOCALE = "pt_BR";
 
