@@ -139,8 +139,53 @@ describe("home orientada ao conteúdo", () => {
     expect(
       (featureGrid as HTMLElement).querySelectorAll(".doc-card__icon"),
     ).toHaveLength(6);
+    expect(
+      (featureGrid as HTMLElement).querySelectorAll(".doc-card--feature"),
+    ).toHaveLength(6);
+    expect(
+      within(featureGrid as HTMLElement).queryByText(
+        "Disponível em ambientes com o serviço contratado.",
+      ),
+    ).toBeNull();
+    expect(
+      within(featureGrid as HTMLElement).getByRole("link", {
+        name: /Busca Inteligente.*Pesquise documentos por conteúdo, significado e filtros\./,
+      }),
+    ).toBeTruthy();
+    expect(
+      within(featureGrid as HTMLElement).getByRole("link", {
+        name: /Workflows.*Crie e acompanhe processos com cards, fases e automações\./,
+      }),
+    ).toBeTruthy();
+    expect(
+      within(learningPath as HTMLElement).queryByText("Acessar"),
+    ).toBeNull();
     expect(screen.queryByText("Guias mais acessados")).toBeNull();
     expect(screen.queryByText("Organizar documentos")).toBeNull();
+  });
+
+  it("preserva os avisos de disponibilidade nas páginas dos recursos", async () => {
+    const [searchContent, workflowsContent] = await Promise.all([
+      readFile(
+        path.join(
+          contentDirectory,
+          "funcionalidades",
+          "busca-inteligente.mdx",
+        ),
+        "utf8",
+      ),
+      readFile(
+        path.join(contentDirectory, "funcionalidades", "workflows.mdx"),
+        "utf8",
+      ),
+    ]);
+
+    expect(searchContent).toContain(
+      "Disponível em ambientes com o serviço contratado.",
+    );
+    expect(workflowsContent).toContain(
+      "Disponível em ambientes com o serviço contratado.",
+    );
   });
 
   it("mantém FAQ sem perguntas fictícias e remove os guias por popularidade", async () => {

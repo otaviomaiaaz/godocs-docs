@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import type { PointerEvent } from "react";
 
 import { Brand } from "@/components/brand";
 import { DocCard } from "@/components/doc-card";
@@ -53,6 +54,47 @@ const FEATURE_ICONS: Readonly<Record<string, LucideIcon>> = {
   "funcionalidades/workflows": GitBranch,
   "funcionalidades/relatorios": BarChart3,
 };
+
+const HOME_CARD_DESCRIPTION_REFINEMENTS: Readonly<Record<string, string>> = {
+  "funcionalidades/busca-inteligente":
+    "Pesquise documentos por conteúdo, significado e filtros.",
+  "funcionalidades/workflows":
+    "Crie e acompanhe processos com cards, fases e automações.",
+};
+
+function supportsPointerTilt(pointerType: string) {
+  return (
+    pointerType === "mouse" &&
+    window.matchMedia("(pointer: fine)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+function handleLearningPathPointerMove(
+  event: PointerEvent<HTMLAnchorElement>,
+) {
+  if (!supportsPointerTilt(event.pointerType)) return;
+
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const pointerX = (event.clientX - bounds.left) / bounds.width - 0.5;
+  const pointerY = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+  event.currentTarget.style.setProperty(
+    "--learning-card-tilt-x",
+    `${(-pointerY * 8).toFixed(2)}deg`,
+  );
+  event.currentTarget.style.setProperty(
+    "--learning-card-tilt-y",
+    `${(pointerX * 8).toFixed(2)}deg`,
+  );
+}
+
+function resetLearningPathPointerTilt(
+  event: PointerEvent<HTMLAnchorElement>,
+) {
+  event.currentTarget.style.setProperty("--learning-card-tilt-x", "0deg");
+  event.currentTarget.style.setProperty("--learning-card-tilt-y", "0deg");
+}
 
 function collectDocumentItems(
   items: DocNavigationItem[],
@@ -98,7 +140,12 @@ function LearningPath({ entries }: { entries: LinkedNavigationItem[] }) {
 
           return (
             <li key={entry.id}>
-              <Link className="learning-path__card" href={entry.href}>
+              <Link
+                className="learning-path__card"
+                href={entry.href}
+                onPointerLeave={resetLearningPathPointerTilt}
+                onPointerMove={handleLearningPathPointerMove}
+              >
                 <span className="learning-path__step">
                   ETAPA {String(index + 1).padStart(2, "0")}
                 </span>
@@ -146,7 +193,10 @@ function FeatureDirectory({ features }: { features: HomeFeature[] }) {
             return (
               <li key={feature.slug}>
                 <DocCard
-                  description={feature.description}
+                  description={
+                    HOME_CARD_DESCRIPTION_REFINEMENTS[feature.slug] ??
+                    feature.description
+                  }
                   href={feature.href}
                   icon={Icon}
                   status={
@@ -155,6 +205,7 @@ function FeatureDirectory({ features }: { features: HomeFeature[] }) {
                       : "active"
                   }
                   title={feature.title}
+                  variant="feature"
                 />
               </li>
             );
