@@ -7,6 +7,9 @@ export const SITE_URL = new URL(
 );
 export const SITE_LOCALE = "pt_BR";
 
+export const DOCUMENTED_VERSION =
+  process.env.NEXT_PUBLIC_DOCUMENTED_VERSION?.replace(/^v/, "") || null;
+
 export const APP_VERSION = (
   process.env.NEXT_PUBLIC_APP_VERSION || "dev"
 ).replace(/^v/, "");

@@ -9,6 +9,7 @@ export type DocOpenEvent = {
 
 export function isPageRequest(pathname: string): boolean {
   if (pathname.startsWith("/_next/")) return false;
+  if (pathname.startsWith("/api/")) return false;
   return !PAGE_EXTENSION.test(pathname);
 }
 

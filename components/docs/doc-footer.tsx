@@ -1,3 +1,4 @@
+import { VersionNote } from "@/components/docs/version-note";
 import { APP_VERSION } from "@/lib/site";
 
 type DocFooterProps = {
@@ -27,6 +28,7 @@ export function DocFooter({ updatedAt }: DocFooterProps) {
         </>
       ) : null}
       <span>Documentação v{APP_VERSION}</span>
+      <VersionNote />
     </footer>
   );
 }
