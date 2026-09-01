@@ -17,6 +17,10 @@ const securityHeaders = [
     key: "X-Frame-Options",
     value: "DENY",
   },
+  {
+    key: "X-Robots-Tag",
+    value: "noindex, nofollow",
+  },
 ];
 
 const nextConfig: NextConfig = {

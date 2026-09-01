@@ -23,6 +23,9 @@
 #   REGISTRY            host/projeto do Harbor, ex. harbor.fabrica.io/godocs
 #   REGISTRY_USER       robot com push no projeto (robot$godocs+ci)
 #   REGISTRY_PASSWORD   (Secured) token do robot de push
+#   SITE_URL_STAGE      (opcional) domínio público da doc em stage
+#                       — default https://app.stg.godocs4.com.br
+#   SITE_URL_PROD       (opcional) idem em prod — default https://app.godocs4.com.br
 # Deployment variables (Repository settings → Deployments):
 #   DEPLOYDIR           caminho do checkout do godocs4-deploy em cada VM
 
@@ -70,7 +73,16 @@ definitions:
               CHANNEL=stage
               VERSION_TAG=""
             fi
-            echo "== canal=$CHANNEL"
+            # Domínio público da doc, POR CANAL: é build-time (NEXT_PUBLIC_* é
+            # inlinada pelo next build), por isso mora aqui e não no compose da VM.
+            # Sai em canonical, og:url e sitemap — apontar para o host errado é o
+            # que fazia a doc de stage se anunciar como godocs-docs.vercel.app.
+            if [ "$CHANNEL" = prod ]; then
+              SITE_URL="${SITE_URL_PROD:-https://app.godocs4.com.br}"
+            else
+              SITE_URL="${SITE_URL_STAGE:-https://app.stg.godocs4.com.br}"
+            fi
+            echo "== canal=$CHANNEL  site=$SITE_URL"
 
             IMAGE="$REGISTRY/$IMAGE_NAME"
             REGISTRY_HOST="${REGISTRY%%/*}"
@@ -91,6 +103,7 @@ definitions:
             docker build \
               --cache-from "$IMAGE:$CHANNEL" \
               --build-arg BUILDKIT_INLINE_CACHE=1 \
+              --build-arg NEXT_PUBLIC_SITE_URL="$SITE_URL" \
               "${BUILD_TAGS[@]}" .
 
             docker push "$IMAGE:$BITBUCKET_COMMIT"
