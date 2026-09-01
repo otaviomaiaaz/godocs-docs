@@ -37,11 +37,6 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 # `v` inicial e removido na leitura (lib/site.ts).
 ARG NEXT_PUBLIC_APP_VERSION=""
 ENV NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION
-# Versao do PRODUTO que esta doc afirma documentar. E uma declaracao editorial,
-# nao a versao da doc: o rodape a compara com a versao que a API reporta em
-# runtime e avisa quando divergem. Vazio = sem comparacao.
-ARG NEXT_PUBLIC_DOCUMENTED_VERSION=""
-ENV NEXT_PUBLIC_DOCUMENTED_VERSION=$NEXT_PUBLIC_DOCUMENTED_VERSION
 # `pnpm build` roda o prebuild (content:validate) e o postbuild
 # (scripts/prepare-standalone.mjs, que copia .next/static e /public para dentro
 # do standalone).

@@ -1,4 +1,4 @@
-import { VersionNote } from "@/components/docs/version-note";
+import { DeployedVersion } from "@/components/docs/deployed-version";
 import { APP_VERSION } from "@/lib/site";
 
 type DocFooterProps = {
@@ -27,8 +27,9 @@ export function DocFooter({ updatedAt }: DocFooterProps) {
           <span aria-hidden="true">·</span>
         </>
       ) : null}
-      <span>Documentação v{APP_VERSION}</span>
-      <VersionNote />
+      <span>
+        Documentação <DeployedVersion fallback={APP_VERSION} />
+      </span>
     </footer>
   );
 }
