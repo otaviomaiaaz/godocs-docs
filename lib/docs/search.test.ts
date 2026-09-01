@@ -22,7 +22,7 @@ const index: SearchIndex = {
     createSearchEntry({
       title: "Configuração",
       description: "Ajustes disponíveis.",
-      href: "/docs/configuracao",
+      href: "/configuracao",
       section: "Fundamentos",
       keywords: ["preferências"],
       content: "Defina as opções necessárias.",
@@ -30,14 +30,14 @@ const index: SearchIndex = {
     createSearchEntry({
       title: "Pesquisa",
       description: "Localize informações.",
-      href: "/docs/pesquisa",
+      href: "/pesquisa",
       content: "Consulte os documentos publicados.",
     }),
     createSearchEntry({
       title: "O que é o GoDocs?",
       description:
         "Conheça a plataforma e entenda como ela centraliza documentos.",
-      href: "/docs/o-que-e-o-godocs",
+      href: "/o-que-e-o-godocs",
       section: "Comece por aqui",
       keywords: ["GoDocs", "GED", "documentos"],
       content:
@@ -52,7 +52,7 @@ const largeIndex: SearchIndex = {
     createSearchEntry({
       title: `Configuração ${position}`,
       description: "Ajustes disponíveis.",
-      href: `/docs/configuracao-${position}`,
+      href: `/configuracao-${position}`,
       content: "Configuração.",
     }),
   ),
@@ -109,7 +109,7 @@ describe("busca local", () => {
 
     for (const query of ["sem login", "enviar solicitação sem login"]) {
       expect(searchDocuments(searchIndex, query)[0]?.href).toMatch(
-        /^\/docs\/funcionalidades\/workflows\/formulario-publico/,
+        /^\/funcionalidades\/workflows\/formulario-publico/,
       );
     }
   });
@@ -127,7 +127,7 @@ describe("busca local", () => {
 
   it("prioriza título sobre correspondência apenas no conteúdo", () => {
     const results = searchDocuments(index, "configuracao");
-    expect(results[0]?.href).toBe("/docs/configuracao");
+    expect(results[0]?.href).toBe("/configuracao");
   });
 
   it.each([
@@ -138,7 +138,7 @@ describe("busca local", () => {
     ["plataforma documentos"],
   ])("encontra o artigo real com a consulta %s", (query) => {
     const results = searchDocuments(index, query);
-    expect(results[0]?.href).toBe("/docs/o-que-e-o-godocs");
+    expect(results[0]?.href).toBe("/o-que-e-o-godocs");
   });
 
   it("exige que consultas com mais de um termo atendam ao conjunto completo", () => {
@@ -162,7 +162,7 @@ describe("busca local", () => {
             kind: "section",
             title: `Configuração prioritária ${index}`,
             description: "Ajustes disponíveis.",
-            href: `/docs/configuracao#secao-${index}`,
+            href: `/configuracao#secao-${index}`,
             content: "Configuração.",
           }),
         ),
@@ -173,7 +173,7 @@ describe("busca local", () => {
                 kind: "section",
                 title: `Alternativa ${documentSlug} ${index}`,
                 description: "Ajustes disponíveis.",
-                href: `/docs/${documentSlug}#secao-${index}`,
+                href: `/${documentSlug}#secao-${index}`,
                 content: "Configuração.",
               }),
             ),
@@ -193,15 +193,15 @@ describe("busca local", () => {
 
     expect(results).toHaveLength(12);
     expect(resultCountsByDocument).toEqual({
-      "/docs/configuracao": SEARCH_RESULTS_PER_DOCUMENT,
-      "/docs/alternativa-a": SEARCH_RESULTS_PER_DOCUMENT,
-      "/docs/alternativa-b": SEARCH_RESULTS_PER_DOCUMENT,
-      "/docs/alternativa-c": SEARCH_RESULTS_PER_DOCUMENT,
+      "/configuracao": SEARCH_RESULTS_PER_DOCUMENT,
+      "/alternativa-a": SEARCH_RESULTS_PER_DOCUMENT,
+      "/alternativa-b": SEARCH_RESULTS_PER_DOCUMENT,
+      "/alternativa-c": SEARCH_RESULTS_PER_DOCUMENT,
     });
     expect(
       results
         .slice(0, SEARCH_RESULTS_PER_DOCUMENT)
-        .every((result) => result.href.startsWith("/docs/configuracao#")),
+        .every((result) => result.href.startsWith("/configuracao#")),
     ).toBe(true);
   });
 

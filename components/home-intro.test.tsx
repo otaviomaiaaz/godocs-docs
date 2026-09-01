@@ -90,7 +90,7 @@ describe("home orientada ao conteúdo", () => {
       within(learningPath as HTMLElement)
         .getAllByRole("link")
         .map((link) => link.getAttribute("href")),
-    ).toEqual(["/docs/o-que-e-o-godocs", "/docs/primeiro-acesso"]);
+    ).toEqual(["/o-que-e-o-godocs", "/primeiro-acesso"]);
 
     const featureGrid = document.querySelector(".feature-grid");
     expect(featureGrid).toBeTruthy();
@@ -108,12 +108,12 @@ describe("home orientada ao conteúdo", () => {
     ]);
 
     for (const [name, href] of [
-      ["Visão Geral", "/docs/funcionalidades/visao-geral"],
-      ["Busca Inteligente", "/docs/funcionalidades/busca-inteligente"],
-      ["Documentos", "/docs/funcionalidades/documentos"],
-      ["Favoritos", "/docs/funcionalidades/favoritos"],
-      ["Workflows", "/docs/funcionalidades/workflows"],
-      ["Relatórios", "/docs/funcionalidades/relatorios"],
+      ["Visão Geral", "/funcionalidades/visao-geral"],
+      ["Busca Inteligente", "/funcionalidades/busca-inteligente"],
+      ["Documentos", "/funcionalidades/documentos"],
+      ["Favoritos", "/funcionalidades/favoritos"],
+      ["Workflows", "/funcionalidades/workflows"],
+      ["Relatórios", "/funcionalidades/relatorios"],
     ] as const) {
       expect(
         within(featureGrid as HTMLElement)

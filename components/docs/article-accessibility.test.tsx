@@ -162,7 +162,7 @@ function expectCoherentArticleOutline(container: HTMLElement) {
 async function renderDocumentPage(scenario: PageScenario) {
   installBrowserLayout(scenario);
   document.documentElement.dataset.theme = scenario.theme;
-  pathname.value = `/docs/${scenario.slug}`;
+  pathname.value = `/${scenario.slug}`;
 
   const docs = await getAllDocs();
   const doc = docs.find((candidate) => candidate.slug === scenario.slug);

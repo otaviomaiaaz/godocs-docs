@@ -36,7 +36,7 @@ export function getCompatibleAnchorUrl(
     return undefined;
   }
 
-  return `/docs/${destination.slug}#${encodeURIComponent(destination.fragment)}`;
+  return `/${destination.slug}#${encodeURIComponent(destination.fragment)}`;
 }
 
 export function AnchorCompatibility({ slug }: AnchorCompatibilityProps) {

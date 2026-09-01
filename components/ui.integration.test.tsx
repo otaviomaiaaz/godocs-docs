@@ -40,13 +40,13 @@ const sidebarGroups: DocNavigationGroup[] = [
       {
         id: "funcionalidades/documentos",
         label: "Documentos",
-        href: "/docs/funcionalidades/documentos",
+        href: "/funcionalidades/documentos",
         pageType: "hub",
         children: [
           {
             id: "funcionalidades/documentos/pastas",
             label: "Pastas",
-            href: "/docs/funcionalidades/documentos/pastas",
+            href: "/funcionalidades/documentos/pastas",
             children: [],
           },
         ],
@@ -54,7 +54,7 @@ const sidebarGroups: DocNavigationGroup[] = [
       {
         id: "funcionalidades/workflows",
         label: "Workflows",
-        href: "/docs/funcionalidades/workflows",
+        href: "/funcionalidades/workflows",
         pageType: "hub",
         children: [],
       },
@@ -74,7 +74,7 @@ const searchIndex: SearchIndex = {
       title: "O que é o GoDocs?",
       description:
         "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
-      href: "/docs/o-que-e-o-godocs",
+      href: "/o-que-e-o-godocs",
       section: "Comece por aqui",
       keywords: ["GoDocs", "GED", "documentos"],
       content: "Gestão Eletrônica de Documentos e Processos.",
@@ -82,7 +82,7 @@ const searchIndex: SearchIndex = {
     createSearchEntry({
       title: "Pesquisa",
       description: "Localize informações.",
-      href: "/docs/pesquisa",
+      href: "/pesquisa",
       content: "Consulte os documentos publicados.",
     }),
   ],
@@ -216,7 +216,7 @@ describe("fluxos interativos", () => {
     expect(screen.getByRole("status").textContent).toContain("1 resultado");
 
     await user.keyboard("{Enter}");
-    expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
+    expect(push).toHaveBeenCalledWith("/o-que-e-o-godocs");
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(screen.queryByRole("button", { name: "Fechar pesquisa" })).toBeNull();
 
@@ -248,7 +248,7 @@ describe("fluxos interativos", () => {
     expect(combobox.getAttribute("aria-activedescendant")).toBe(options[0]?.id);
     await user.keyboard("{Enter}");
 
-    expect(push).toHaveBeenCalledWith("/docs/o-que-e-o-godocs");
+    expect(push).toHaveBeenCalledWith("/o-que-e-o-godocs");
   });
 
   it("abre com Cmd+K", async () => {
@@ -472,13 +472,13 @@ describe("fluxos interativos", () => {
                 {
                   id: "funcionalidades",
                   label: "Funcionalidades",
-                  href: "/docs/funcionalidades",
+                  href: "/funcionalidades",
                   pageType: "hub",
                   children: [
                     {
                       id: "funcionalidades/documentos",
                       label: "Documentos",
-                      href: "/docs/funcionalidades/documentos",
+                      href: "/funcionalidades/documentos",
                       children: [],
                     },
                   ],
@@ -494,7 +494,7 @@ describe("fluxos interativos", () => {
       name: "Expandir Funcionalidades",
     });
     const hubLink = screen.getByRole("link", { name: "Funcionalidades" });
-    expect(hubLink.getAttribute("href")).toBe("/docs/funcionalidades");
+    expect(hubLink.getAttribute("href")).toBe("/funcionalidades");
     expect(hubLink).not.toBe(expand);
     expect(expand.getAttribute("aria-expanded")).toBe("false");
     expand.focus();
@@ -512,7 +512,7 @@ describe("fluxos interativos", () => {
   });
 
   it("respeita o recolhimento manual do ramo ativo até uma nova navegação", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     const groups = [
       {
@@ -524,19 +524,19 @@ describe("fluxos interativos", () => {
           {
             id: "funcionalidades/documentos",
             label: "Documentos",
-            href: "/docs/funcionalidades/documentos",
+            href: "/funcionalidades/documentos",
             pageType: "hub" as const,
             children: [
               {
                 id: "funcionalidades/documentos/pastas",
                 label: "Pastas",
-                href: "/docs/funcionalidades/documentos/pastas",
+                href: "/funcionalidades/documentos/pastas",
                 children: [],
               },
               {
                 id: "funcionalidades/documentos/logs-e-acoes",
                 label: "Logs e ações",
-                href: "/docs/funcionalidades/documentos/logs-e-acoes",
+                href: "/funcionalidades/documentos/logs-e-acoes",
                 children: [],
               },
             ],
@@ -567,7 +567,7 @@ describe("fluxos interativos", () => {
     view.rerender(renderTree());
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
 
-    pathname.value = "/docs/funcionalidades/documentos/logs-e-acoes";
+    pathname.value = "/funcionalidades/documentos/logs-e-acoes";
     view.rerender(renderTree());
 
     await waitFor(() =>
@@ -583,7 +583,7 @@ describe("fluxos interativos", () => {
   });
 
   it("recolhe a sidebar com semântica acessível e mantém a árvore montada", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
 
     const { container } = renderInSiteShell(renderSidebar());
@@ -624,7 +624,7 @@ describe("fluxos interativos", () => {
   });
 
   it("preserva o estado dos branches ao recolher e reabrir a sidebar", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
 
     renderInSiteShell(renderSidebar());
@@ -676,12 +676,12 @@ describe("fluxos interativos", () => {
     const toggle = screen.getByRole("button", {
       name: "Recolher navegação",
     });
-    pathname.value = "/docs/funcionalidades/workflows";
+    pathname.value = "/funcionalidades/workflows";
     view.rerender(renderSidebar());
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
 
     await user.click(toggle);
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     view.rerender(renderSidebar());
 
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
@@ -700,7 +700,7 @@ describe("fluxos interativos", () => {
   });
 
   it("abre o menu fantasma por pointer, estabiliza a travessia e fecha ao sair", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -734,7 +734,7 @@ describe("fluxos interativos", () => {
   });
 
   it("mantém o toggle operável acima do menu fantasma e expande ao clicar", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -764,7 +764,7 @@ describe("fluxos interativos", () => {
   });
 
   it("abre o menu fantasma por foco, fecha com Escape e não cria focus trap", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -791,7 +791,7 @@ describe("fluxos interativos", () => {
   });
 
   it("fecha o menu fantasma ao navegar sem expandir a sidebar e atualiza o active", async () => {
-    pathname.value = "/docs/funcionalidades/workflows";
+    pathname.value = "/funcionalidades/workflows";
     const user = userEvent.setup();
     const view = renderInSiteShell(renderSidebar());
 
@@ -805,7 +805,7 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
     expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
 
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     view.rerender(renderSidebar());
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
 
@@ -818,7 +818,7 @@ describe("fluxos interativos", () => {
   });
 
   it("mantém branches operáveis no menu fantasma sem alterar o estado global", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -839,7 +839,7 @@ describe("fluxos interativos", () => {
   });
 
   it("torna o hub explícito da seção navegável e marca a página atual", () => {
-    pathname.value = "/docs/funcionalidades";
+    pathname.value = "/funcionalidades";
 
     renderInSiteShell(
       <nav aria-label="Navegação da documentação">
@@ -851,13 +851,13 @@ describe("fluxos interativos", () => {
               description: "Funcionalidades publicadas.",
               order: 1,
               entrySlug: "funcionalidades",
-              entryHref: "/docs/funcionalidades",
+              entryHref: "/funcionalidades",
               entryPageType: "hub",
               items: [
                 {
                   id: "funcionalidades/visao-geral",
                   label: "Visão Geral",
-                  href: "/docs/funcionalidades/visao-geral",
+                  href: "/funcionalidades/visao-geral",
                   pageType: "reference",
                   children: [],
                 },
@@ -890,12 +890,12 @@ describe("fluxos interativos", () => {
             title: "Guias",
             description: "Orientações publicadas.",
             order: 1,
-            entryHref: "/docs/guias",
+            entryHref: "/guias",
             items: [
               {
                 id: "guias",
                 label: "Guias",
-                href: "/docs/guias",
+                href: "/guias",
                 children: [],
               },
             ],
@@ -927,7 +927,7 @@ describe("fluxos interativos", () => {
   });
 
   it("mantém o drawer completo e independente da preferência desktop", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
 
     renderInSiteShell(<MobileNavDrawer groups={sidebarGroups} />);
@@ -983,12 +983,12 @@ describe("fluxos interativos", () => {
             title: "Guias",
             description: "Orientações publicadas.",
             order: 1,
-            entryHref: "/docs/guias",
+            entryHref: "/guias",
             items: [
               {
                 id: "guias",
                 label: "Guias",
-                href: "/docs/guias",
+                href: "/guias",
                 children: [],
               },
             ],
@@ -1076,7 +1076,7 @@ describe("marca", () => {
             title: "Comece por aqui",
             description: "Conteúdos introdutórios.",
             order: 10,
-            entryHref: "/docs/o-que-e-o-godocs",
+            entryHref: "/o-que-e-o-godocs",
             items: [],
           },
         ]}
@@ -1109,7 +1109,7 @@ describe("marca", () => {
   });
 
   it("preserva busca, tema e menu móvel condicional no header interno", async () => {
-    pathname.value = "/docs/o-que-e-o-godocs";
+    pathname.value = "/o-que-e-o-godocs";
     renderInSiteShell(
       <DocsHeader
         navigation={[
@@ -1118,12 +1118,12 @@ describe("marca", () => {
             title: "Comece por aqui",
             description: "Conteúdos introdutórios.",
             order: 10,
-            entryHref: "/docs/o-que-e-o-godocs",
+            entryHref: "/o-que-e-o-godocs",
             items: [
               {
                 id: "o-que-e-o-godocs",
                 label: "O que é o GoDocs?",
-                href: "/docs/o-que-e-o-godocs",
+                href: "/o-que-e-o-godocs",
                 children: [],
               },
             ],

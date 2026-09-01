@@ -14,12 +14,14 @@ describe("contrato de estado da sidebar documental", () => {
     const rootLayout = await readProjectFile("app", "layout.tsx");
 
     expect(rootLayout).toContain('id="theme-initialization"');
-    expect(rootLayout).toContain('src="/theme-initialization.js"');
+    expect(rootLayout).toContain(
+      "src={`${SITE_BASE_PATH}/theme-initialization.js`}",
+    );
     expect(rootLayout).not.toMatch(/sidebar-initialization|SIDEBAR_INITIALIZATION/);
   });
 
   it("hospeda o estado no menor layout estável compartilhado por /docs", async () => {
-    const docsLayout = await readProjectFile("app", "docs", "layout.tsx");
+    const docsLayout = await readProjectFile("app", "(docs)", "layout.tsx");
     const stateProvider = await readProjectFile(
       "components",
       "docs",

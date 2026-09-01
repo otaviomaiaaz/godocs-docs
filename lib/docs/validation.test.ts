@@ -107,7 +107,7 @@ order: 1
 
 ## Visão geral
 
-[Configuração](/docs/guias/configuracao#op%C3%A7%C3%B5es)
+[Configuração](/guias/configuracao#op%C3%A7%C3%B5es)
 
 ![Diagrama](/diagram.svg)
 `,
@@ -182,8 +182,8 @@ order: 2
 
 ## Referências
 
-[Ausente](/docs/ausente)
-[Fragmento](/docs/destino#nao-existe)
+[Ausente](/ausente)
+[Fragmento](/destino#nao-existe)
 ![Imagem ausente](/nao-existe.png)
 
 <ComponenteInexistente />
@@ -295,11 +295,11 @@ pageType: reference
 order: 2
 ---
 
-[H2](/docs/destino#nível-dois)
-[H3](/docs/destino#nível-três)
-[H4](/docs/destino#nível-quatro)
-[Alias](/docs/destino#nome-antigo)
-[Inválido](/docs/destino#nao-existe)
+[H2](/destino#nível-dois)
+[H3](/destino#nível-três)
+[H4](/destino#nível-quatro)
+[Alias](/destino#nome-antigo)
+[Inválido](/destino#nao-existe)
 `,
     );
 

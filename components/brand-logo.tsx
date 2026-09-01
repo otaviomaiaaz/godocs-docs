@@ -1,13 +1,15 @@
 import Image from "next/image";
 
+import { SITE_BASE_PATH } from "@/lib/site";
+
 export type BrandLogoSize = "compact" | "default";
 
 const BRAND_LOGO_ASSETS = {
-  dark: "/brand/godocs-logo-official-dark.png",
-  light: "/brand/godocs-logo-official-light.png",
+  dark: `${SITE_BASE_PATH}/brand/godocs-logo-official-dark.png`,
+  light: `${SITE_BASE_PATH}/brand/godocs-logo-official-light.png`,
   height: 58,
   width: 150,
-} as const;
+};
 
 type BrandLogoProps = {
   size?: BrandLogoSize;

@@ -44,7 +44,7 @@ describe("conteúdo publicado", () => {
       order: 1,
       related: ["funcionalidades/visao-geral"],
     });
-    expect(doc?.href).toBe("/docs/o-que-e-o-godocs");
+    expect(doc?.href).toBe("/o-que-e-o-godocs");
     expect(doc?.source).not.toMatch(/^# /m);
     expect(doc?.headings.map((heading) => heading.title)).toEqual([
       "O que você pode fazer no GoDocs",
@@ -110,7 +110,7 @@ describe("conteúdo publicado", () => {
       },
       order: 0,
     });
-    expect(functionalities?.href).toBe("/docs/funcionalidades");
+    expect(functionalities?.href).toBe("/funcionalidades");
     expect(firstAccess?.metadata).toMatchObject({
       title: "Primeiro Acesso",
       pageType: "task",
@@ -122,7 +122,7 @@ describe("conteúdo publicado", () => {
       },
       order: 2,
     });
-    expect(firstAccess?.href).toBe("/docs/primeiro-acesso");
+    expect(firstAccess?.href).toBe("/primeiro-acesso");
     expect(firstAccess?.headings.map((heading) => heading.title)).toEqual([
       "Localize o e-mail de convite",
       "Abra o convite",
@@ -167,7 +167,7 @@ describe("conteúdo publicado", () => {
       ],
       order: 1,
     });
-    expect(overview?.href).toBe("/docs/funcionalidades/visao-geral");
+    expect(overview?.href).toBe("/funcionalidades/visao-geral");
     expect(overview?.headings.map((heading) => heading.title)).toEqual([
       "Principais indicadores",
       "Documentos indexados",
@@ -188,7 +188,7 @@ describe("conteúdo publicado", () => {
       order: 2,
     });
     expect(smartSearch?.href).toBe(
-      "/docs/funcionalidades/busca-inteligente",
+      "/funcionalidades/busca-inteligente",
     );
     expect(smartSearch?.source).toContain('title="Disponibilidade"');
     expect(smartSearch?.source).toContain(
@@ -220,7 +220,7 @@ describe("conteúdo publicado", () => {
       },
       order: 3,
     });
-    expect(documents?.href).toBe("/docs/funcionalidades/documentos");
+    expect(documents?.href).toBe("/funcionalidades/documentos");
     expect(documents?.headings.map((heading) => heading.title)).toEqual([
       "O que é a seção Documentos",
       "Conceitos importantes",
@@ -340,7 +340,7 @@ describe("conteúdo publicado", () => {
         expect.objectContaining({
           kind: "section",
           title: "Crie sua conta",
-          href: "/docs/primeiro-acesso#crie-sua-conta",
+          href: "/primeiro-acesso#crie-sua-conta",
         }),
       ]),
     );
@@ -365,7 +365,7 @@ describe("conteúdo publicado", () => {
       expect(
         publicIndex.entries.some(
           (entry) =>
-            entry.kind === "page" && entry.href === `/docs/${slug}`,
+            entry.kind === "page" && entry.href === `/${slug}`,
         ),
       ).toBe(true);
     }
@@ -381,102 +381,102 @@ describe("conteúdo publicado", () => {
     ]);
     expect(navigation[0]).toMatchObject({
       entrySlug: "o-que-e-o-godocs",
-      entryHref: "/docs/o-que-e-o-godocs",
+      entryHref: "/o-que-e-o-godocs",
       entryPageType: "reference",
     });
     expect(navigation[1]).toMatchObject({
       entrySlug: "funcionalidades",
-      entryHref: "/docs/funcionalidades",
+      entryHref: "/funcionalidades",
       entryPageType: "hub",
     });
     expect(navigation[0]?.items).toMatchObject([
       {
         label: "O que é o GoDocs?",
-        href: "/docs/o-que-e-o-godocs",
+        href: "/o-que-e-o-godocs",
       },
       {
         label: "Primeiro Acesso",
-        href: "/docs/primeiro-acesso",
+        href: "/primeiro-acesso",
       },
     ]);
     expect(navigation[1]?.items).toMatchObject([
       {
         label: "Visão Geral",
-        href: "/docs/funcionalidades/visao-geral",
+        href: "/funcionalidades/visao-geral",
       },
       {
         label: "Busca Inteligente",
-        href: "/docs/funcionalidades/busca-inteligente",
+        href: "/funcionalidades/busca-inteligente",
       },
       {
         label: "Documentos",
-        href: "/docs/funcionalidades/documentos",
+        href: "/funcionalidades/documentos",
         pageType: "hub",
         children: [
           {
             label: "Organizar pastas e subpastas",
-            href: "/docs/funcionalidades/documentos/pastas",
+            href: "/funcionalidades/documentos/pastas",
           },
           {
             label: "Adicionar documentos",
-            href: "/docs/funcionalidades/documentos/adicionar-documentos",
+            href: "/funcionalidades/documentos/adicionar-documentos",
           },
           {
             label: "Localizar, filtrar e consultar metadados",
-            href: "/docs/funcionalidades/documentos/filtros-e-metadados",
+            href: "/funcionalidades/documentos/filtros-e-metadados",
           },
           {
             label: "Visualizar e gerenciar documentos",
-            href: "/docs/funcionalidades/documentos/gerenciar-documentos",
+            href: "/funcionalidades/documentos/gerenciar-documentos",
           },
           {
             label: "Logs e ações",
-            href: "/docs/funcionalidades/documentos/logs-e-acoes",
+            href: "/funcionalidades/documentos/logs-e-acoes",
           },
         ],
       },
       {
         label: "Favoritos",
-        href: "/docs/funcionalidades/favoritos",
+        href: "/funcionalidades/favoritos",
       },
       {
         label: "Workflows",
-        href: "/docs/funcionalidades/workflows",
+        href: "/funcionalidades/workflows",
         pageType: "hub",
         children: [
           {
             label: "Cards, Kanban e Lista",
-            href: "/docs/funcionalidades/workflows/cards-kanban-e-lista",
+            href: "/funcionalidades/workflows/cards-kanban-e-lista",
           },
           {
             label: "Automações",
-            href: "/docs/funcionalidades/workflows/automacoes",
+            href: "/funcionalidades/workflows/automacoes",
           },
           {
             label: "Criar e configurar",
-            href: "/docs/funcionalidades/workflows/criar-e-configurar",
+            href: "/funcionalidades/workflows/criar-e-configurar",
           },
           {
             label: "Fases e transições",
-            href: "/docs/funcionalidades/workflows/fases-e-transicoes",
+            href: "/funcionalidades/workflows/fases-e-transicoes",
           },
           {
             label: "Formulários e campos",
-            href: "/docs/funcionalidades/workflows/formularios-e-campos",
+            href: "/funcionalidades/workflows/formularios-e-campos",
           },
           {
             label: "Membros e papéis",
-            href: "/docs/funcionalidades/workflows/membros-e-papeis",
+            href: "/funcionalidades/workflows/membros-e-papeis",
           },
           {
             label: "Formulário público",
-            href: "/docs/funcionalidades/workflows/formulario-publico",
+            href: "/funcionalidades/workflows/formulario-publico",
           },
         ],
       },
       {
         label: "Relatórios",
-        href: "/docs/funcionalidades/relatorios",
+        href: "/funcionalidades/relatorios",
       },
     ]);
     expect(
@@ -609,7 +609,7 @@ describe("conteúdo publicado", () => {
       {
         id: "section:funcionalidades",
         label: "Funcionalidades",
-        href: "/docs/funcionalidades",
+        href: "/funcionalidades",
       },
       {
         id: "path:funcionalidades/visao-geral",
@@ -620,7 +620,7 @@ describe("conteúdo publicado", () => {
       {
         id: "section:funcionalidades",
         label: "Funcionalidades",
-        href: "/docs/funcionalidades",
+        href: "/funcionalidades",
       },
       {
         id: "path:funcionalidades/busca-inteligente",
@@ -640,7 +640,7 @@ describe("conteúdo publicado", () => {
         {
           id: "section:funcionalidades",
           label: "Funcionalidades",
-          href: "/docs/funcionalidades",
+          href: "/funcionalidades",
         },
         {
           id: `path:${slug}`,
@@ -668,12 +668,12 @@ describe("conteúdo publicado", () => {
         {
           id: "section:funcionalidades",
           label: "Funcionalidades",
-          href: "/docs/funcionalidades",
+          href: "/funcionalidades",
         },
         {
           id: "path:funcionalidades/documentos",
           label: "Documentos",
-          href: "/docs/funcionalidades/documentos",
+          href: "/funcionalidades/documentos",
         },
         {
           id: `path:${slug}`,
@@ -697,12 +697,12 @@ describe("conteúdo publicado", () => {
         {
           id: "section:funcionalidades",
           label: "Funcionalidades",
-          href: "/docs/funcionalidades",
+          href: "/funcionalidades",
         },
         {
           id: "path:funcionalidades/workflows",
           label: "Workflows",
-          href: "/docs/funcionalidades/workflows",
+          href: "/funcionalidades/workflows",
         },
         {
           id: `path:${slug}`,
@@ -740,7 +740,7 @@ describe("conteúdo publicado", () => {
     const docs = await loadPublishedDocs();
     const results = searchDocuments(createSearchIndex(docs), query);
 
-    expect(results[0]?.href.startsWith(`/docs/${expectedSlug}`)).toBe(true);
+    expect(results[0]?.href.startsWith(`/${expectedSlug}`)).toBe(true);
   });
 
   it("mantém slugs, taxonomia, componentes, links, fragments e assets válidos", async () => {

@@ -10,6 +10,7 @@ import { buildNavigation } from "@/lib/docs/navigation";
 import { getAllDocs } from "@/lib/docs/source";
 import {
   absoluteUrl,
+  SITE_BASE_PATH,
   SITE_DESCRIPTION,
   SITE_HOME_TITLE,
   SITE_LOCALE,
@@ -73,7 +74,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <head>
         <Script
           id="theme-initialization"
-          src="/theme-initialization.js"
+          src={`${SITE_BASE_PATH}/theme-initialization.js`}
           strategy="beforeInteractive"
         />
       </head>

@@ -39,7 +39,7 @@ function createDocument(input: TestFrontmatter): DocRecord {
     metadata,
     slug: metadata.slug,
     segments: metadata.slug.split("/"),
-    href: `/docs/${metadata.slug}`,
+    href: `/${metadata.slug}`,
     source: "",
     searchableText: "",
     headings: [],
@@ -80,11 +80,11 @@ describe("taxonomia documental", () => {
       id: "primeiros-passos",
       title: "Guias",
       description: "Orientações iniciais publicadas.",
-      entryHref: "/docs/guias",
+      entryHref: "/guias",
     });
     expect(groups[0]?.items[0]).toMatchObject({
       label: "Configuração",
-      href: "/docs/guias/configuracao",
+      href: "/guias/configuracao",
     });
   });
 
@@ -93,7 +93,7 @@ describe("taxonomia documental", () => {
       {
         id: "section:primeiros-passos",
         label: "Guias",
-        href: "/docs/guias",
+        href: "/guias",
       },
       {
         id: "path:guias/configuracao",
@@ -134,7 +134,7 @@ describe("taxonomia documental", () => {
       {
         id: "funcionalidades/visao-geral",
         label: "Visão Geral",
-        href: "/docs/funcionalidades/visao-geral",
+        href: "/funcionalidades/visao-geral",
       },
     ]);
   });
@@ -146,7 +146,7 @@ describe("taxonomia documental", () => {
     });
 
     expect(buildNavigation([reordered, entry])[0]?.entryHref).toBe(
-      "/docs/guias",
+      "/guias",
     );
   });
 
@@ -204,12 +204,12 @@ describe("taxonomia documental", () => {
       {
         id: "section:funcionalidades",
         label: "Funcionalidades",
-        href: "/docs/funcionalidades",
+        href: "/funcionalidades",
       },
       {
         id: "path:funcionalidades/documentos",
         label: "Documentos",
-        href: "/docs/funcionalidades/documentos",
+        href: "/funcionalidades/documentos",
       },
       {
         id: "path:funcionalidades/documentos/pastas",

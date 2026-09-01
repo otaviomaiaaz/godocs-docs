@@ -10,31 +10,31 @@ import { getAllDocs } from "@/lib/docs/source";
 const items: HubNavigationItem[] = [
   {
     description: "Crie uma estrutura para guardar seus arquivos.",
-    href: "/docs/funcionalidades/documentos/pastas",
+    href: "/funcionalidades/documentos/pastas",
     slug: "funcionalidades/documentos/pastas",
     title: "Organizar pastas e subpastas",
   },
   {
     description: "Adicione arquivos à seção Documentos.",
-    href: "/docs/funcionalidades/documentos/adicionar-documentos",
+    href: "/funcionalidades/documentos/adicionar-documentos",
     slug: "funcionalidades/documentos/adicionar-documentos",
     title: "Adicionar documentos",
   },
   {
     description: "Encontre documentos por busca, filtros e metadados.",
-    href: "/docs/funcionalidades/documentos/localizar-documentos",
+    href: "/funcionalidades/documentos/localizar-documentos",
     slug: "funcionalidades/documentos/localizar-documentos",
     title: "Localizar, filtrar e consultar metadados",
   },
   {
     description: "Abra, consulte informações e gerencie arquivos enviados.",
-    href: "/docs/funcionalidades/documentos/gerenciar-documentos",
+    href: "/funcionalidades/documentos/gerenciar-documentos",
     slug: "funcionalidades/documentos/gerenciar-documentos",
     title: "Visualizar e gerenciar documentos",
   },
   {
     description: "Consulte o histórico de ações realizadas nos documentos.",
-    href: "/docs/funcionalidades/documentos/logs-e-acoes",
+    href: "/funcionalidades/documentos/logs-e-acoes",
     slug: "funcionalidades/documentos/logs-e-acoes",
     title: "Logs e ações",
   },
@@ -50,7 +50,7 @@ const workflowItems: HubNavigationItem[] = [
   ["formulario-publico", "Formulário público e acompanhamento"],
 ].map(([segment, title]) => ({
   description: `Descrição de ${title}.`,
-  href: `/docs/funcionalidades/workflows/${segment}`,
+  href: `/funcionalidades/workflows/${segment}`,
   slug: `funcionalidades/workflows/${segment}`,
   title,
 }));

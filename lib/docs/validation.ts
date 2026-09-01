@@ -211,11 +211,9 @@ function resolveDocumentSlug(currentSlug: string, pathname: string): string | nu
   if (!pathname) return currentSlug;
   if (pathname === "/") return null;
 
-  if (pathname.startsWith("/docs/")) {
-    return pathname.slice("/docs/".length).replace(/\/$/, "");
+  if (pathname.startsWith("/")) {
+    return pathname.slice(1).replace(/\/$/, "") || null;
   }
-
-  if (pathname.startsWith("/")) return null;
   if (LOCAL_ASSET_EXTENSION.test(pathname)) return null;
 
   const currentDirectory = path.posix.dirname(currentSlug);

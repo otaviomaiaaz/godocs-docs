@@ -3,34 +3,34 @@ import { describe, expect, it } from "vitest";
 import {
   generateMetadata,
   generateStaticParams,
-} from "@/app/docs/[...slug]/page";
+} from "@/app/(docs)/[...slug]/page";
 import { metadata } from "@/app/layout";
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
 const expectedDocumentPaths = [
-  "/docs/o-que-e-o-godocs",
-  "/docs/primeiro-acesso",
-  "/docs/funcionalidades",
-  "/docs/funcionalidades/workflows/cards-kanban-e-lista",
-  "/docs/funcionalidades/documentos/pastas",
-  "/docs/funcionalidades/visao-geral",
-  "/docs/funcionalidades/documentos/adicionar-documentos",
-  "/docs/funcionalidades/workflows/automacoes",
-  "/docs/funcionalidades/busca-inteligente",
-  "/docs/funcionalidades/workflows/criar-e-configurar",
-  "/docs/funcionalidades/documentos",
-  "/docs/funcionalidades/documentos/filtros-e-metadados",
-  "/docs/funcionalidades/workflows/fases-e-transicoes",
-  "/docs/funcionalidades/favoritos",
-  "/docs/funcionalidades/documentos/gerenciar-documentos",
-  "/docs/funcionalidades/workflows/formularios-e-campos",
-  "/docs/funcionalidades/documentos/logs-e-acoes",
-  "/docs/funcionalidades/workflows",
-  "/docs/funcionalidades/workflows/membros-e-papeis",
-  "/docs/funcionalidades/relatorios",
-  "/docs/funcionalidades/workflows/formulario-publico",
+  "/o-que-e-o-godocs",
+  "/primeiro-acesso",
+  "/funcionalidades",
+  "/funcionalidades/workflows/cards-kanban-e-lista",
+  "/funcionalidades/documentos/pastas",
+  "/funcionalidades/visao-geral",
+  "/funcionalidades/documentos/adicionar-documentos",
+  "/funcionalidades/workflows/automacoes",
+  "/funcionalidades/busca-inteligente",
+  "/funcionalidades/workflows/criar-e-configurar",
+  "/funcionalidades/documentos",
+  "/funcionalidades/documentos/filtros-e-metadados",
+  "/funcionalidades/workflows/fases-e-transicoes",
+  "/funcionalidades/favoritos",
+  "/funcionalidades/documentos/gerenciar-documentos",
+  "/funcionalidades/workflows/formularios-e-campos",
+  "/funcionalidades/documentos/logs-e-acoes",
+  "/funcionalidades/workflows",
+  "/funcionalidades/workflows/membros-e-papeis",
+  "/funcionalidades/relatorios",
+  "/funcionalidades/workflows/formulario-publico",
 ] as const;
 
 describe("SEO e indexação", () => {
@@ -69,12 +69,12 @@ describe("SEO e indexação", () => {
       description:
         "Conheça a plataforma e entenda como ela centraliza documentos, organiza informações e apoia os processos da organização.",
       alternates: {
-        canonical: absoluteUrl("/docs/o-que-e-o-godocs"),
+        canonical: absoluteUrl("/o-que-e-o-godocs"),
       },
       openGraph: {
         type: "article",
         locale: "pt_BR",
-        url: absoluteUrl("/docs/o-que-e-o-godocs"),
+        url: absoluteUrl("/o-que-e-o-godocs"),
       },
       twitter: {
         card: "summary_large_image",
@@ -90,10 +90,10 @@ describe("SEO e indexação", () => {
     expect(hubMetadata).toMatchObject({
       title: "Funcionalidades",
       alternates: {
-        canonical: absoluteUrl("/docs/funcionalidades"),
+        canonical: absoluteUrl("/funcionalidades"),
       },
       openGraph: {
-        url: absoluteUrl("/docs/funcionalidades"),
+        url: absoluteUrl("/funcionalidades"),
         images: [
           expect.objectContaining({
             url: absoluteUrl("/share-image/funcionalidades"),
@@ -116,7 +116,7 @@ describe("SEO e indexação", () => {
     const params = await generateStaticParams();
 
     expect(params).toEqual(
-      expectedDocumentPaths.map((path) => ({ slug: path.slice("/docs/".length).split("/") })),
+      expectedDocumentPaths.map((path) => ({ slug: path.slice("/".length).split("/") })),
     );
   });
 

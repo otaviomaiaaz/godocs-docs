@@ -53,7 +53,7 @@ export async function loadDocumentFile(filePath: string): Promise<DocRecord> {
       metadata,
       slug: metadata.slug,
       segments: metadata.slug.split("/"),
-      href: `/docs/${metadata.slug}`,
+      href: `/${metadata.slug}`,
       source: content,
       searchableText: parsed.searchableText,
       headings: parsed.headings,

@@ -9,7 +9,7 @@ import { getAllDocs } from "@/lib/docs/source";
 
 vi.mock("next/navigation", () => ({
   notFound: vi.fn(),
-  usePathname: () => "/docs/funcionalidades/workflows",
+  usePathname: () => "/funcionalidades/workflows",
   useRouter: () => ({ push: vi.fn() }),
 }));
 
@@ -36,13 +36,13 @@ describe("DocPage", () => {
 
     expect(navigation).toBeTruthy();
     expect(within(navigation as HTMLElement).getAllByRole("link").map((link) => link.getAttribute("href"))).toEqual([
-      "/docs/funcionalidades/workflows/cards-kanban-e-lista",
-      "/docs/funcionalidades/workflows/automacoes",
-      "/docs/funcionalidades/workflows/criar-e-configurar",
-      "/docs/funcionalidades/workflows/fases-e-transicoes",
-      "/docs/funcionalidades/workflows/formularios-e-campos",
-      "/docs/funcionalidades/workflows/membros-e-papeis",
-      "/docs/funcionalidades/workflows/formulario-publico",
+      "/funcionalidades/workflows/cards-kanban-e-lista",
+      "/funcionalidades/workflows/automacoes",
+      "/funcionalidades/workflows/criar-e-configurar",
+      "/funcionalidades/workflows/fases-e-transicoes",
+      "/funcionalidades/workflows/formularios-e-campos",
+      "/funcionalidades/workflows/membros-e-papeis",
+      "/funcionalidades/workflows/formulario-publico",
     ]);
   });
 
@@ -88,7 +88,7 @@ describe("DocPage", () => {
         .some((item) => item.classList.contains("hub-navigation__item--wide")),
     ).toBe(false);
     expect(functionalityHub.source).not.toContain(
-      "/docs/funcionalidades/visao-geral",
+      "/funcionalidades/visao-geral",
     );
   });
 

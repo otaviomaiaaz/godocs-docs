@@ -51,7 +51,7 @@ Conteúdo pesquisável.
 
     const docs = await loadDocumentsFromDirectory(directory);
     expect(docs).toHaveLength(1);
-    expect(docs[0]?.href).toBe("/docs/pagina-valida");
+    expect(docs[0]?.href).toBe("/pagina-valida");
     expect(docs[0]?.metadata.pageType).toBe("reference");
     expect(docs[0]?.headings[0]?.id).toBe("leitura");
   });

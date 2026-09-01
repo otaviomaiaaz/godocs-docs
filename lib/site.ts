@@ -5,6 +5,9 @@ export const SITE_DESCRIPTION =
 export const SITE_URL = new URL("https://godocs-docs.vercel.app");
 export const SITE_LOCALE = "pt_BR";
 
+export const SITE_BASE_PATH = "/docs";
+
 export function absoluteUrl(path = "/"): string {
-  return new URL(path, SITE_URL).toString();
+  const suffix = path === "/" ? "" : path;
+  return new URL(`${SITE_BASE_PATH}${suffix}`, SITE_URL).toString();
 }

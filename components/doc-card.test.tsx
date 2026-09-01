@@ -16,7 +16,7 @@ describe("DocCard", () => {
     render(
       <DocCard
         description="Explicação inicial."
-        href="/docs/inicio"
+        href="/inicio"
         icon={BookOpen}
         status="active"
         title="Início"
@@ -49,7 +49,7 @@ describe("DocCard", () => {
     const { container } = render(
       <DocCard
         description="Conteúdo em preparação."
-        href="/docs/proximo-guia"
+        href="/proximo-guia"
         icon={BookOpen}
         status="comingSoon"
         title="Próximo guia"
@@ -67,7 +67,7 @@ describe("DocCard", () => {
 
     expect(activationSpy).toHaveBeenCalledTimes(2);
     expect(card?.tagName).toBe("A");
-    expect(card?.getAttribute("href")).toBe("/docs/proximo-guia");
+    expect(card?.getAttribute("href")).toBe("/proximo-guia");
     expect(card?.getAttribute("data-status")).toBe("comingSoon");
     expect(screen.getByText("Em breve")).toBeTruthy();
     expect(

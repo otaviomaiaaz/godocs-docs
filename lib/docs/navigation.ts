@@ -221,7 +221,7 @@ export function buildBreadcrumbs(
 
 function flattenNavigationItem(item: DocNavigationItem): string[] {
   return [
-    ...(item.href ? [item.href.slice("/docs/".length)] : []),
+    ...(item.href ? [item.href.slice(1)] : []),
     ...item.children.flatMap(flattenNavigationItem),
   ];
 }

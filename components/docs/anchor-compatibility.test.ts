@@ -21,7 +21,7 @@ describe("compatibilidade client-side de anchors", () => {
         manifest,
       ),
     ).toBe(
-      "/docs/funcionalidades/documentos/pastas#criar-pasta",
+      "/funcionalidades/documentos/pastas#criar-pasta",
     );
     expect(
       getCompatibleAnchorUrl(
