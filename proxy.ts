@@ -12,6 +12,8 @@ const LOGIN_PATH = "/login";
 export async function proxy(request: NextRequest) {
   if (process.env.DOCS_AUTH_ENABLED !== "true") return NextResponse.next();
 
+  if (request.headers.get("host") === null) return NextResponse.next();
+
   const cookie = request.headers.get("cookie");
   if (cookie && (await hasValidSession(cookie))) return NextResponse.next();
 

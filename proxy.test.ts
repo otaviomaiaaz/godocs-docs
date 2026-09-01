@@ -2,9 +2,17 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { proxy } from "./proxy";
 
-function request(pathname: string, cookie?: string) {
+function request(
+  pathname: string,
+  cookie?: string,
+  host: string | null = "cliente.godocs4.com.br",
+) {
+  const headers: Record<string, string | null> = {
+    cookie: cookie ?? null,
+    host,
+  };
   return {
-    headers: { get: (key: string) => (key === "cookie" ? (cookie ?? null) : null) },
+    headers: { get: (key: string) => headers[key] ?? null },
     nextUrl: { origin: "https://cliente.godocs4.com.br", pathname },
   } as unknown as Parameters<typeof proxy>[0];
 }
@@ -63,6 +71,20 @@ describe("gate de sessão da doc", () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("ECONNREFUSED")));
 
     expect((await proxy(request("/primeiro-acesso", "gd_at=abc"))).status).toBe(307);
+  });
+
+  it("deixa passar a busca interna do otimizador de imagem, que vem sem headers", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await proxy(
+      request("/primeiro-acesso/captura.png", undefined, null),
+    );
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("falha fechado quando falta a URL da API", async () => {
