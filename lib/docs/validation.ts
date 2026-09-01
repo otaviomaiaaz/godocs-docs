@@ -20,6 +20,7 @@ import {
   loadDocumentFile,
 } from "@/lib/docs/source";
 import type { DocRecord } from "@/lib/docs/schema";
+import { SITE_BASE_PATH } from "@/lib/site";
 
 const ALLOWED_MDX_COMPONENTS = new Set([
   "Callout",
@@ -207,6 +208,13 @@ function decodeFragment(fragment: string): string {
   }
 }
 
+function stripBasePath(pathname: string): string {
+  if (pathname === SITE_BASE_PATH) return "/";
+  return pathname.startsWith(`${SITE_BASE_PATH}/`)
+    ? pathname.slice(SITE_BASE_PATH.length)
+    : pathname;
+}
+
 function resolveDocumentSlug(currentSlug: string, pathname: string): string | null {
   if (!pathname) return currentSlug;
   if (pathname === "/") return null;
@@ -237,7 +245,7 @@ async function validateAsset(
   }
 
   const resolvedPath = pathname.startsWith("/")
-    ? path.resolve(publicDirectory, `.${pathname}`)
+    ? path.resolve(publicDirectory, `.${stripBasePath(pathname)}`)
     : path.resolve(path.dirname(doc.filePath), pathname);
   const relativeToWorkspace = path.relative(workspaceDirectory, resolvedPath);
 
