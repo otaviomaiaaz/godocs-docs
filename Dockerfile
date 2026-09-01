@@ -51,7 +51,12 @@ USER nextjs
 EXPOSE 3000
 
 # Com basePath=/docs a raiz `/` responde 404 — o sinal de vida é /docs.
+#
+# `redirect: manual` + status < 500: com o gate de sessão ligado (DOCS_AUTH_ENABLED)
+# o /docs responde 307 para o /login da SPA, que NÃO existe dentro deste container.
+# Seguir o redirect daria 404 e marcaria como unhealthy um serviço que está de pé —
+# um 307 vindo do proxy.ts já prova que o server está servindo.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/docs').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/docs',{redirect:'manual'}).then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "server.js"]
