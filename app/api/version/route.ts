@@ -5,7 +5,9 @@ import { APP_VERSION } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export type VersionInfo = {
-  version: string;
+  docs: string;
+  api: string | null;
+  web: string | null;
 };
 
 const FULL_SHA = /^[0-9a-f]{40}$/i;
@@ -20,6 +22,8 @@ export function readableVersion(raw: string | undefined): string | null {
 
 export async function GET() {
   return NextResponse.json<VersionInfo>({
-    version: readableVersion(process.env.DOCS_VERSION) ?? APP_VERSION,
+    docs: readableVersion(process.env.DOCS_VERSION) ?? APP_VERSION,
+    api: readableVersion(process.env.API_VERSION),
+    web: readableVersion(process.env.WEB_VERSION),
   });
 }

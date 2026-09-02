@@ -5,20 +5,24 @@ import { useEffect, useState } from "react";
 import type { VersionInfo } from "@/app/api/version/route";
 import { SITE_BASE_PATH } from "@/lib/site";
 
-type DeployedVersionProps = {
+type DeployedVersionsProps = {
   fallback: string;
 };
 
-export function DeployedVersion({ fallback }: DeployedVersionProps) {
-  const [version, setVersion] = useState(fallback);
+export function DeployedVersions({ fallback }: DeployedVersionsProps) {
+  const [info, setInfo] = useState<VersionInfo>({
+    docs: fallback,
+    api: null,
+    web: null,
+  });
 
   useEffect(() => {
     let active = true;
 
     fetch(`${SITE_BASE_PATH}/api/version`)
       .then((response) => (response.ok ? response.json() : null))
-      .then((info: VersionInfo | null) => {
-        if (active && info?.version) setVersion(info.version);
+      .then((data: VersionInfo | null) => {
+        if (active && data?.docs) setInfo(data);
       })
       .catch(() => undefined);
 
@@ -27,5 +31,20 @@ export function DeployedVersion({ fallback }: DeployedVersionProps) {
     };
   }, []);
 
-  return <>v{version}</>;
+  const parts = [
+    info.api ? `API v${info.api}` : null,
+    info.web ? `Web v${info.web}` : null,
+    `Documentação v${info.docs}`,
+  ].filter(Boolean) as string[];
+
+  return (
+    <>
+      {parts.map((part, index) => (
+        <span key={part}>
+          {index > 0 ? <span aria-hidden="true"> · </span> : null}
+          {part}
+        </span>
+      ))}
+    </>
+  );
 }
