@@ -16,6 +16,9 @@ export const config = {
 };
 
 const LOGIN_PATH = "/login";
+const SESSION_COOKIES = ["gd_at", "gd_rt", "gd_csrf"];
+
+type SessionCheck = "valid" | "rejected" | "unknown";
 
 export async function proxy(request: NextRequest) {
   if (process.env.DOCS_AUTH_ENABLED !== "true") return NextResponse.next();
@@ -23,8 +26,9 @@ export async function proxy(request: NextRequest) {
   if (request.headers.get("host") === null) return NextResponse.next();
 
   const cookie = request.headers.get("cookie");
-  if (cookie && (await hasValidSession(cookie))) {
-    await trackOpen(request, cookie);
+  const session = cookie ? await checkSession(cookie) : "rejected";
+  if (session === "valid") {
+    await trackOpen(request, cookie as string);
     return NextResponse.next();
   }
 
@@ -33,7 +37,16 @@ export async function proxy(request: NextRequest) {
     "redirect",
     `${SITE_BASE_PATH}${request.nextUrl.pathname}${request.nextUrl.search}`,
   );
-  return NextResponse.redirect(login);
+
+  const response = NextResponse.redirect(login);
+  if (session === "rejected") expireHostOnlySession(response);
+  return response;
+}
+
+function expireHostOnlySession(response: NextResponse): void {
+  for (const name of SESSION_COOKIES) {
+    response.cookies.set(name, "", { path: "/", maxAge: 0 });
+  }
 }
 
 async function trackOpen(request: NextRequest, cookie: string) {
@@ -51,17 +64,20 @@ async function trackOpen(request: NextRequest, cookie: string) {
   });
 }
 
-async function hasValidSession(cookie: string): Promise<boolean> {
+async function checkSession(cookie: string): Promise<SessionCheck> {
   const baseUrl = process.env.DOCS_AUTH_API_URL;
-  if (!baseUrl) return false;
+  if (!baseUrl) return "unknown";
 
   try {
     const response = await fetch(`${baseUrl}/api/v1/profile`, {
       headers: { cookie },
       cache: "no-store",
     });
-    return response.ok;
+    if (response.ok) return "valid";
+    return response.status === 401 || response.status === 403
+      ? "rejected"
+      : "unknown";
   } catch {
-    return false;
+    return "unknown";
   }
 }

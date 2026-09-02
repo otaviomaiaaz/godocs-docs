@@ -70,6 +70,31 @@ describe("gate de sessão da doc", () => {
     expect((await proxy(request("/primeiro-acesso", "gd_at=velho"))).status).toBe(307);
   });
 
+  it("expira o cookie host-only quando a API recusa a sessão", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
+
+    const response = await proxy(request("/primeiro-acesso", "gd_at=velho"));
+    const cleared = response.headers.getSetCookie().join(" ");
+
+    expect(cleared).toContain("gd_at=");
+    expect(cleared).toContain("gd_rt=");
+    expect(cleared).toContain("Max-Age=0");
+    expect(cleared).not.toContain("Domain");
+  });
+
+  it("não mexe nos cookies quando a API está fora do ar", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("ECONNREFUSED")));
+
+    const response = await proxy(request("/primeiro-acesso", "gd_at=bom"));
+
+    expect(response.status).toBe(307);
+    expect(response.headers.getSetCookie()).toHaveLength(0);
+  });
+
   it("falha fechado quando a API está fora do ar", async () => {
     process.env.DOCS_AUTH_ENABLED = "true";
     process.env.DOCS_AUTH_API_URL = "http://app:3333";
