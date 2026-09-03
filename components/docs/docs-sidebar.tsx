@@ -4,7 +4,6 @@ import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   type FocusEvent,
-  type KeyboardEvent,
   type MouseEvent,
   type PointerEvent,
   useEffect,
@@ -21,35 +20,83 @@ type DocsSidebarProps = {
 };
 
 const NAVIGATION_ID = "docs-sidebar-navigation";
-const GHOST_MENU_CLOSE_DELAY = 120;
+const HOVER_INTENT_DELAY = 110;
+const PREVIEW_CLOSE_DELAY = 140;
+const COMPACT_CONTENT_DELAY = 110;
+const HOVER_CAPABILITY_QUERY = "(hover: hover) and (pointer: fine)";
 
 export function DocsSidebar({ groups }: DocsSidebarProps) {
   const pathname = usePathname();
   const { sidebarState, setSidebarState } = useDocsSidebarState();
-  const [ghostMenuPathname, setGhostMenuPathname] = useState<string | null>(
-    null,
-  );
+  const [previewPathname, setPreviewPathname] = useState<string | null>(null);
+  const [isCollapsing, setIsCollapsing] = useState(false);
+  const openTimeoutRef = useRef<number | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
-  const navigationRef = useRef<HTMLElement>(null);
+  const compactTimeoutRef = useRef<number | null>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const dismissedByEscapeRef = useRef(false);
+  const previewOpenedByFocusRef = useRef(false);
+  const isExpanded = sidebarState === "expanded";
+  const isPreviewOpen = !isExpanded && previewPathname === pathname;
+  const isCompact = !isExpanded && !isPreviewOpen && !isCollapsing;
+  const actionLabel = isExpanded
+    ? "Recolher navegação"
+    : "Expandir navegação";
 
   useEffect(
     () => () => {
+      if (openTimeoutRef.current !== null) {
+        window.clearTimeout(openTimeoutRef.current);
+      }
+
       if (closeTimeoutRef.current !== null) {
         window.clearTimeout(closeTimeoutRef.current);
+      }
+
+      if (compactTimeoutRef.current !== null) {
+        window.clearTimeout(compactTimeoutRef.current);
       }
     },
     [],
   );
 
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      cancelScheduledOpen();
+      cancelScheduledClose();
+      if (compactTimeoutRef.current !== null) {
+        window.clearTimeout(compactTimeoutRef.current);
+      }
+      setIsCollapsing(true);
+      compactTimeoutRef.current = window.setTimeout(() => {
+        compactTimeoutRef.current = null;
+        setIsCollapsing(false);
+      }, COMPACT_CONTENT_DELAY);
+      dismissedByEscapeRef.current = true;
+      previewOpenedByFocusRef.current = false;
+      setPreviewPathname(null);
+      toggleRef.current?.focus({ preventScroll: true });
+    }
+
+    document.addEventListener("keydown", handleEscape, true);
+
+    return () => document.removeEventListener("keydown", handleEscape, true);
+  }, [isPreviewOpen]);
+
   if (groups.length === 0) return null;
 
-  const isExpanded = sidebarState === "expanded";
-  const isGhostMenuOpen = !isExpanded && ghostMenuPathname === pathname;
-  const actionLabel = isExpanded
-    ? "Recolher navegação"
-    : "Expandir navegação";
+  function cancelScheduledOpen() {
+    if (openTimeoutRef.current !== null) {
+      window.clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  }
 
   function cancelScheduledClose() {
     if (closeTimeoutRef.current !== null) {
@@ -58,96 +105,153 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     }
   }
 
-  function openGhostMenu() {
+  function cancelCompactTransition() {
+    if (compactTimeoutRef.current !== null) {
+      window.clearTimeout(compactTimeoutRef.current);
+      compactTimeoutRef.current = null;
+    }
+
+    setIsCollapsing(false);
+  }
+
+  function scheduleCompactTransition() {
+    cancelCompactTransition();
+    setIsCollapsing(true);
+    compactTimeoutRef.current = window.setTimeout(() => {
+      compactTimeoutRef.current = null;
+      setIsCollapsing(false);
+    }, COMPACT_CONTENT_DELAY);
+  }
+
+  function supportsHoverPreview() {
+    return window.matchMedia(HOVER_CAPABILITY_QUERY).matches;
+  }
+
+  function openPreview(source: "focus" | "pointer") {
     if (isExpanded || dismissedByEscapeRef.current) return;
 
+    cancelScheduledOpen();
     cancelScheduledClose();
-    setGhostMenuPathname(pathname);
+    cancelCompactTransition();
+    previewOpenedByFocusRef.current = source === "focus";
+    setPreviewPathname(pathname);
   }
 
-  function closeGhostMenu() {
+  function closePreview() {
+    cancelScheduledOpen();
     cancelScheduledClose();
-    setGhostMenuPathname(null);
+    if (!isExpanded) {
+      scheduleCompactTransition();
+    } else {
+      cancelCompactTransition();
+    }
+    previewOpenedByFocusRef.current = false;
+    setPreviewPathname(null);
   }
 
-  function scheduleGhostMenuClose() {
+  function schedulePreviewOpen() {
+    if (isExpanded || isPreviewOpen || dismissedByEscapeRef.current) return;
+
+    cancelScheduledOpen();
+    cancelScheduledClose();
+    openTimeoutRef.current = window.setTimeout(() => {
+      openTimeoutRef.current = null;
+      openPreview("pointer");
+    }, HOVER_INTENT_DELAY);
+  }
+
+  function schedulePreviewClose() {
     cancelScheduledClose();
     closeTimeoutRef.current = window.setTimeout(() => {
-      if (navigationRef.current?.contains(document.activeElement)) {
-        closeTimeoutRef.current = null;
+      closeTimeoutRef.current = null;
+
+      if (
+        previewOpenedByFocusRef.current &&
+        document.activeElement &&
+        eventTargetContains(document.activeElement)
+      ) {
         return;
       }
 
-      setGhostMenuPathname(null);
-      closeTimeoutRef.current = null;
-    }, GHOST_MENU_CLOSE_DELAY);
+      scheduleCompactTransition();
+      setPreviewPathname(null);
+    }, PREVIEW_CLOSE_DELAY);
+  }
+
+  function eventTargetContains(target: Element) {
+    return toggleRef.current?.closest("aside")?.contains(target) ?? false;
   }
 
   function handleToggle(event: MouseEvent<HTMLButtonElement>) {
     const nextState = isExpanded ? "collapsed" : "expanded";
 
+    cancelScheduledOpen();
+    cancelScheduledClose();
     dismissedByEscapeRef.current = false;
     setSidebarState(nextState);
 
     if (nextState === "collapsed" && event.detail === 0) {
-      setGhostMenuPathname(pathname);
+      cancelCompactTransition();
+      previewOpenedByFocusRef.current = true;
+      setPreviewPathname(pathname);
+    } else if (nextState === "collapsed") {
+      scheduleCompactTransition();
+      previewOpenedByFocusRef.current = false;
+      setPreviewPathname(null);
     } else {
-      closeGhostMenu();
+      cancelCompactTransition();
+      previewOpenedByFocusRef.current = false;
+      setPreviewPathname(null);
     }
   }
 
   function handlePointerEnter(event: PointerEvent<HTMLElement>) {
-    if (event.pointerType === "touch") return;
+    if (event.pointerType === "touch" || !supportsHoverPreview()) return;
 
     dismissedByEscapeRef.current = false;
-    openGhostMenu();
+    if (isPreviewOpen) {
+      cancelScheduledClose();
+      return;
+    }
+
+    schedulePreviewOpen();
   }
 
   function handlePointerLeave(event: PointerEvent<HTMLElement>) {
-    if (event.pointerType === "touch" || !isGhostMenuOpen) return;
-    scheduleGhostMenuClose();
+    if (event.pointerType === "touch") return;
+
+    dismissedByEscapeRef.current = false;
+    cancelScheduledOpen();
+    if (!isPreviewOpen) return;
+    schedulePreviewClose();
   }
 
   function handleFocus(event: FocusEvent<HTMLElement>) {
-    if (event.target === toggleRef.current || isGhostMenuOpen) {
-      openGhostMenu();
-    }
+    if (!event.currentTarget.contains(event.target)) return;
+    cancelScheduledOpen();
+    openPreview("focus");
   }
 
   function handleBlur(event: FocusEvent<HTMLElement>) {
-    if (
-      !event.currentTarget.contains(event.relatedTarget as Node | null)
-    ) {
+    if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
       dismissedByEscapeRef.current = false;
-      closeGhostMenu();
+      closePreview();
     }
-  }
-
-  function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (event.key !== "Escape" || !isGhostMenuOpen) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    dismissedByEscapeRef.current = true;
-    closeGhostMenu();
-    toggleRef.current?.focus({ preventScroll: true });
   }
 
   return (
     <aside
       aria-label="Navegação lateral"
       className="docs-sidebar"
-      data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}
+      data-motion={isCollapsing ? "collapsing" : "idle"}
+      data-preview={isPreviewOpen ? "open" : "closed"}
       data-sidebar-state={sidebarState}
       onBlur={handleBlur}
       onFocus={handleFocus}
-      onKeyDown={handleKeyDown}
+      onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >
-      <div
-        className="docs-sidebar__controls"
-        onPointerEnter={handlePointerEnter}
-      >
+      <div className="docs-sidebar__controls">
         <button
           aria-controls={NAVIGATION_ID}
           aria-expanded={isExpanded}
@@ -155,7 +259,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
           className="icon-button docs-sidebar__toggle"
           onClick={handleToggle}
           ref={toggleRef}
-          title={actionLabel}
           type="button"
         >
           <PanelLeftClose
@@ -171,16 +274,16 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
         </button>
       </div>
       <nav
-        aria-hidden={!isExpanded && !isGhostMenuOpen ? "true" : undefined}
         aria-label="Navegação da documentação"
         className="docs-sidebar__navigation"
-        data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}
         id={NAVIGATION_ID}
-        inert={!isExpanded && !isGhostMenuOpen ? true : undefined}
-        onPointerEnter={handlePointerEnter}
-        ref={navigationRef}
       >
-        <NavigationTree groups={groups} onNavigate={closeGhostMenu} />
+        <NavigationTree
+          compact={isCompact}
+          groups={groups}
+          onNavigate={closePreview}
+          showIcons
+        />
       </nav>
     </aside>
   );

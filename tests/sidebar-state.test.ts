@@ -36,7 +36,7 @@ describe("contrato de estado da sidebar documental", () => {
     );
   });
 
-  it("reutiliza a árvore real no overlay e não expande ao navegar", async () => {
+  it("reutiliza a árvore real no rail e no preview sem persistência externa", async () => {
     const sidebar = await readProjectFile(
       "components",
       "docs",
@@ -44,13 +44,17 @@ describe("contrato de estado da sidebar documental", () => {
     );
 
     expect(sidebar.match(/<NavigationTree/g)).toHaveLength(1);
-    expect(sidebar).toContain("onNavigate={closeGhostMenu}");
+    expect(sidebar).toContain("compact={isCompact}");
+    expect(sidebar).toContain("onNavigate={closePreview}");
     expect(sidebar).toContain(
-      "inert={!isExpanded && !isGhostMenuOpen ? true : undefined}",
+      'data-preview={isPreviewOpen ? "open" : "closed"}',
     );
-    expect(sidebar).toContain(
-      'data-ghost-menu={isGhostMenuOpen ? "open" : "closed"}',
-    );
+    expect(sidebar).toContain("showIcons");
+    expect(sidebar).toContain("const HOVER_INTENT_DELAY = 110");
+    expect(sidebar).toContain("const COMPACT_CONTENT_DELAY = 110");
+    expect(sidebar).toContain("schedulePreviewOpen()");
+    expect(sidebar).toContain("cancelScheduledOpen()");
+    expect(sidebar).toContain("scheduleCompactTransition()");
     expect(sidebar).not.toMatch(/localStorage|sessionStorage|setExpanded/);
   });
 });
