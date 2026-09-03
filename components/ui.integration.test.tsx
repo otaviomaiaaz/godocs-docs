@@ -119,6 +119,18 @@ function renderSidebar() {
   );
 }
 
+async function waitForSidebarHoverIntent() {
+  await act(async () => {
+    await new Promise((resolve) => window.setTimeout(resolve, 125));
+  });
+}
+
+async function waitForSidebarCompactTransition() {
+  await act(async () => {
+    await new Promise((resolve) => window.setTimeout(resolve, 120));
+  });
+}
+
 function expectComboboxPopupState(
   combobox: HTMLElement,
   expanded: boolean,
@@ -582,7 +594,7 @@ describe("fluxos interativos", () => {
     ).toBe("page");
   });
 
-  it("recolhe a sidebar com semântica acessível e mantém a árvore montada", async () => {
+  it("recolhe para um rail acessível e mantém ícones e árvore montados", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
 
@@ -594,8 +606,6 @@ describe("fluxos interativos", () => {
     const navigation = document.getElementById(navigationId ?? "");
 
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
-    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
-    expect(navigation?.hasAttribute("inert")).toBe(false);
     expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
     expect((await axe.run(container)).violations).toEqual([]);
 
@@ -607,19 +617,31 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
     expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
     expect(window.localStorage.length).toBe(0);
-    expect(navigation?.getAttribute("aria-hidden")).toBe("true");
-    expect(navigation?.hasAttribute("inert")).toBe(true);
-    expect(navigation?.dataset.ghostMenu).toBe("closed");
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+    expect(toggle.closest("aside")?.dataset.motion).toBe("collapsing");
     expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
-    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
+    expect(
+      navigation?.querySelectorAll(".navigation-tree__icon"),
+    ).toHaveLength(2);
+    expect(
+      navigation?.querySelector('.navigation-tree[data-compact="false"]'),
+    ).toBeTruthy();
+    await waitForSidebarCompactTransition();
+    expect(toggle.closest("aside")?.dataset.motion).toBe("idle");
+    expect(
+      navigation?.querySelector('.navigation-tree[data-compact="true"]'),
+    ).toBeTruthy();
+    expect((await axe.run(container)).violations).toEqual([]);
 
     await user.click(toggle);
 
     expect(document.activeElement).toBe(toggle);
     expect(toggle.getAttribute("aria-label")).toBe("Recolher navegação");
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
-    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
-    expect(navigation?.hasAttribute("inert")).toBe(false);
+    expect(
+      navigation?.querySelector('.navigation-tree[data-compact="false"]'),
+    ).toBeTruthy();
     expect(window.localStorage.length).toBe(0);
   });
 
@@ -699,7 +721,7 @@ describe("fluxos interativos", () => {
     expect(document.documentElement.dataset.docsSidebar).toBe("expanded");
   });
 
-  it("abre o menu fantasma por pointer, estabiliza a travessia e fecha ao sair", async () => {
+  it("abre preview por pointer fine e fecha sem alterar o estado persistente", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
@@ -712,28 +734,109 @@ describe("fluxos interativos", () => {
       toggle.getAttribute("aria-controls") ?? "",
     );
 
-    expect(navigation?.getAttribute("aria-hidden")).toBe("true");
-    expect(navigation?.hasAttribute("inert")).toBe(true);
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
-    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
-    expect(navigation?.hasAttribute("inert")).toBe(false);
-    expect(navigation?.dataset.ghostMenu).toBe("open");
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+    await waitForSidebarHoverIntent();
+    expect(toggle.closest("aside")?.dataset.preview).toBe("open");
+    expect(
+      navigation?.querySelector('.navigation-tree[data-compact="false"]'),
+    ).toBeTruthy();
 
     const sidebar = toggle.closest("aside");
     fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
     fireEvent.pointerEnter(navigation!, { pointerType: "mouse" });
     await new Promise((resolve) => window.setTimeout(resolve, 150));
-    expect(navigation?.getAttribute("aria-hidden")).toBeNull();
+    expect(sidebar?.dataset.preview).toBe("open");
 
     fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
     await waitFor(() =>
-      expect(navigation?.getAttribute("aria-hidden")).toBe("true"),
+      expect(sidebar?.dataset.preview).toBe("closed"),
     );
-    expect(navigation?.hasAttribute("inert")).toBe(true);
-    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
   });
 
-  it("mantém o toggle operável acima do menu fantasma e expande ao clicar", async () => {
+  it("cancela o hover intent quando o pointer sai antes da abertura", async () => {
+    const user = userEvent.setup();
+    renderInSiteShell(renderSidebar());
+
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação",
+    });
+    await user.click(toggle);
+    const sidebar = toggle.closest("aside");
+
+    fireEvent.pointerEnter(sidebar!, { pointerType: "mouse" });
+    fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
+
+    expect(sidebar?.dataset.preview).toBe("closed");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("fecha com Escape o preview aberto por pointer mesmo com foco externo", async () => {
+    pathname.value = "/docs/funcionalidades/documentos";
+    const user = userEvent.setup();
+    renderInSiteShell(
+      <>
+        {renderSidebar()}
+        <button type="button">Controle externo</button>
+      </>,
+    );
+
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação",
+    });
+    await user.click(toggle);
+    await user.click(screen.getByRole("button", { name: "Controle externo" }));
+    fireEvent.pointerEnter(toggle.closest("aside")!, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
+    expect(toggle.closest("aside")?.dataset.preview).toBe("open");
+
+    await user.keyboard("{Escape}");
+
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(toggle);
+  });
+
+  it("não abre preview por hover quando o dispositivo não suporta pointer fine", async () => {
+    installMatchMedia(false);
+    const user = userEvent.setup();
+    renderInSiteShell(renderSidebar());
+
+    const toggle = screen.getByRole("button", {
+      name: "Recolher navegação",
+    });
+    await user.click(toggle);
+    fireEvent.pointerEnter(toggle.closest("aside")!, { pointerType: "mouse" });
+
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("relaciona cada link principal do rail ao tooltip textual", async () => {
+    const user = userEvent.setup();
+    renderInSiteShell(renderSidebar());
+
+    await user.click(
+      screen.getByRole("button", { name: "Recolher navegação" }),
+    );
+    await waitForSidebarCompactTransition();
+    const documentos = screen.getByRole("link", { name: "Documentos" });
+    const tooltipId = documentos.getAttribute("aria-describedby");
+
+    expect(tooltipId).toBeTruthy();
+    expect(document.getElementById(tooltipId ?? "")?.getAttribute("role")).toBe(
+      "tooltip",
+    );
+    expect(document.getElementById(tooltipId ?? "")?.textContent).toBe(
+      "Documentos",
+    );
+  });
+
+  it("mantém o toggle operável no preview e expande persistentemente ao clicar", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
@@ -743,12 +846,9 @@ describe("fluxos interativos", () => {
     });
     await user.click(toggle);
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
 
-    const navigation = document.getElementById(
-      toggle.getAttribute("aria-controls") ?? "",
-    );
-    expect(navigation?.dataset.ghostMenu).toBe("open");
-    expect(toggle.closest("aside")?.dataset.ghostMenu).toBe("open");
+    expect(toggle.closest("aside")?.dataset.preview).toBe("open");
     expect(toggle.isConnected).toBe(true);
     expect(toggle.tabIndex).toBe(0);
 
@@ -759,11 +859,10 @@ describe("fluxos interativos", () => {
     expect(document.documentElement.dataset.docsSidebar).toBe("expanded");
     expect(toggle.getAttribute("aria-expanded")).toBe("true");
     expect(toggle.getAttribute("aria-label")).toBe("Recolher navegação");
-    expect(navigation?.dataset.ghostMenu).toBe("closed");
-    expect(toggle.closest("aside")?.dataset.ghostMenu).toBe("closed");
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
   });
 
-  it("abre o menu fantasma por foco, fecha com Escape e não cria focus trap", async () => {
+  it("abre o preview por foco, fecha com Escape e não cria focus trap", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
@@ -786,11 +885,12 @@ describe("fluxos interativos", () => {
     await user.keyboard("{Escape}");
 
     expect(document.activeElement).toBe(toggle);
-    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+    expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("fecha o menu fantasma ao navegar sem expandir a sidebar e atualiza o active", async () => {
+  it("fecha o preview ao navegar sem expandir a sidebar e atualiza o active", async () => {
     pathname.value = "/docs/funcionalidades/workflows";
     const user = userEvent.setup();
     const view = renderInSiteShell(renderSidebar());
@@ -800,14 +900,16 @@ describe("fluxos interativos", () => {
     });
     await user.click(toggle);
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
     await user.click(screen.getByRole("link", { name: "Documentos" }));
 
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
-    expect(screen.queryByRole("link", { name: "Documentos" })).toBeNull();
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
 
     pathname.value = "/docs/funcionalidades/documentos";
     view.rerender(renderSidebar());
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
 
     expect(
       screen.getByRole("link", { name: "Documentos" }).getAttribute(
@@ -817,7 +919,7 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("mantém branches operáveis no menu fantasma sem alterar o estado global", async () => {
+  it("mantém branches operáveis no preview sem alterar o estado global", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
@@ -827,6 +929,7 @@ describe("fluxos interativos", () => {
     });
     await user.click(toggle);
     fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
+    await waitForSidebarHoverIntent();
 
     const branchToggle = screen.getByRole("button", {
       name: "Recolher Documentos",

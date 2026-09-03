@@ -780,7 +780,7 @@ describe("identidade e prevenção de regressões visuais", () => {
     );
   });
 
-  it("remove o track do TOC no shell intermediário e preserva o drawer", async () => {
+  it("desacopla sidebar e TOC do eixo editorial e preserva o drawer", async () => {
     const css = await readFile(
       path.join(projectRoot, "app", "globals.css"),
       "utf8",
@@ -803,14 +803,64 @@ describe("identidade e prevenção de regressões visuais", () => {
       ...css.matchAll(/@media \(max-width: 1319px\)/g),
     ];
 
+    expect(cssRuleBlock(css, ".article-layout")).toContain("display: block");
+    expect(cssRuleBlock(css, ".article-layout")).toContain("max-width: none");
     expect(cssRuleBlock(css, ".article-layout")).toContain(
-      "grid-template-columns: 240px minmax(560px, var(--content-width)) 220px",
+      "--docs-shell-sidebar-reserve: 240px",
+    );
+    expect(cssRuleBlock(css, ".article-layout")).toContain(
+      "--docs-shell-toc-width: 220px",
+    );
+    expect(cssRuleBlock(css, ".article-layout")).toContain(
+      "--docs-shell-toc-gutter: 32px",
+    );
+    expect(cssRuleBlock(css, ".article")).toContain(
+      "width: min(var(--content-width), calc(100vw - 544px))",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain("position: fixed");
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-expanded: 240px",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-collapsed: 48px",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-duration: 220ms",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-reveal-start: 170ms",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-reveal-step: 20ms",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-reveal-end: 310ms",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "top: var(--header-height)",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain("left: 0");
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "height: calc(100dvh - var(--header-height))",
+    );
+    expect(cssRuleBlock(css, ".table-of-contents")).toContain(
+      "position: fixed",
+    );
+    expect(cssRuleBlock(css, ".table-of-contents")).toContain("left: auto");
+    expect(cssRuleBlock(css, ".table-of-contents")).toContain(
+      "right: var(--docs-shell-toc-gutter)",
+    );
+    expect(css).toContain(
+      '.article-layout[data-has-sidebar="true"][data-has-toc="true"]',
+    );
+    expect(css).toContain(
+      "padding-left: var(--docs-shell-sidebar-reserve)",
+    );
+    expect(css).toContain(
+      "var(--docs-shell-toc-width) + var(--docs-shell-toc-gutter)",
     );
     expect(intermediateStart).toBeGreaterThanOrEqual(0);
     expect(compactHeaderStart).toBeGreaterThan(intermediateStart);
-    expect(cssRuleBlock(intermediateCss, ".article-layout")).toContain(
-      "grid-template-columns: 240px minmax(560px, var(--content-width))",
-    );
     expect(cssRuleBlock(intermediateCss, ".table-of-contents")).toContain(
       "display: none",
     );
@@ -825,34 +875,32 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(cssRuleBlock(drawerCss, ".docs-sidebar")).toContain(
       "display: none",
     );
-    expect(css).toContain('html[data-docs-sidebar="collapsed"]');
-    expect(css).toContain("grid-template-columns: minmax(560px, 48rem) 220px");
-    expect(css).toContain("grid-template-columns: minmax(560px, 48rem)");
     expect(css).toContain(
-      'html[data-docs-sidebar="collapsed"] .docs-sidebar__navigation[data-ghost-menu="open"]',
-    );
-    expect(css).toContain("position: fixed");
-    expect(css).toContain("width: 280px");
-    expect(css).toContain("padding: 88px 20px 24px");
-    expect(css).toContain("z-index: 2");
-    expect(css).toContain("z-index: 1");
-    expect(css).toContain(
-      'html[data-docs-sidebar="collapsed"] .docs-sidebar[data-ghost-menu="open"] .docs-sidebar__toggle',
-    );
-    expect(css).toContain("border-color: var(--divider)");
-    expect(css).toContain("background: var(--surface-interactive)");
-    expect(css).toContain(
-      'html[data-theme="light"][data-docs-sidebar="collapsed"] .docs-sidebar__navigation',
+      '.docs-sidebar[data-sidebar-state="collapsed"][data-preview="open"]',
     );
     expect(css).toContain(
       "border-right-color: color-mix(in srgb, var(--divider) 56%, var(--background))",
     );
-    expect(css).toContain("box-shadow: none");
-    expect(css).toContain("transform: translateX(-100%)");
-    expect(css).toContain("transform: translateX(0)");
-    expect(css).toContain("border-right: 0");
+    expect(css).toContain("width: var(--docs-sidebar-collapsed)");
+    expect(css).toContain("width: var(--docs-sidebar-expanded)");
+    expect(
+      cssRuleBlock(
+        css,
+        '.docs-sidebar[data-sidebar-state="collapsed"][data-preview="closed"]',
+      ),
+    ).toContain("transition-delay: 120ms");
+    expect(css).toContain("var(--docs-sidebar-reveal-start) +");
+    expect(css).toContain(
+      "var(--navigation-item-index, 0) * var(--docs-sidebar-reveal-step)",
+    );
+    expect(css).not.toMatch(
+      /navigation-tree--sidebar\[data-compact="true"\][\s\S]{0,120}navigation-tree__group-title\s*\{[^}]*display:\s*none/,
+    );
+    expect(css).not.toContain("data-ghost-menu");
+    expect(css).not.toContain("width: 280px");
+    expect(css).not.toContain("padding: 88px 20px 24px");
     expect(css).toMatch(
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*html\[data-docs-sidebar="collapsed"\] \.docs-sidebar__navigation\s*\{[^}]*transform:\s*none;[^}]*transition:\s*none;/,
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.docs-sidebar,[\s\S]*\.navigation-tree__tooltip\s*\{[^}]*transition:\s*none;/,
     );
   });
 
