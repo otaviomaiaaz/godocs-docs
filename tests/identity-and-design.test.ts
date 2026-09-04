@@ -825,16 +825,19 @@ describe("identidade e prevenção de regressões visuais", () => {
       "--docs-sidebar-collapsed: 48px",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-duration: 220ms",
+      "--docs-sidebar-expand-duration: 205ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-reveal-start: 170ms",
+      "--docs-sidebar-collapse-duration: 200ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-reveal-step: 20ms",
+      "--docs-sidebar-collapse-delay: 40ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-reveal-end: 310ms",
+      "--docs-sidebar-reveal-duration: 140ms",
+    );
+    expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
+      "--docs-sidebar-reveal-start: 135ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
       "top: var(--header-height)",
@@ -888,11 +891,17 @@ describe("identidade e prevenção de regressões visuais", () => {
         css,
         '.docs-sidebar[data-sidebar-state="collapsed"][data-preview="closed"]',
       ),
-    ).toContain("transition-delay: 120ms");
+    ).toContain("transition-delay: var(--docs-sidebar-collapse-delay)");
     expect(css).toContain("var(--docs-sidebar-reveal-start) +");
     expect(css).toContain(
-      "var(--navigation-item-index, 0) * var(--docs-sidebar-reveal-step)",
+      "var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)",
     );
+    expect(css).toContain("-webkit-mask-image: linear-gradient(");
+    expect(css).toContain("mask-position: 100% 50%");
+    expect(css).toContain("grid-template-rows 190ms");
+    expect(css).toContain("var(--navigation-child-index, 0) * 10ms");
+    expect(css).not.toContain("data-motion");
+    expect(css).not.toContain("navigation-tree__tooltip");
     expect(css).not.toMatch(
       /navigation-tree--sidebar\[data-compact="true"\][\s\S]{0,120}navigation-tree__group-title\s*\{[^}]*display:\s*none/,
     );
@@ -900,7 +909,7 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(css).not.toContain("width: 280px");
     expect(css).not.toContain("padding: 88px 20px 24px");
     expect(css).toMatch(
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.docs-sidebar,[\s\S]*\.navigation-tree__tooltip\s*\{[^}]*transition:\s*none;/,
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.docs-sidebar,[\s\S]*\.navigation-tree--sidebar \.navigation-tree__cascade,[\s\S]*\{[^}]*transition:\s*none;/,
     );
   });
 

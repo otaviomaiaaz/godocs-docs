@@ -20,25 +20,24 @@ type DocsSidebarProps = {
 };
 
 const NAVIGATION_ID = "docs-sidebar-navigation";
-const HOVER_INTENT_DELAY = 110;
+const HOVER_INTENT_DELAY = 140;
 const PREVIEW_CLOSE_DELAY = 140;
-const COMPACT_CONTENT_DELAY = 110;
 const HOVER_CAPABILITY_QUERY = "(hover: hover) and (pointer: fine)";
+const PREVIEW_INTENT_SELECTOR =
+  ".docs-sidebar__toggle, .navigation-tree__row, .navigation-tree__group-title--link";
 
 export function DocsSidebar({ groups }: DocsSidebarProps) {
   const pathname = usePathname();
   const { sidebarState, setSidebarState } = useDocsSidebarState();
   const [previewPathname, setPreviewPathname] = useState<string | null>(null);
-  const [isCollapsing, setIsCollapsing] = useState(false);
   const openTimeoutRef = useRef<number | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
-  const compactTimeoutRef = useRef<number | null>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const dismissedByEscapeRef = useRef(false);
   const previewOpenedByFocusRef = useRef(false);
   const isExpanded = sidebarState === "expanded";
   const isPreviewOpen = !isExpanded && previewPathname === pathname;
-  const isCompact = !isExpanded && !isPreviewOpen && !isCollapsing;
+  const isCompact = !isExpanded && !isPreviewOpen;
   const actionLabel = isExpanded
     ? "Recolher navegação"
     : "Expandir navegação";
@@ -51,10 +50,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
 
       if (closeTimeoutRef.current !== null) {
         window.clearTimeout(closeTimeoutRef.current);
-      }
-
-      if (compactTimeoutRef.current !== null) {
-        window.clearTimeout(compactTimeoutRef.current);
       }
     },
     [],
@@ -70,14 +65,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
       event.stopPropagation();
       cancelScheduledOpen();
       cancelScheduledClose();
-      if (compactTimeoutRef.current !== null) {
-        window.clearTimeout(compactTimeoutRef.current);
-      }
-      setIsCollapsing(true);
-      compactTimeoutRef.current = window.setTimeout(() => {
-        compactTimeoutRef.current = null;
-        setIsCollapsing(false);
-      }, COMPACT_CONTENT_DELAY);
       dismissedByEscapeRef.current = true;
       previewOpenedByFocusRef.current = false;
       setPreviewPathname(null);
@@ -105,24 +92,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     }
   }
 
-  function cancelCompactTransition() {
-    if (compactTimeoutRef.current !== null) {
-      window.clearTimeout(compactTimeoutRef.current);
-      compactTimeoutRef.current = null;
-    }
-
-    setIsCollapsing(false);
-  }
-
-  function scheduleCompactTransition() {
-    cancelCompactTransition();
-    setIsCollapsing(true);
-    compactTimeoutRef.current = window.setTimeout(() => {
-      compactTimeoutRef.current = null;
-      setIsCollapsing(false);
-    }, COMPACT_CONTENT_DELAY);
-  }
-
   function supportsHoverPreview() {
     return window.matchMedia(HOVER_CAPABILITY_QUERY).matches;
   }
@@ -132,7 +101,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
 
     cancelScheduledOpen();
     cancelScheduledClose();
-    cancelCompactTransition();
     previewOpenedByFocusRef.current = source === "focus";
     setPreviewPathname(pathname);
   }
@@ -140,11 +108,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
   function closePreview() {
     cancelScheduledOpen();
     cancelScheduledClose();
-    if (!isExpanded) {
-      scheduleCompactTransition();
-    } else {
-      cancelCompactTransition();
-    }
     previewOpenedByFocusRef.current = false;
     setPreviewPathname(null);
   }
@@ -173,7 +136,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
         return;
       }
 
-      scheduleCompactTransition();
       setPreviewPathname(null);
     }, PREVIEW_CLOSE_DELAY);
   }
@@ -191,15 +153,12 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     setSidebarState(nextState);
 
     if (nextState === "collapsed" && event.detail === 0) {
-      cancelCompactTransition();
       previewOpenedByFocusRef.current = true;
       setPreviewPathname(pathname);
     } else if (nextState === "collapsed") {
-      scheduleCompactTransition();
       previewOpenedByFocusRef.current = false;
       setPreviewPathname(null);
     } else {
-      cancelCompactTransition();
       previewOpenedByFocusRef.current = false;
       setPreviewPathname(null);
     }
@@ -207,6 +166,14 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
 
   function handlePointerEnter(event: PointerEvent<HTMLElement>) {
     if (event.pointerType === "touch" || !supportsHoverPreview()) return;
+
+    if (
+      !isPreviewOpen &&
+      event.target instanceof Element &&
+      !event.target.closest(PREVIEW_INTENT_SELECTOR)
+    ) {
+      return;
+    }
 
     dismissedByEscapeRef.current = false;
     if (isPreviewOpen) {
@@ -243,7 +210,6 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
     <aside
       aria-label="Navegação lateral"
       className="docs-sidebar"
-      data-motion={isCollapsing ? "collapsing" : "idle"}
       data-preview={isPreviewOpen ? "open" : "closed"}
       data-sidebar-state={sidebarState}
       onBlur={handleBlur}
