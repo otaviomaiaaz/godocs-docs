@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
   type FocusEvent,
@@ -20,8 +20,8 @@ type DocsSidebarProps = {
 };
 
 const NAVIGATION_ID = "docs-sidebar-navigation";
-const HOVER_INTENT_DELAY = 140;
-const PREVIEW_CLOSE_DELAY = 140;
+const HOVER_INTENT_DELAY = 130;
+const PREVIEW_CLOSE_DELAY = 240;
 const HOVER_CAPABILITY_QUERY = "(hover: hover) and (pointer: fine)";
 const PREVIEW_INTENT_SELECTOR =
   ".docs-sidebar__toggle, .navigation-tree__row, .navigation-tree__group-title--link";
@@ -227,15 +227,11 @@ export function DocsSidebar({ groups }: DocsSidebarProps) {
           ref={toggleRef}
           type="button"
         >
-          <PanelLeftClose
+          <ChevronLeft
             aria-hidden="true"
-            className="docs-sidebar__toggle-icon docs-sidebar__toggle-icon--collapse"
-            size={18}
-          />
-          <PanelLeftOpen
-            aria-hidden="true"
-            className="docs-sidebar__toggle-icon docs-sidebar__toggle-icon--expand"
-            size={18}
+            className="docs-sidebar__toggle-icon"
+            size={16}
+            strokeWidth={1.8}
           />
         </button>
       </div>
