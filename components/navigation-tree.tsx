@@ -2,10 +2,12 @@
 
 import {
   BarChart3,
+  BookOpenText,
   ChevronRight,
   Compass,
   FileText,
   Files,
+  LogIn,
   Search,
   Star,
   Workflow,
@@ -36,6 +38,18 @@ type BranchOverride = {
   isOpen: boolean;
   pathname: string;
 };
+
+const NAVIGATION_CASCADE_BASE_STEP_MS = 9;
+const NAVIGATION_CASCADE_MAX_STAGGER_MS = 85;
+
+function getNavigationCascadeStep(visibleItemCount: number) {
+  if (visibleItemCount <= 1) return NAVIGATION_CASCADE_BASE_STEP_MS;
+
+  return Math.min(
+    NAVIGATION_CASCADE_BASE_STEP_MS,
+    NAVIGATION_CASCADE_MAX_STAGGER_MS / (visibleItemCount - 1),
+  );
+}
 
 function buildNavigationAnimationOrder(
   groups: DocNavigationGroup[],
@@ -108,6 +122,10 @@ function NavigationIcon({ item }: { item: DocNavigationItem }) {
   } as const;
 
   switch (key) {
+    case "o-que-e-o-godocs":
+      return <BookOpenText {...props} />;
+    case "primeiro-acesso":
+      return <LogIn {...props} />;
     case "busca-inteligente":
       return <Search {...props} />;
     case "documentos":
@@ -273,6 +291,9 @@ export function NavigationTree({
     () => buildNavigationAnimationOrder(groups, openBranchIds),
     [groups, openBranchIds],
   );
+  const cascadeStep = getNavigationCascadeStep(
+    animationOrder.visibleItemCount,
+  );
   function toggleBranch(itemId: string) {
     setBranchOverrides((current) => {
       const next = new Map(current);
@@ -288,10 +309,11 @@ export function NavigationTree({
     <div
       className={`navigation-tree${showIcons ? " navigation-tree--sidebar" : ""}`}
       data-compact={compact ? "true" : "false"}
+      data-cascade-step-ms={cascadeStep.toFixed(3)}
       data-visible-item-count={animationOrder.visibleItemCount}
       style={
         {
-          "--navigation-cascade-step": "14ms",
+          "--navigation-cascade-step": `${cascadeStep}ms`,
         } as CSSProperties
       }
     >
