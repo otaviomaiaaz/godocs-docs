@@ -12,13 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  type CSSProperties,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { type CSSProperties, useId, useMemo, useState } from "react";
 
 import type {
   DocNavigationGroup,
@@ -35,10 +29,17 @@ type NavigationTreeProps = {
 type NavigationAnimationOrder = {
   groupIndexes: Map<string, number>;
   itemIndexes: Map<string, number>;
+  visibleItemCount: number;
+};
+
+type BranchOverride = {
+  isOpen: boolean;
+  pathname: string;
 };
 
 function buildNavigationAnimationOrder(
   groups: DocNavigationGroup[],
+  openBranchIds: ReadonlySet<string>,
 ): NavigationAnimationOrder {
   const groupIndexes = new Map<string, number>();
   const itemIndexes = new Map<string, number>();
@@ -48,7 +49,10 @@ function buildNavigationAnimationOrder(
     for (const item of items) {
       itemIndexes.set(item.id, nextIndex);
       nextIndex += 1;
-      indexItems(item.children);
+
+      if (openBranchIds.has(item.id)) {
+        indexItems(item.children);
+      }
     }
   }
 
@@ -61,7 +65,7 @@ function buildNavigationAnimationOrder(
     indexItems(group.items);
   }
 
-  return { groupIndexes, itemIndexes };
+  return { groupIndexes, itemIndexes, visibleItemCount: nextIndex };
 }
 
 function branchContainsPath(item: DocNavigationItem, pathname: string): boolean {
@@ -69,6 +73,29 @@ function branchContainsPath(item: DocNavigationItem, pathname: string): boolean 
     item.href === pathname ||
     item.children.some((child) => branchContainsPath(child, pathname))
   );
+}
+
+function collectActiveBranchIds(
+  groups: DocNavigationGroup[],
+  pathname: string,
+) {
+  const activeBranchIds = new Set<string>();
+
+  function collect(items: DocNavigationItem[]) {
+    for (const item of items) {
+      if (item.children.length > 0 && branchContainsPath(item, pathname)) {
+        activeBranchIds.add(item.id);
+      }
+
+      collect(item.children);
+    }
+  }
+
+  for (const group of groups) {
+    collect(group.items);
+  }
+
+  return activeBranchIds;
 }
 
 function NavigationIcon({ item }: { item: DocNavigationItem }) {
@@ -100,46 +127,47 @@ function NavigationIcon({ item }: { item: DocNavigationItem }) {
 
 function NavigationItem({
   compact,
+  childIndex,
   depth,
   item,
   animationIndex,
   animationOrder,
+  openBranchIds,
   pathname,
   onNavigate,
+  onToggleBranch,
   showIcons,
 }: {
   compact: boolean;
+  childIndex: number;
   depth: number;
   item: DocNavigationItem;
-  animationIndex: number;
+  animationIndex?: number;
   animationOrder: NavigationAnimationOrder;
+  openBranchIds: ReadonlySet<string>;
   pathname: string;
   onNavigate?: () => void;
+  onToggleBranch: (itemId: string) => void;
   showIcons: boolean;
 }) {
-  const branchIsActive = branchContainsPath(item, pathname);
-  const [isOpen, setIsOpen] = useState(branchIsActive);
-  const previousPathnameRef = useRef(pathname);
   const baseId = useId();
   const childrenId = `${baseId}-children`;
-  const tooltipId = `${baseId}-tooltip`;
   const hasChildren = item.children.length > 0;
   const displaysIcon = showIcons && depth === 0;
-
-  useEffect(() => {
-    if (previousPathnameRef.current !== pathname && branchIsActive) {
-      setIsOpen(true);
-    }
-
-    previousPathnameRef.current = pathname;
-  }, [branchIsActive, pathname]);
+  const isOpen = openBranchIds.has(item.id);
 
   return (
     <li
       className="navigation-tree__item"
+      data-cascade-index={animationIndex}
       data-depth={depth}
       style={
-        { "--navigation-item-index": animationIndex } as CSSProperties
+        {
+          "--navigation-child-index": childIndex,
+          ...(animationIndex === undefined
+            ? {}
+            : { "--navigation-item-index": animationIndex }),
+        } as CSSProperties
       }
     >
       <div
@@ -149,19 +177,22 @@ function NavigationItem({
         {item.href ? (
           <Link
             aria-current={item.href === pathname ? "page" : undefined}
-            aria-describedby={compact && displaysIcon ? tooltipId : undefined}
             aria-label={compact && displaysIcon ? item.label : undefined}
             className="navigation-tree__link"
             href={item.href}
             onClick={onNavigate}
           >
             {displaysIcon ? <NavigationIcon item={item} /> : null}
-            <span className="navigation-tree__label">{item.label}</span>
+            <span className="navigation-tree__label navigation-tree__cascade">
+              {item.label}
+            </span>
           </Link>
         ) : (
           <span className="navigation-tree__branch-label">
             {displaysIcon ? <NavigationIcon item={item} /> : null}
-            <span className="navigation-tree__label">{item.label}</span>
+            <span className="navigation-tree__label navigation-tree__cascade">
+              {item.label}
+            </span>
           </span>
         )}
 
@@ -171,9 +202,9 @@ function NavigationItem({
             aria-expanded={isOpen}
             aria-hidden={compact ? "true" : undefined}
             aria-label={`${isOpen ? "Recolher" : "Expandir"} ${item.label}`}
-            className="navigation-tree__expand"
+            className="navigation-tree__expand navigation-tree__cascade"
             inert={compact ? true : undefined}
-            onClick={() => setIsOpen((open) => !open)}
+            onClick={() => onToggleBranch(item.id)}
             tabIndex={compact ? -1 : undefined}
             type="button"
           >
@@ -181,16 +212,6 @@ function NavigationItem({
           </button>
         ) : null}
       </div>
-
-      {compact && displaysIcon ? (
-        <span
-          className="navigation-tree__tooltip"
-          id={tooltipId}
-          role="tooltip"
-        >
-          {item.label}
-        </span>
-      ) : null}
 
       {hasChildren ? (
         <div
@@ -203,15 +224,16 @@ function NavigationItem({
           <ul className="navigation-tree__children">
             {item.children.map((child, index) => (
               <NavigationItem
+                childIndex={index}
                 compact={compact}
                 depth={depth + 1}
                 item={child}
-                animationIndex={
-                  animationOrder.itemIndexes.get(child.id) ?? index
-                }
+                animationIndex={animationOrder.itemIndexes.get(child.id)}
                 animationOrder={animationOrder}
                 key={child.id}
                 onNavigate={onNavigate}
+                onToggleBranch={onToggleBranch}
+                openBranchIds={openBranchIds}
                 pathname={pathname}
                 showIcons={showIcons}
               />
@@ -231,12 +253,47 @@ export function NavigationTree({
 }: NavigationTreeProps) {
   const pathname = usePathname();
   const baseId = useId();
-  const animationOrder = buildNavigationAnimationOrder(groups);
+  const [branchOverrides, setBranchOverrides] = useState<
+    Map<string, BranchOverride>
+  >(() => new Map());
+  const openBranchIds = useMemo(() => {
+    const next = collectActiveBranchIds(groups, pathname);
+
+    for (const [itemId, override] of branchOverrides) {
+      if (override.isOpen) {
+        next.add(itemId);
+      } else if (override.pathname === pathname) {
+        next.delete(itemId);
+      }
+    }
+
+    return next;
+  }, [branchOverrides, groups, pathname]);
+  const animationOrder = useMemo(
+    () => buildNavigationAnimationOrder(groups, openBranchIds),
+    [groups, openBranchIds],
+  );
+  function toggleBranch(itemId: string) {
+    setBranchOverrides((current) => {
+      const next = new Map(current);
+      next.set(itemId, {
+        isOpen: !openBranchIds.has(itemId),
+        pathname,
+      });
+      return next;
+    });
+  }
 
   return (
     <div
       className={`navigation-tree${showIcons ? " navigation-tree--sidebar" : ""}`}
       data-compact={compact ? "true" : "false"}
+      data-visible-item-count={animationOrder.visibleItemCount}
+      style={
+        {
+          "--navigation-cascade-step": "14ms",
+        } as CSSProperties
+      }
     >
       {groups.map((group) => {
         const titleId = group.title ? `${baseId}-${group.id}-title` : undefined;
@@ -246,7 +303,10 @@ export function NavigationTree({
             {group.title ? (
               <div
                 aria-hidden={compact ? "true" : undefined}
-                className="navigation-tree__group-title-shell"
+                className="navigation-tree__group-title-shell navigation-tree__cascade"
+                data-cascade-index={
+                  animationOrder.groupIndexes.get(group.id)
+                }
                 inert={compact ? true : undefined}
                 style={
                   {
@@ -282,15 +342,16 @@ export function NavigationTree({
             >
               {group.items.map((item, index) => (
                 <NavigationItem
+                  childIndex={index}
                   compact={compact}
                   depth={0}
                   item={item}
-                  animationIndex={
-                    animationOrder.itemIndexes.get(item.id) ?? index
-                  }
+                  animationIndex={animationOrder.itemIndexes.get(item.id)}
                   animationOrder={animationOrder}
                   key={item.id}
                   onNavigate={onNavigate}
+                  onToggleBranch={toggleBranch}
+                  openBranchIds={openBranchIds}
                   pathname={pathname}
                   showIcons={showIcons}
                 />

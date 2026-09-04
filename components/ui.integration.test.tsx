@@ -121,13 +121,7 @@ function renderSidebar() {
 
 async function waitForSidebarHoverIntent() {
   await act(async () => {
-    await new Promise((resolve) => window.setTimeout(resolve, 125));
-  });
-}
-
-async function waitForSidebarCompactTransition() {
-  await act(async () => {
-    await new Promise((resolve) => window.setTimeout(resolve, 120));
+    await new Promise((resolve) => window.setTimeout(resolve, 155));
   });
 }
 
@@ -618,17 +612,11 @@ describe("fluxos interativos", () => {
     expect(document.documentElement.dataset.docsSidebar).toBe("collapsed");
     expect(window.localStorage.length).toBe(0);
     expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
-    expect(toggle.closest("aside")?.dataset.motion).toBe("collapsing");
     expect(navigation?.querySelector(".navigation-tree")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Documentos" })).toBeTruthy();
     expect(
       navigation?.querySelectorAll(".navigation-tree__icon"),
     ).toHaveLength(2);
-    expect(
-      navigation?.querySelector('.navigation-tree[data-compact="false"]'),
-    ).toBeTruthy();
-    await waitForSidebarCompactTransition();
-    expect(toggle.closest("aside")?.dataset.motion).toBe("idle");
     expect(
       navigation?.querySelector('.navigation-tree[data-compact="true"]'),
     ).toBeTruthy();
@@ -767,7 +755,7 @@ describe("fluxos interativos", () => {
     await user.click(toggle);
     const sidebar = toggle.closest("aside");
 
-    fireEvent.pointerEnter(sidebar!, { pointerType: "mouse" });
+    fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
     fireEvent.pointerLeave(sidebar!, { pointerType: "mouse" });
     await waitForSidebarHoverIntent();
 
@@ -790,7 +778,7 @@ describe("fluxos interativos", () => {
     });
     await user.click(toggle);
     await user.click(screen.getByRole("button", { name: "Controle externo" }));
-    fireEvent.pointerEnter(toggle.closest("aside")!, { pointerType: "mouse" });
+    fireEvent.pointerEnter(toggle, { pointerType: "mouse" });
     await waitForSidebarHoverIntent();
     expect(toggle.closest("aside")?.dataset.preview).toBe("open");
 
@@ -816,24 +804,47 @@ describe("fluxos interativos", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("relaciona cada link principal do rail ao tooltip textual", async () => {
+  it("mantém nome acessível no rail sem tooltip concorrente", async () => {
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
     await user.click(
       screen.getByRole("button", { name: "Recolher navegação" }),
     );
-    await waitForSidebarCompactTransition();
     const documentos = screen.getByRole("link", { name: "Documentos" });
-    const tooltipId = documentos.getAttribute("aria-describedby");
 
-    expect(tooltipId).toBeTruthy();
-    expect(document.getElementById(tooltipId ?? "")?.getAttribute("role")).toBe(
-      "tooltip",
+    expect(documentos.getAttribute("aria-label")).toBe("Documentos");
+    expect(documentos.hasAttribute("aria-describedby")).toBe(false);
+    expect(document.querySelector('[role="tooltip"]')).toBeNull();
+  });
+
+  it("calcula o cascade somente com itens visíveis", async () => {
+    pathname.value = "/";
+    const user = userEvent.setup();
+    const { container } = renderInSiteShell(renderSidebar());
+    const tree = container.querySelector(".navigation-tree--sidebar");
+    const documentos = screen
+      .getByRole("link", { name: "Documentos" })
+      .closest(".navigation-tree__item");
+    const workflows = screen
+      .getByRole("link", { name: "Workflows" })
+      .closest(".navigation-tree__item");
+    const pastas = container.querySelector(
+      '.navigation-tree__item[data-depth="1"]',
     );
-    expect(document.getElementById(tooltipId ?? "")?.textContent).toBe(
-      "Documentos",
+
+    expect(tree?.getAttribute("data-visible-item-count")).toBe("3");
+    expect(documentos?.getAttribute("data-cascade-index")).toBe("1");
+    expect(workflows?.getAttribute("data-cascade-index")).toBe("2");
+    expect(pastas?.hasAttribute("data-cascade-index")).toBe(false);
+
+    await user.click(
+      screen.getByRole("button", { name: "Expandir Documentos" }),
     );
+
+    expect(tree?.getAttribute("data-visible-item-count")).toBe("4");
+    expect(pastas?.getAttribute("data-cascade-index")).toBe("2");
+    expect(workflows?.getAttribute("data-cascade-index")).toBe("3");
   });
 
   it("mantém o toggle operável no preview e expande persistentemente ao clicar", async () => {

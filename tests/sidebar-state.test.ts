@@ -50,11 +50,13 @@ describe("contrato de estado da sidebar documental", () => {
       'data-preview={isPreviewOpen ? "open" : "closed"}',
     );
     expect(sidebar).toContain("showIcons");
-    expect(sidebar).toContain("const HOVER_INTENT_DELAY = 110");
-    expect(sidebar).toContain("const COMPACT_CONTENT_DELAY = 110");
+    expect(sidebar).toContain("const HOVER_INTENT_DELAY = 140");
     expect(sidebar).toContain("schedulePreviewOpen()");
     expect(sidebar).toContain("cancelScheduledOpen()");
-    expect(sidebar).toContain("scheduleCompactTransition()");
+    expect(sidebar).toContain(
+      "const isCompact = !isExpanded && !isPreviewOpen",
+    );
+    expect(sidebar).not.toMatch(/COMPACT_CONTENT_DELAY|data-motion/);
     expect(sidebar).not.toMatch(/localStorage|sessionStorage|setExpanded/);
   });
 });
