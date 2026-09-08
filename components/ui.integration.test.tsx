@@ -873,6 +873,61 @@ describe("fluxos interativos", () => {
     expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
   });
 
+  it("preserva a árvore e indica o ancestral ativo no rail sem expor filhos ou controles ocultos", async () => {
+    pathname.value = "/docs/funcionalidades/documentos/pastas";
+    const user = userEvent.setup();
+    const { container } = renderInSiteShell(renderSidebar());
+    const tree = container.querySelector(".navigation-tree--sidebar");
+    const child = screen.getByRole("link", { name: "Pastas" });
+    const hub = screen.getByRole("link", { name: "Documentos" });
+    const branch = screen.getByRole("button", { name: "Recolher Documentos" });
+    const shell = document.getElementById(branch.getAttribute("aria-controls")!);
+    const toggle = screen.getByRole("button", { name: "Recolher navegação" });
+    await user.click(toggle);
+    expect(container.querySelector(".navigation-tree--sidebar")).toBe(tree);
+    expect(hub.closest(".navigation-tree__row")?.getAttribute("data-active-branch")).toBe("true");
+    expect(hub.hasAttribute("aria-current")).toBe(false);
+    expect(child.getAttribute("aria-current")).toBe("page");
+    expect(shell?.getAttribute("aria-hidden")).toBe("true");
+    expect(shell?.hasAttribute("inert")).toBe(true);
+    expect(branch.hasAttribute("inert")).toBe(true);
+    expect(branch.tabIndex).toBe(-1);
+    expect(container.querySelector(".navigation-tree__group-title-shell")?.hasAttribute("inert")).toBe(true);
+    expect(screen.queryByRole("link", { name: "Pastas" })).toBeNull();
+    fireEvent.focus(toggle);
+    expect(container.querySelector(".navigation-tree--sidebar")).toBe(tree);
+    expect(screen.getByRole("link", { name: "Pastas" })).toBe(child);
+    expect(shell?.hasAttribute("inert")).toBe(false);
+    expect(branch.getAttribute("aria-expanded")).toBe("true");
+    expect(branch.tabIndex).toBe(0);
+  });
+
+  it.each([10, 15, 17, 40])("limita o cascade dinâmico de %i itens ao orçamento de 85ms", (count) => {
+    const items = Array.from({ length: count }, (_, index) => ({
+      id: `item-${index}`, label: `Item ${index}`, href: `/docs/item-${index}`, children: [],
+    }));
+    const { container } = renderInSiteShell(
+      <NavigationTree groups={[{ id: "grupo", order: 1, items }]} showIcons />,
+    );
+    const tree = container.querySelector<HTMLElement>(".navigation-tree--sidebar")!;
+    const step = Number.parseFloat(tree.style.getPropertyValue("--navigation-cascade-step"));
+    expect(step).toBeLessThanOrEqual(9);
+    expect(step * (count - 1)).toBeLessThanOrEqual(85);
+    expect(step).toBeCloseTo(Math.min(9, 85 / (count - 1)), 6);
+  });
+
+  it("ignora touch mesmo quando o dispositivo também anuncia pointer fine", async () => {
+    const user = userEvent.setup();
+    renderInSiteShell(renderSidebar());
+    const toggle = screen.getByRole("button", { name: "Recolher navegação" });
+    await user.click(toggle);
+    const event = new Event("pointerover", { bubbles: true });
+    Object.defineProperty(event, "pointerType", { value: "touch" });
+    fireEvent(toggle, event);
+    await waitForSidebarHoverIntent();
+    expect(toggle.closest("aside")?.dataset.preview).toBe("closed");
+  });
+
   it("abre o preview por foco, fecha com Escape e não cria focus trap", async () => {
     pathname.value = "/docs/funcionalidades/documentos";
     const user = userEvent.setup();
