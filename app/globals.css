@@ -1024,11 +1024,18 @@ body:has(dialog[open]) {
 .docs-sidebar {
   --docs-sidebar-expanded: 240px;
   --docs-sidebar-collapsed: 48px;
-  --docs-sidebar-expand-duration: 205ms;
-  --docs-sidebar-collapse-duration: 200ms;
-  --docs-sidebar-collapse-delay: 40ms;
-  --docs-sidebar-reveal-duration: 140ms;
-  --docs-sidebar-reveal-start: 135ms;
+  --docs-sidebar-expand-duration: 195ms;
+  --docs-sidebar-collapse-duration: 185ms;
+  --docs-sidebar-collapse-delay: 0ms;
+  --docs-sidebar-reveal-duration: 95ms;
+  --docs-sidebar-reveal-start: 85ms;
+  --docs-sidebar-reveal-opacity: 0.35;
+  --docs-sidebar-row-height: 38px;
+  --docs-sidebar-group-slot: 24px;
+  --docs-sidebar-group-gap: 10px;
+  --docs-sidebar-branch-geometry: 180ms;
+  --docs-sidebar-branch-opacity: 125ms;
+  --docs-sidebar-child-stagger: 7ms;
   position: fixed;
   top: var(--header-height);
   left: 0;
@@ -1082,24 +1089,23 @@ html[data-theme="light"] .docs-sidebar {
   background: var(--surface-hover);
 }
 
+.docs-sidebar__toggle:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -4px;
+  background: var(--surface-hover);
+}
+
 .docs-sidebar__toggle-icon {
   position: absolute;
   inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-  transition:
-    opacity 160ms var(--ease),
-    transform 200ms var(--ease);
-}
-
-.docs-sidebar__toggle-icon--expand {
-  opacity: 0;
-  transform: translate(-42%, -50%);
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: transform 120ms var(--ease);
 }
 
 .docs-sidebar__navigation {
   height: 100%;
   max-height: none;
-  padding: 68px 8px 28px;
+  padding: 68px 2px 28px;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1120,35 +1126,44 @@ html[data-theme="light"] .docs-sidebar {
   transition-delay: var(--docs-sidebar-collapse-delay);
 }
 
-.docs-sidebar[data-sidebar-state="collapsed"][data-preview="closed"]
-  .docs-sidebar__navigation {
-  padding-right: 2px;
-  padding-left: 2px;
-  overflow: visible;
-}
-
 .docs-sidebar[data-sidebar-state="collapsed"]
-  .docs-sidebar__toggle-icon--collapse {
-  opacity: 0;
-  transform: translate(-58%, -50%);
-}
-
-.docs-sidebar[data-sidebar-state="collapsed"]
-  .docs-sidebar__toggle-icon--expand {
-  opacity: 1;
-  transform: translate(-50%, -50%);
+  .docs-sidebar__toggle-icon {
+  transform: translate(-50%, -50%) rotate(180deg);
 }
 
 .navigation-tree--sidebar .navigation-tree__group + .navigation-tree__group {
-  margin-top: 24px;
+  margin-top: var(--docs-sidebar-group-gap);
+}
+
+.navigation-tree--sidebar {
+  width: calc(var(--docs-sidebar-expanded) - 5px);
 }
 
 .navigation-tree--sidebar .navigation-tree__group-title-shell {
-  max-height: 44px;
+  height: var(--docs-sidebar-group-slot);
+  overflow: visible;
+}
+
+.navigation-tree--sidebar .navigation-tree__group-title {
+  display: flex;
+  min-height: 0;
+  height: var(--docs-sidebar-group-slot);
+  align-items: center;
+  padding: 0 12px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.navigation-tree--sidebar .navigation-tree__group-title--link::after {
+  position: absolute;
+  inset: -10px 0;
+  content: "";
 }
 
 .navigation-tree--sidebar .navigation-tree__row {
-  min-height: 38px;
+  min-height: var(--docs-sidebar-row-height);
   padding: 0;
 }
 
@@ -1163,7 +1178,12 @@ html[data-theme="light"] .docs-sidebar {
 
 .navigation-tree--sidebar .navigation-tree__link,
 .navigation-tree--sidebar .navigation-tree__branch-label {
-  padding: 9px 8px;
+  min-height: var(--docs-sidebar-row-height);
+  padding: 6px 12px;
+}
+
+.navigation-tree--sidebar .navigation-tree__item[data-depth="0"] > .navigation-tree__row {
+  height: var(--docs-sidebar-row-height);
 }
 
 .navigation-tree--sidebar .navigation-tree__link,
@@ -1175,9 +1195,31 @@ html[data-theme="light"] .docs-sidebar {
 .navigation-tree--sidebar .navigation-tree__link[aria-current="page"],
 .navigation-tree--sidebar
   .navigation-tree__group-title--link[aria-current="page"] {
-  background: color-mix(in srgb, var(--surface-interactive) 64%, transparent);
+  background: transparent;
   color: var(--text-primary);
   box-shadow: none;
+}
+
+/* The active surface shares the label's reveal, while the rail marker stays put. */
+.navigation-tree--sidebar .navigation-tree__link[aria-current="page"]::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--surface-interactive) 64%, transparent);
+  opacity: 1;
+  transition: opacity var(--docs-sidebar-reveal-duration) var(--ease);
+  transition-delay: var(--navigation-reveal-delay);
+  content: "";
+}
+
+.navigation-tree--sidebar .navigation-tree__link {
+  isolation: isolate;
+}
+
+/* Group title and its surface already share the same cascade wrapper. */
+.navigation-tree--sidebar .navigation-tree__group-title--link[aria-current="page"] {
+  background: color-mix(in srgb, var(--surface-interactive) 64%, transparent);
 }
 
 .navigation-tree--sidebar .navigation-tree__link[aria-current="page"]::before,
@@ -1200,18 +1242,16 @@ html[data-theme="light"] .docs-sidebar {
 
 .navigation-tree--sidebar .navigation-tree__children-shell {
   transition:
-    grid-template-rows 190ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 150ms var(--ease);
+    grid-template-rows var(--docs-sidebar-branch-geometry) var(--ease),
+    opacity var(--docs-sidebar-branch-opacity) var(--ease);
 }
 
-.navigation-tree--sidebar
-  .navigation-tree__children
-  > .navigation-tree__item {
-  opacity: 0.18;
+.navigation-tree--sidebar .navigation-tree__children > .navigation-tree__item {
+  opacity: var(--docs-sidebar-reveal-opacity);
   transform: translateX(-4px);
   transition:
-    opacity 120ms var(--ease),
-    transform 120ms var(--ease);
+    opacity var(--docs-sidebar-branch-opacity) var(--ease),
+    transform var(--docs-sidebar-branch-opacity) var(--ease);
   transition-delay: 0ms;
 }
 
@@ -1221,7 +1261,7 @@ html[data-theme="light"] .docs-sidebar {
   > .navigation-tree__item {
   opacity: 1;
   transform: translateX(0);
-  transition-delay: calc(var(--navigation-child-index, 0) * 10ms);
+  transition-delay: calc(var(--navigation-child-index, 0) * var(--docs-sidebar-child-stagger));
 }
 
 .navigation-tree--sidebar
@@ -1236,7 +1276,7 @@ html[data-theme="light"] .docs-sidebar {
   line-height: 1.35;
 }
 
-.navigation-tree--sidebar .navigation-tree__expand {
+.navigation-tree--sidebar .navigation-tree__expand.navigation-tree__cascade {
   position: absolute;
   isolation: isolate;
   top: 50%;
@@ -1269,135 +1309,99 @@ html[data-theme="light"] .docs-sidebar {
   transition: transform 185ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* One schedule for a label and its active surface. The dynamic step is
+   capped in NavigationTree; hidden descendants never consume cascade slots. */
+.navigation-tree--sidebar .navigation-tree__item,
+.navigation-tree--sidebar .navigation-tree__group-title-shell {
+  --navigation-reveal-delay: calc(
+    var(--docs-sidebar-reveal-start) +
+    var(--navigation-item-index, 0) * var(--navigation-cascade-step, 9ms)
+  );
+}
+
 .navigation-tree--sidebar .navigation-tree__cascade {
   opacity: 1;
   transform: translateX(0);
   visibility: visible;
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(0 0 0 / 18%) 30%,
-    #000 58%,
-    #000 100%
-  );
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgb(0 0 0 / 18%) 30%,
-    #000 58%,
-    #000 100%
-  );
-  -webkit-mask-position: 100% 50%;
-  mask-position: 100% 50%;
-  -webkit-mask-size: 220% 100%;
-  mask-size: 220% 100%;
   transition:
     opacity var(--docs-sidebar-reveal-duration) var(--ease),
     transform var(--docs-sidebar-reveal-duration) var(--ease),
-    visibility 0s linear 0s,
-    -webkit-mask-position var(--docs-sidebar-reveal-duration) var(--ease),
-    mask-position var(--docs-sidebar-reveal-duration) var(--ease);
-  transition-delay: calc(
-    var(--docs-sidebar-reveal-start) +
-      var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)
-  );
+    visibility 0s;
+  transition-delay: var(--navigation-reveal-delay), var(--navigation-reveal-delay), 0s;
 }
 
 .navigation-tree--sidebar .navigation-tree__label.navigation-tree__cascade {
-  max-width: 190px;
-  overflow: hidden;
-  transition:
-    opacity var(--docs-sidebar-reveal-duration) var(--ease),
-    transform var(--docs-sidebar-reveal-duration) var(--ease),
-    visibility 0s linear 0s,
-    -webkit-mask-position var(--docs-sidebar-reveal-duration) var(--ease),
-    mask-position var(--docs-sidebar-reveal-duration) var(--ease),
-    max-width 90ms var(--ease);
-  transition-delay:
-    calc(
-      var(--docs-sidebar-reveal-start) +
-        var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)
-    ),
-    calc(
-      var(--docs-sidebar-reveal-start) +
-        var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)
-    ),
-    0ms,
-    calc(
-      var(--docs-sidebar-reveal-start) +
-        var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)
-    ),
-    calc(
-      var(--docs-sidebar-reveal-start) +
-        var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)
-    ),
-    35ms;
+  /* Constant text measure prevents line wraps and branch-height changes
+     while the outer surface animates. The navigation viewport clips it. */
+  flex: 0 0 auto;
+  max-width: 184px;
+  white-space: nowrap;
 }
 
-.navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__group-title-shell {
-  max-height: 0;
-  pointer-events: none;
-}
-
-.navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__group
-  + .navigation-tree__group {
-  margin-top: 10px;
-}
-
-.navigation-tree--sidebar[data-compact="true"] .navigation-tree__row {
-  padding-right: 4px;
-  padding-left: 4px;
-}
-
-.navigation-tree--sidebar[data-compact="true"] .navigation-tree__link,
-.navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__branch-label {
-  justify-content: center;
-  gap: 0;
-  padding-right: 9px;
-  padding-left: 9px;
-}
-
-.navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__row[data-has-children="true"]
-  .navigation-tree__link,
-.navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__row[data-has-children="true"]
-  .navigation-tree__branch-label {
-  padding-right: 9px;
-}
-
-.navigation-tree--sidebar[data-compact="true"] .navigation-tree__expand {
-  transform: translate(6px, -50%);
-  pointer-events: none;
-}
-
-.navigation-tree--sidebar[data-compact="true"] .navigation-tree__label {
-  max-width: 0;
-  pointer-events: none;
+.navigation-tree--sidebar .navigation-tree__item[data-depth="0"]
+  > .navigation-tree__row .navigation-tree__link {
+  gap: 9px;
 }
 
 .navigation-tree--sidebar[data-compact="true"] .navigation-tree__cascade {
-  opacity: 0.18;
-  transform: translateX(-6px);
+  opacity: var(--docs-sidebar-reveal-opacity);
+  transform: translateX(-4px);
   visibility: hidden;
-  -webkit-mask-position: 0 50%;
-  mask-position: 0 50%;
-  transition-duration: 90ms, 90ms, 0s, 90ms, 90ms;
-  transition-delay: 0ms, 0ms, 90ms, 0ms, 0ms;
+  pointer-events: none;
+  transition-duration: 70ms, 70ms, 0s;
+  transition-delay: 0ms, 0ms, 70ms;
+}
+
+.navigation-tree--sidebar[data-compact="true"] .navigation-tree__expand.navigation-tree__cascade {
+  transform: translate(4px, -50%);
+}
+
+.navigation-tree--sidebar[data-compact="true"] .navigation-tree__link[aria-current="page"]::after {
+  opacity: 0;
+  transition-duration: 70ms;
+  transition-delay: 0ms;
 }
 
 .navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__link[aria-current="page"] {
-  background: transparent;
+  .navigation-tree__row[data-active-branch="true"] > .navigation-tree__link::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  content: "";
 }
 
 .navigation-tree--sidebar[data-compact="true"]
-  .navigation-tree__link[aria-current="page"]::before {
-  top: 10px;
-  bottom: 10px;
+  .navigation-tree__row[data-active-branch="true"] .navigation-tree__icon {
+  color: var(--accent-text);
+}
+
+/* Nested rows reveal as a unit: no second label cascade over the branch
+   surface/guide. The whole shell joins the sidebar reveal on preview. */
+.navigation-tree--sidebar .navigation-tree__children .navigation-tree__cascade {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.navigation-tree--sidebar .navigation-tree__children .navigation-tree__label {
+  flex: 1;
+  white-space: normal;
+}
+
+.navigation-tree--sidebar .navigation-tree__children .navigation-tree__link[aria-current="page"]::after {
+  transition: none;
+}
+
+.navigation-tree--sidebar[data-compact="true"] .navigation-tree__children-shell {
+  transition: none;
+}
+
+.navigation-tree--sidebar[data-compact="false"] .navigation-tree__children-shell {
+  transition-delay: 0ms;
 }
 
 .article {
@@ -2043,6 +2047,23 @@ html[data-theme="light"] .docs-sidebar {
   }
 }
 
+@media (min-width: 1024px) and (max-width: 1319px) {
+  .article-layout[data-has-sidebar="true"] {
+    padding-left: calc(var(--docs-shell-sidebar-reserve) + 32px);
+    padding-right: 32px;
+  }
+
+  .article-layout[data-has-sidebar="true"] .article {
+    width: min(var(--content-width), 100%);
+  }
+}
+
+@media (min-width: 1320px) {
+  .article-layout[data-has-sidebar="true"][data-has-toc="false"] {
+    padding-left: calc(var(--docs-shell-sidebar-reserve) + 32px);
+  }
+}
+
 @media (max-width: 1279px) {
   .docs-header__inner {
     grid-template-columns: minmax(160px, 1fr) minmax(320px, 460px) minmax(70px, 1fr);
@@ -2268,6 +2289,7 @@ html[data-theme="light"] .docs-sidebar {
   .docs-sidebar,
   .docs-sidebar__toggle-icon,
   .navigation-tree--sidebar .navigation-tree__cascade,
+  .navigation-tree--sidebar .navigation-tree__link::after,
   .navigation-tree--sidebar .navigation-tree__children > .navigation-tree__item,
   .navigation-tree__children-shell,
   .navigation-tree--sidebar .navigation-tree__expand,

@@ -190,6 +190,11 @@ function NavigationItem({
     >
       <div
         className="navigation-tree__row"
+        data-active-branch={
+          displaysIcon && hasChildren && branchContainsPath(item, pathname)
+            ? "true"
+            : undefined
+        }
         data-has-children={hasChildren ? "true" : "false"}
       >
         {item.href ? (

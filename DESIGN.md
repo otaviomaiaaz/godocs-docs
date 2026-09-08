@@ -372,6 +372,18 @@ Os componentes são **contidos e orientadores**: esclarecem hierarquia, navegaç
 
 - **Header:** sticky, `64px` nos artigos e `56px` na home; a home começa transparente e ganha fundo desfocado após scroll.
 - **Sidebar / TOC:** labels compactos, grupos em caixa alta, item ativo com fundo laranja suave e indicador lateral de `2px`.
+
+### Sidebar V2.5 — estabilização do Lote 6
+
+Na sidebar desktop, o contrato V2.5 refina a regra geral de navegação: superfície ativa neutra sincronizada ao label e indicador laranja de `2px`. A paleta A2 existente permanece aprovada. Títulos de grupo usam `--text-secondary` para preservar contraste sobre `--navigation-surface`.
+
+A mesma árvore ocupa `240px` em expanded/preview e `48px` em collapsed, fixa em `left: 0` abaixo do header. Rows de primeiro nível têm `38px`, slots de título `24px` e separação entre grupos `10px`, iguais nos três estados. Labels não mudam de medida durante a transição. Filhos fecham no rail sem placeholders; deslocamentos de ícones posteriores a ramos abertos são consequência legítima dos filhos. A geometria equivalente, descontados esses filhos, deve variar no máximo `1px`.
+
+O shell reserva `240px` em todo desktop: a partir de `1320px` o artigo fica centralizado entre essa fronteira e o TOC de `220px`, com gutter externo de `32px`; entre `1024px` e `1319px` mantém a reserva sem TOC lateral. Até `1023px`, permanece o drawer existente.
+
+Motion contextual: largura `195ms` ao abrir e `185ms` ao recolher; reveal de `0.35` para `1`, deslocamento horizontal de `-4px` e duração `95ms`, iniciando em `85ms`. O cascade mantém step dinâmico de até `9ms` e stagger total de até `85ms`, sem mask. Surface ativa e label compartilham o mesmo atraso; filhos, guia e surface aparecem como uma unidade, sem segundo cascade de texto. Branches usam geometria de `180ms`, opacidade de `125ms` e stagger de `7ms` por filho.
+
+O único `ChevronLeft` gira em `120ms`: `0deg` em expanded e `180deg` em collapsed/preview, refletindo o estado persistente. O alvo continua `44px` com SVG de `16px`. Hover intent de `130ms`, fechamento de preview de `240ms`, teclado, Escape e restrição a pointer fine permanecem. Reduced motion elimina as transições e seus atrasos, preservando os indicadores de estado e a navegação.
 - **Mobile:** sidebar vira drawer e a busca vira botão de ícone; o conteúdo continua sendo a prioridade.
 
 ### Article Reading
