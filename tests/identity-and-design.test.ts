@@ -825,19 +825,19 @@ describe("identidade e prevenção de regressões visuais", () => {
       "--docs-sidebar-collapsed: 48px",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-expand-duration: 205ms",
+      "--docs-sidebar-expand-duration: 195ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-collapse-duration: 200ms",
+      "--docs-sidebar-collapse-duration: 185ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-collapse-delay: 40ms",
+      "--docs-sidebar-collapse-delay: 0ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-reveal-duration: 140ms",
+      "--docs-sidebar-reveal-duration: 95ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
-      "--docs-sidebar-reveal-start: 135ms",
+      "--docs-sidebar-reveal-start: 85ms",
     );
     expect(cssRuleBlock(css, ".docs-sidebar")).toContain(
       "top: var(--header-height)",
@@ -894,12 +894,12 @@ describe("identidade e prevenção de regressões visuais", () => {
     ).toContain("transition-delay: var(--docs-sidebar-collapse-delay)");
     expect(css).toContain("var(--docs-sidebar-reveal-start) +");
     expect(css).toContain(
-      "var(--navigation-item-index, 0) * var(--navigation-cascade-step, 14ms)",
+      "var(--navigation-item-index, 0) * var(--navigation-cascade-step, 9ms)",
     );
-    expect(css).toContain("-webkit-mask-image: linear-gradient(");
-    expect(css).toContain("mask-position: 100% 50%");
-    expect(css).toContain("grid-template-rows 190ms");
-    expect(css).toContain("var(--navigation-child-index, 0) * 10ms");
+    expect(cssRuleBlock(css, ".navigation-tree--sidebar .navigation-tree__cascade")).not.toContain("mask");
+    expect(css).toContain("--docs-sidebar-reveal-opacity: 0.35");
+    expect(css).toContain("grid-template-rows var(--docs-sidebar-branch-geometry)");
+    expect(css).toContain("var(--navigation-child-index, 0) * var(--docs-sidebar-child-stagger)");
     expect(css).not.toContain("data-motion");
     expect(css).not.toContain("navigation-tree__tooltip");
     expect(css).not.toMatch(
@@ -911,6 +911,33 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(css).toMatch(
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.docs-sidebar,[\s\S]*\.navigation-tree--sidebar \.navigation-tree__cascade,[\s\S]*\{[^}]*transition:\s*none;/,
     );
+  });
+
+  it("mantém slots compactos invariantes, direção do toggle e motion V2.5", async () => {
+    const css = await readFile(path.join(projectRoot, "app", "globals.css"), "utf8");
+    const sidebar = cssRuleBlock(css, ".docs-sidebar");
+    for (const token of [
+      "--docs-sidebar-row-height: 38px",
+      "--docs-sidebar-group-slot: 24px",
+      "--docs-sidebar-group-gap: 10px",
+      "--docs-sidebar-branch-geometry: 180ms",
+      "--docs-sidebar-branch-opacity: 125ms",
+      "--docs-sidebar-child-stagger: 7ms",
+    ]) expect(sidebar).toContain(token);
+    expect(cssRuleBlock(css, ".docs-sidebar__toggle-icon")).toContain("rotate(0deg)");
+    expect(cssRuleBlock(css, ".docs-sidebar__toggle-icon")).toContain("transform 120ms");
+    expect(css).toContain("translate(-50%, -50%) rotate(180deg)");
+    expect(css).not.toMatch(/toggle-icon--(?:collapse|expand)/);
+    expect(cssRuleBlock(css, ".docs-sidebar__toggle")).toContain("min-height: 44px");
+    expect(cssRuleBlock(css, ".docs-sidebar__toggle")).toContain("min-width: 44px");
+    const compactRules = [...css.matchAll(/[^{}]*data-compact="true"[^{}]*\{([^}]*)\}/g)];
+    for (const rule of compactRules) {
+      expect(rule[1]).not.toMatch(/(?:max-height|margin-top|padding|gap):/);
+    }
+    expect(css).toContain("transition-delay: var(--navigation-reveal-delay)");
+    expect(css).toContain(".navigation-tree__children .navigation-tree__cascade");
+    expect(css).toContain("@media (min-width: 1024px) and (max-width: 1319px)");
+    expect(css).toContain("padding-left: calc(var(--docs-shell-sidebar-reserve) + 32px)");
   });
 
   it("não mantém interceptação personalizada de Tab nem X fora de dialog", async () => {

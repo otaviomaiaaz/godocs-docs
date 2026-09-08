@@ -50,7 +50,8 @@ describe("contrato de estado da sidebar documental", () => {
       'data-preview={isPreviewOpen ? "open" : "closed"}',
     );
     expect(sidebar).toContain("showIcons");
-    expect(sidebar).toContain("const HOVER_INTENT_DELAY = 140");
+    expect(sidebar).toContain("const HOVER_INTENT_DELAY = 130");
+    expect(sidebar).toContain("const PREVIEW_CLOSE_DELAY = 240");
     expect(sidebar).toContain("schedulePreviewOpen()");
     expect(sidebar).toContain("cancelScheduledOpen()");
     expect(sidebar).toContain(
