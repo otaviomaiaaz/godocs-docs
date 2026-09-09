@@ -1,8 +1,8 @@
 # GoDocs Docs — Arquitetura do Redesign
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
-> **Fase:** Redesign estrutural  
-> **Implementação:** Lotes 1, 2, 3, 4 e 5 implementados e concluídos; Lote 6 é a próxima frente.
+> **Fase:** Redesign estrutural e evolução visual progressiva
+> **Implementação:** Lotes 1, 2, 3, 4 e 5 implementados e concluídos; Lote 6 está em andamento.
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
 
@@ -213,17 +213,51 @@ Nenhum quarto nível de conteúdo será criado sem nova aprovação arquitetural
 
 ### Sidebar e drawer
 
+A direção aprovada nesta seção já foi parcialmente materializada no Lote 6 e deve ser preservada como contrato arquitetural.
+
 - Funcionalidades possui hub explícito.
 - Hubs podem ser clicáveis e expansíveis; a expansão usa controle separado do link.
 - O ramo correspondente à página atual pode abrir automaticamente para fornecer contexto; depois dessa abertura, a pessoa pode recolhê-lo manualmente.
 - Página ativa e estado expandido são independentes: a árvore não deve forçar reabertura contínua enquanto a mesma rota permanecer ativa; a regra vale para hubs com páginas-filhas, como Documentos e Workflows, e deve ser preservada em futuros hubs equivalentes.
-- A sidebar desktop será retrátil por ação do usuário e ficará aberta por padrão.
-- Recolher a sidebar não deve ser consequência automática de entrar em um card ou trocar de página.
-- O estado aberto/recolhido deve permanecer consistente durante a navegação do usuário.
+- A sidebar desktop é retrátil por ação do usuário e permanece aberta por padrão.
+- Recolher a sidebar não é consequência automática de entrar em um card ou trocar de página.
+- O estado persistente da sidebar e o estado temporário de preview são conceitos separados.
 - A retração da sidebar inteira é independente da expansão e do recolhimento dos ramos internos.
-- O drawer mobile usa a mesma árvore da sidebar e continua sendo o padrão de navegação em telas pequenas.
+- Sidebar e drawer reutilizam a mesma `NavigationTree`; não criar uma segunda árvore, ghost menu ou sistema paralelo de navegação.
+- O drawer mobile continua sendo o padrão de navegação em telas pequenas.
 - Touch targets de 44 px permanecem obrigatórios.
-- Não criar sistema paralelo de navegação.
+- A arquitetura desktop preserva a área estrutural máxima da sidebar para que o preview não desloque nem cubra o artigo.
+
+Baseline estabilizado da Sidebar V2.5:
+
+```text
+expanded: 240px
+collapsed: 48px
+preview: 240px
+left: 0
+```
+
+Regression guards da geometria:
+
+```text
+icon centerY delta <= 1px
+article centerX delta <= 1px
+TOC delta <= 1px
+```
+
+A Sidebar V2.5 foi implementada e promovida. A próxima rodada é estritamente de **interaction polish**, sem reconstrução arquitetural, limitada a três problemas já identificados:
+
+1. hover preview intermitente;
+2. inset esquerdo visualmente insuficiente nos itens expanded/preview;
+3. percepção de delay/peso/travamento no motion.
+
+A hipótese técnica atual para o hover intermitente deve ser reproduzida e confirmada antes de qualquer correção; ela não é tratada como causa raiz já comprovada.
+
+O contrato canônico dessa próxima rodada está consolidado em:
+
+```text
+Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md
+```
 
 
 ### “Nesta página” / TOC
@@ -376,20 +410,52 @@ Regra principal:
 
 ## 13. Direção visual planejada
 
-A revisão visual mais profunda permanece reservada aos lotes próprios de identidade e refinamento. As decisões abaixo registram direção, não especificações finais de Design System.
+A evolução visual mais profunda continua concentrada nos lotes próprios de identidade e refinamento. Parte dessa direção já foi implementada no Lote 6; o que segue distingue decisões consolidadas de trabalhos ainda sujeitos a validação específica.
 
 ### Paletas e temas
 
-- os temas claro e escuro serão refinados;
-- o tema claro é a prioridade da revisão por apresentar menor diferenciação perceptível entre algumas superfícies;
-- a revisão deve aumentar legibilidade, contraste e separação entre background, superfícies, bordas, navegação, cards e conteúdo sem poluir a interface;
-- o tema escuro será refinado de forma mais contida, preservando a base atual;
+A paleta **A2 Contrast Refined** foi implementada e aprovada como baseline atual.
+
+Valores consolidados:
+
+```text
+light canvas: #f6f7f9
+dark canvas: #151515
+nav: #1a1a1a
+cards: #202020
+interactive: #262626
+elevated: #2c2c2c
+orange light: #ff7600
+orange dark: #ff7a1a
+```
+
+Direção preservada:
+
+- os temas claro e escuro continuam requisitos estruturais;
+- a revisão do tema claro priorizou maior diferenciação perceptível entre superfícies e melhor leitura estrutural;
+- o tema escuro preserva a base mais contida já aprovada;
 - o laranja GoDocs permanece como accent principal, especialmente em links, foco, estados ativos e pequenos destaques;
-- evitar grandes superfícies laranja sem necessidade funcional.
+- evitar grandes superfícies laranja sem necessidade funcional;
+- não introduzir tendência azulada na paleta.
+
+A paleta aprovada fica congelada durante tarefas focais que não tenham revisão de cor como escopo explícito.
 
 ### Tokens e consistência
 
-A revisão de paleta deve ser sistêmica e orientada por tokens, evitando correções isoladas de CSS. Os valores finais e a nomenclatura definitiva serão consolidados no `DESIGN.md` durante a etapa visual.
+A revisão visual continua sistêmica e orientada por tokens, evitando correções isoladas de CSS.
+
+Valores e regras visuais consolidados devem permanecer coerentes com `DESIGN.md`. Mudanças futuras em tokens compartilhados exigem necessidade comprovada e validação de regressão nas superfícies afetadas.
+
+### Home, background e identidade
+
+O Background oficial da Home e as logos GoDocs Client passaram por implementação, refinamento, validação visual e promoção para produção.
+
+Decisão atual:
+
+- Background e Logos estão encerrados;
+- não criar nova rodada apenas por refinamento especulativo;
+- reabrir esse escopo somente diante de problema visual novo e comprovado;
+- tarefas focais posteriores, como o polish da Sidebar, não devem alterar Home, Background ou Logos.
 
 ### Referência de identidade
 
@@ -409,7 +475,7 @@ Lote 2 — Documentos — concluído
 Lote 3 — Workflows — implementado e concluído
 Lote 4 — Busca — concluído
 Lote 5 — Descoberta e consolidação — concluído
-Lote 6 — Home + Hubs + identidade visual — próxima frente
+Lote 6 — Home + Hubs + identidade visual — em andamento
 Lote 7 — Refinamento visual e microinterações
 Lote 8 — Governança editorial
 Lote 9 — Reauditoria Impeccable + regressão final
@@ -425,4 +491,60 @@ UI UX PRO MAX foi instalada e usada pontualmente, de modo consultivo, para acess
 
 O commit funcional é `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). A revisão focal encontrou P0: 0, P1: 0, P2: 2 e P3: 2; os dois P2 de cobertura foram corrigidos antes do commit. Permanecem P3 não bloqueantes: teste de sequência Tab completa em Related e reavaliação futura de `RelatedLinks`, sem uso nos MDX publicados.
 
-O Lote 5 validou 21 documentos, 20 arquivos/250 testes, 50 páginas estáticas e compatibilidade de `79/79` aliases. O Lote 6 é a próxima frente; suas decisões visuais detalhadas permanecem subordinadas ao `DESIGN.md` e à tarefa própria.
+O Lote 5 validou 21 documentos, 20 arquivos/250 testes, 50 páginas estáticas e compatibilidade de `79/79` aliases.
+
+### Registro do Lote 6
+
+O Lote 6 está em andamento e já possui marcos concluídos que não devem ser tratados como frentes abertas:
+
+- paleta **A2 Contrast Refined** implementada e aprovada;
+- Sidebar V2.5 implementada, estabilizada e promovida;
+- Background oficial da Home implementado;
+- logos GoDocs Client atualizadas;
+- Background + Logo refinados, validados visualmente e promovidos para produção.
+
+Referências confirmadas do Lote 6:
+
+```text
+Paleta em produção:
+ad0212eb65d72ef4272ba269d995962350e6cdb7
+Implementa paleta A2 Contrast Refined
+
+Sidebar V2.5 em produção:
+fa3ff62e9f800b21fb55d09db5f29090497a8b64
+Implementa Sidebar V2.5 e estabilização final
+
+Background inicial em produção:
+0630b6067ef54b492e971cd4f7a664cb712a14f9
+Implementa background oficial da Home
+
+Background + Logo — estado final em develop:
+1d392c18360d7535ddbdce7452880356bc5a6671
+Finaliza background responsivo e estabilidade das logos
+
+Background + Logo — estado final em main/produção:
+07635a6d1fa8480bebec0e485ef85c4f8e451d89
+Finaliza background responsivo e estabilidade das logos
+```
+
+O deployment de produção correspondente a `07635a6d1fa8480bebec0e485ef85c4f8e451d89` foi confirmado como `READY`.
+
+A próxima intervenção do Lote 6 é:
+
+```text
+Sidebar V2.5 Final Interaction Polish
+```
+
+Escopo delimitado:
+
+```text
+hover preview intermitente
++
+inset esquerdo insuficiente
++
+motion com percepção de delay/travamento
+```
+
+A próxima implementação deve preservar os regression guards arquiteturais da Sidebar V2.5 e não reabrir Home, Background, Logos, cards, busca, paleta, conteúdo editorial, URLs ou arquitetura do TOC.
+
+Após essa implementação, a continuidade do roadmap deve depender de validação técnica, revisão Impeccable focal e validação visual humana antes de eventual promoção para produção.
