@@ -2110,4 +2110,3 @@ commit/push somente após aprovação
 ↓
 eventual promoção isolada para main
 ```
-
