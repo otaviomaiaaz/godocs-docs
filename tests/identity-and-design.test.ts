@@ -130,6 +130,26 @@ function pixelAt(image: DecodedPng, x: number, y: number) {
   return image.pixels.subarray(offset, offset + 4);
 }
 
+function alphaBounds(image: DecodedPng, minimumAlpha = 8) {
+  let left = image.width;
+  let top = image.height;
+  let right = -1;
+  let bottom = -1;
+
+  for (let y = 0; y < image.height; y += 1) {
+    for (let x = 0; x < image.width; x += 1) {
+      if (pixelAt(image, x, y)[3] > minimumAlpha) {
+        left = Math.min(left, x);
+        top = Math.min(top, y);
+        right = Math.max(right, x);
+        bottom = Math.max(bottom, y);
+      }
+    }
+  }
+
+  return { bottom, left, right, top };
+}
+
 function cssRuleBlock(css: string, selector: string): string {
   const normalizedCss = css.replaceAll("\r\n", "\n");
   const normalizedSelector = selector.replaceAll("\r\n", "\n");
@@ -309,6 +329,12 @@ describe("identidade e prevenção de regressões visuais", () => {
     expect(darkContents.toString("utf8")).not.toContain("<rect");
     expect(pixelAt(light, 0, 0)[3]).toBe(0);
     expect(pixelAt(light, light.width - 1, light.height - 1)[3]).toBe(0);
+    expect(alphaBounds(light)).toEqual({
+      bottom: 328,
+      left: 4,
+      right: 813,
+      top: 11,
+    });
   });
 
   it("separa marca, acento operacional e estados em tokens semânticos", async () => {
