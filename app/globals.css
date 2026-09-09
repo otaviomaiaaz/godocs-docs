@@ -282,7 +282,7 @@ a {
 
 .brand-logo {
   display: block;
-  aspect-ratio: 818 / 326;
+  aspect-ratio: 212 / 88;
   background-image: url("/brand/godocs-logo-official-dark.svg");
   background-position: left center;
   background-repeat: no-repeat;
@@ -2926,14 +2926,14 @@ html[data-theme="light"] .docs-sidebar {
   -webkit-mask-image: linear-gradient(
     to bottom,
     #000 0,
-    #000 62%,
-    transparent 100%
+    #000 42%,
+    transparent 96%
   );
   mask-image: linear-gradient(
     to bottom,
     #000 0,
-    #000 62%,
-    transparent 100%
+    #000 42%,
+    transparent 96%
   );
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
@@ -2945,6 +2945,18 @@ html[data-theme="light"] .home::before {
     url("/brand/backgrounds/background-godocs-white.avif") type("image/avif"),
     url("/brand/backgrounds/background-godocs-white.webp") type("image/webp")
   );
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .home::before {
+    background-size: max(1200px, 100vw) auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .home::before {
+    background-size: clamp(820px, 220vw, 980px) auto;
+  }
 }
 
 .home-hero {
