@@ -1204,34 +1204,13 @@ describe("fluxos interativos", () => {
 });
 
 describe("marca", () => {
-  it("usa as variantes PNG oficiais sem wordmark textual", () => {
+  it("usa a marca oficial centralizada sem wordmark textual", () => {
     render(<Brand />);
 
     const brand = screen.getByRole("link", { name: "GoDocs — página inicial" });
     expect(brand.getAttribute("href")).toBe("/");
-    const images = Array.from(brand.querySelectorAll("img"));
-    const sources = images.map((image) => image.getAttribute("src"));
-    expect(sources).toHaveLength(2);
-    expect(sources.some((source) => source?.includes("godocs-logo-official-dark.png"))).toBe(
-      true,
-    );
-    expect(
-      sources.some((source) => source?.includes("godocs-logo-official-light.png")),
-    ).toBe(true);
-    const defectiveAssetName = ["godocs", "logo.png"].join("-");
-    expect(sources.some((source) => source?.includes(defectiveAssetName))).toBe(
-      false,
-    );
-    expect(sources.every((source) => !source?.includes("/_next/image"))).toBe(
-      true,
-    );
-    expect(
-      images.every(
-        (image) =>
-          image.getAttribute("width") === "150" &&
-          image.getAttribute("height") === "58",
-      ),
-    ).toBe(true);
+    expect(brand.querySelectorAll("img")).toHaveLength(0);
+    expect(brand.querySelector(".brand-logo")).not.toBeNull();
     expect(screen.queryByText("Documentação")).toBeNull();
     expect(screen.queryByText("Docs")).toBeNull();
   });
