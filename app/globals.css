@@ -2925,37 +2925,22 @@ html[data-theme="light"] .docs-sidebar {
   position: absolute;
   inset: 0;
   z-index: -3;
-  background-image:
-    radial-gradient(
-      ellipse 58% 360px at 50% 0,
-      color-mix(in srgb, var(--accent-primary) 10%, transparent),
-      transparent 72%
-    ),
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--divider) 17%, transparent) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--divider) 13%, transparent) 1px,
-      transparent 1px
-    );
-  background-size:
-    100% 460px,
-    72px 72px,
-    72px 72px;
-  background-repeat: no-repeat, repeat, repeat;
-  content: "";
-  mask-image: linear-gradient(
-    to bottom,
-    black,
-    transparent 38%,
-    transparent 88%,
-    black
+  background-image: image-set(
+    url("/brand/backgrounds/background-godocs-black.avif") type("image/avif"),
+    url("/brand/backgrounds/background-godocs-black.webp") type("image/webp")
   );
-  opacity: 0.52;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  content: "";
   pointer-events: none;
+}
+
+html[data-theme="light"] .home::before {
+  background-image: image-set(
+    url("/brand/backgrounds/background-godocs-white.avif") type("image/avif"),
+    url("/brand/backgrounds/background-godocs-white.webp") type("image/webp")
+  );
 }
 
 .home-hero {
@@ -2967,30 +2952,6 @@ html[data-theme="light"] .docs-sidebar {
   border-bottom: 0;
   text-align: center;
   isolation: isolate;
-}
-
-.home-hero__ambient {
-  position: absolute;
-  inset: 0 -180px -4px;
-  z-index: -2;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.home-hero__ambient::before {
-  position: absolute;
-  top: -48%;
-  left: 50%;
-  width: min(820px, 88vw);
-  aspect-ratio: 1.6;
-  border-radius: 50%;
-  background: radial-gradient(
-    ellipse,
-    color-mix(in srgb, var(--accent-primary) 9%, transparent),
-    transparent 70%
-  );
-  content: "";
-  transform: translateX(-50%);
 }
 
 .home-hero h1 {
@@ -3579,20 +3540,8 @@ html[data-theme="light"] .docs-sidebar {
     padding-left: var(--page-padding-mobile);
   }
 
-  .home::before {
-    background-size:
-      100% 400px,
-      56px 56px,
-      56px 56px;
-  }
-
   .home-hero {
     padding: calc(var(--home-header-height) + 18px) 0 30px;
-  }
-
-  .home-hero__ambient {
-    right: -80px;
-    left: -80px;
   }
 
   .home-hero h1 {
