@@ -2,13 +2,13 @@
 
 > Acompanhamento operacional do projeto **GoDocs Docs**.
 >
-> **Última atualização:** 28 de agosto de 2026, Editor pausado e `develop` realinhada à base estável (UTC−03:00)
-> **Estado geral:** `main` e `develop` não contêm E1; `feature/editor` preserva o E1 congelado.
-> **Fase atual:** `develop` pronta para a próxima melhoria independente; Editor e infraestrutura associada pausados.
-> **Baseline remoto de produção confirmado:** `ee9b6b1` — `Corrige configuração do pnpm no Vercel`.
-> **Snapshot local do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
-> **Deploy:** a associação do estado atual a um deployment específico não foi confirmada. A última confirmação explícita registrada de Vercel `success` permanece no commit `700998c`. Prints renderizados do sistema foram fornecidos em 19/08/2026, mas não devem ser usados para inferir automaticamente qual SHA está publicado.
-> **Próxima ação principal:** iniciar somente uma melhoria independente aprovada a partir de `develop`, em uma nova `feature/*`.
+> **Última atualização:** 09 de setembro de 2026 (UTC−03:00)
+> **Estado geral:** Lotes 0–5 concluídos; Lote 6 em andamento. `develop` é a branch padrão de desenvolvimento; `main` é reservada à produção. O Editor E1 permanece preservado e pausado em `feature/editor`.
+> **Fase atual:** Lote 6 — próxima intervenção focal: **Sidebar V2.5 Final Interaction Polish**.
+> **Baseline de desenvolvimento auditado:** `1d392c18360d7535ddbdce7452880356bc5a6671` — `Finaliza background responsivo e estabilidade das logos`.
+> **Produção confirmada:** `07635a6d1fa8480bebec0e485ef85c4f8e451d89` — `Finaliza background responsivo e estabilidade das logos`; deployment Vercel confirmado como `READY`.
+> **Snapshot preservado do E1:** `be80a03` — `Editor - Preserva implementação inicial E1`.
+> **Próxima ação principal:** executar a Sidebar V2.5 Final Interaction Polish em `develop`, usando o prompt canônico consolidado, sem reabrir Home, Background, Logos, paleta ou outros escopos congelados.
 
 ---
 
@@ -55,59 +55,76 @@ GoDocs Docs
 REPOSITÓRIO
 otaviomaiaaz/godocs-docs
 
-AMBIENTE DE PRODUÇÃO LOCAL
-godocs-docs → main
-baseline sem E1: ee9b6b1
+PASTA PRINCIPAL DE TRABALHO
+godocs-docs
 
-AMBIENTE DE DESENVOLVIMENTO LOCAL
-godocs-docs-dev → develop, alinhada à main e sem E1
+BRANCH PADRÃO DE DESENVOLVIMENTO
+develop
+
+BRANCH DE PRODUÇÃO
+main
+
+BASELINE DE DESENVOLVIMENTO AUDITADO
+1d392c18360d7535ddbdce7452880356bc5a6671
+Finaliza background responsivo e estabilidade das logos
+
+PRODUÇÃO CONFIRMADA
+07635a6d1fa8480bebec0e485ef85c4f8e451d89
+Finaliza background responsivo e estabilidade das logos
+Vercel: READY
 
 EDITOR E1
 feature/editor → be80a03, preservada e pausada
 
-ESTADO DO LOTE 1
-Versionado
+LOTE 1
+Concluído e versionado
 
-ESTADO DO LOTE 2
-Concluído e sincronizado
-Hub + cinco páginas-filhas
-Compatibilidade histórica preservada
-Validação visual aprovada
+LOTE 2 — DOCUMENTOS
+Concluído
 
-COLEÇÃO ATUAL
-21 documentos, 147 entradas e 126 seções
-Baseline final do Lote 5; redução editorial intencional de um heading manual
+LOTE 3 — WORKFLOWS
+Concluído
 
-COLEÇÃO DO LOTE 1 VERSIONADO
-9 documentos
+LOTE 4 — BUSCA
+Concluído
 
 LOTE 5 — DISCOVERY / CONSOLIDAÇÃO
 Concluído; SHA funcional 34ffcb9
 
-PRÓXIMO PASSO
-Melhoria independente aprovada, criada a partir de develop em feature/*
+LOTE 6
+Em andamento
+
+PALETA A2 CONTRAST REFINED
+Implementada e aprovada
+
+SIDEBAR V2.5
+Implementada, estabilizada e promovida para produção
+Próxima rodada: Final Interaction Polish
+
+BACKGROUND + LOGO
+Concluídos, aprovados e publicados em produção
+
+COLEÇÃO / BASELINE DO LOTE 5
+21 documentos, 147 entradas e 126 seções
 
 FRENTE EDITORIAL PARALELA
 Configurações — analisada/documentada em conversa; publicação MDX não confirmada
 
-AUDITORIA IMPECCABLE ANTERIOR
-Encerrada
-
 UI UX PRO MAX
-Instalada e usada pontualmente, de forma consultiva, no Lote 4
+Instalada e utilizada pontualmente
 
-VERCEL
-Último success explicitamente registrado: 700998c
-Production Branch deve permanecer main
-Nenhuma alteração de Preview/Supabase é necessária enquanto o Editor estiver pausado
-Nenhum deploy foi executado nesta reorganização
+IMPECCABLE
+Auditoria anterior encerrada; revisão focal prevista no polish final da Sidebar
+
+PRÓXIMO PASSO
+Sidebar V2.5 Final Interaction Polish em develop
 ```
 
-### Observação sobre “publicado”
+### Observação sobre baselines e “publicado”
 
-A contagem de **21 documentos** pertence ao estado final do Lote 3 em `415a113`, com `HEAD = origin/main` na verificação final. Isso não confirma, por si só, qual SHA está publicado em produção.
+Os SHAs `1d392c1...` e `07635a6...` são baselines confirmados em 09/09/2026. O primeiro representa o estado de desenvolvimento auditado antes de novas atualizações documentais; o segundo foi confirmado em produção pela Vercel.
 
----
+Snapshots históricos anteriores continuam válidos apenas para os marcos aos quais pertencem e não devem ser usados para inferir o estado operacional atual.
 
 ## 3. Contexto operacional do produto
 
@@ -152,51 +169,101 @@ Direção visual consolidada:
 otaviomaiaaz/godocs-docs
 ```
 
-Estado conhecido:
+### Governança vigente
+
+A partir de 01/09/2026:
 
 | Item | Situação |
 |---|---|
-| Produção | `main` / `godocs-docs` |
-| Desenvolvimento | `develop` / `godocs-docs-dev`, alinhada à `main` e sem E1 |
-| Editor | `feature/editor`, E1 preservado e pausado em `be80a03` |
+| Pasta principal | `godocs-docs` |
+| Desenvolvimento | `develop` |
+| Produção | `main` |
+| Editor | `feature/editor`, E1 preservado e pausado |
 | Deploy | Vercel |
 | Conteúdo | Markdown/MDX local |
 | CMS público | Não |
-| Supabase Production | não alterado nesta reorganização |
-| Supabase Development | não criar/configurar enquanto o Editor estiver pausado |
-| Autenticação do E1 | preservada somente em `feature/editor` |
+| Supabase / Editor | fora do escopo imediato enquanto o Editor estiver pausado |
+
+Fluxo atual:
+
+```text
+develop
+→ implementação / protótipo / validação
+→ aprovação
+→ promoção isolada para main
+→ produção
+```
+
+`main` não deve ser usada como branch de desenvolvimento contínuo.
+
+A configuração de 28/08/2026, em que `godocs-docs` e `godocs-docs-dev` eram usados como ambientes locais separados, pertence ao histórico da reorganização inicial. Ela foi substituída pela governança definida em 01/09/2026, com `godocs-docs` como pasta principal e `develop` como branch padrão.
 
 ### Histórico de HEADs relevantes
 
-No início do Lote 2:
+Marcos anteriores preservados:
 
 ```text
 cc5f6e1 — Redesign - Implementação do Lote 1
+0ae9420 — Consolidação do Lote 2
+415a113 — Revisão dos workflows
+5c8a7c120aba1d6afd323621a7ec186776178bd6 — Implementacao do Lote 4
+34ffcb9eae1c155b66f07abc7efa2cdb68195471 — Implementacao do Lote 5
+be80a0309d0c1daaef6dd55d8172510bd94ce0c4 — Editor - Preserva implementação inicial E1
 ```
 
-O Lote 2 foi desenvolvido sobre esse estado. As validações intermediárias ocorreram antes dos commits finais; o fechamento foi consolidado e sincronizado posteriormente em `0ae9420`.
+Marcos recentes do Lote 6:
 
-O checkpoint funcional do Lote 4 é `5c8a7c120aba1d6afd323621a7ec186776178bd6` — `Implementacao do Lote 4`; ele foi usado na validação visual. Em 28/08/2026, o baseline remoto revalidado de produção é `ee9b6b1823e56e2f42520a0aee524a7788ff8475`, alinhado a `origin/main` antes do commit documental local desta reorganização. O E1 foi preservado separadamente em `be80a0309d0c1daaef6dd55d8172510bd94ce0c4`.
+```text
+ad0212eb65d72ef4272ba269d995962350e6cdb7
+Implementa paleta A2 Contrast Refined
+(main / produção)
+
+fa3ff62e9f800b21fb55d09db5f29090497a8b64
+Implementa Sidebar V2.5 e estabilização final
+(main / produção)
+
+0630b6067ef54b492e971cd4f7a664cb712a14f9
+Implementa background oficial da Home
+(main / produção)
+
+430d269
+Refina background da Home e atualiza logos
+(main)
+
+07635a6d1fa8480bebec0e485ef85c4f8e451d89
+Finaliza background responsivo e estabilidade das logos
+(main / produção)
+```
+
+Baseline correspondente em `develop` para o fechamento de Background + Logo:
+
+```text
+1d392c18360d7535ddbdce7452880356bc5a6671
+Finaliza background responsivo e estabilidade das logos
+```
 
 ### Deploy
 
-A última confirmação explícita registrada permanece:
+A associação produção → commit foi confirmada em 09/09/2026:
 
 ```text
-Vercel: success para 700998c
+branch: main
+commit: 07635a6d1fa8480bebec0e485ef85c4f8e451d89
+mensagem: Finaliza background responsivo e estabilidade das logos
+Vercel state: READY
+target: production
 ```
 
-Não assumir que um push ou um estado local mais novo está publicado sem confirmar a associação:
+A confirmação anterior de `700998c` permanece válida apenas como marco histórico de deployment anterior.
+
+Não assumir publicação de novos commits sem confirmar:
 
 ```text
 commit / SHA
 → deployment
-→ ambiente acessível
+→ target
+→ estado READY
 ```
-
-Em 19/08/2026 foram fornecidos prints renderizados do sistema com a nova estrutura de Documentos. Esses prints servem como evidência visual da interface apresentada, mas não confirmam, por si só, qual SHA está ativo no Vercel.
-
----
 
 ## 5. Marcos técnicos e de design já concluídos
 
@@ -783,6 +850,9 @@ O ajuste focal foi concluído posteriormente: o hub recebeu `Explore Documentos`
 
 ## 10. Novas decisões arquiteturais do redesign
 
+> **Nota de status (09/09/2026):** esta seção preserva decisões tomadas durante as fases anteriores. Parte delas já foi implementada no Lote 6 — especialmente paleta, sidebar retrátil/preview e refinamentos visuais. Para o estado operacional atual, usar as seções 2, 17, 20, 22, 26 e 28.
+
+
 Estas decisões foram definidas após a implementação e inspeção do Lote 2 e devem orientar os próximos lotes.
 
 ### 10.1 Funcionalidades mantém seis cards equivalentes
@@ -1211,45 +1281,31 @@ O problema visual identificado em **Busca Inteligente** está atualmente ligado 
 
 Estado:
 
-- instalada/em uso no projeto;
-- auditoria anterior encerrada;
-- não usar automaticamente em todos os lotes;
-- volta a ter papel central na fase visual e na reauditoria final.
+- instalada e utilizada no projeto;
+- auditoria anterior formalmente encerrada;
+- não deve ser executada automaticamente em qualquer tarefa;
+- permanece prevista como revisão crítica focal da Sidebar V2.5 Final Interaction Polish;
+- o escopo dessa revisão deve permanecer limitado à Sidebar, motion, hover/focus, spacing, shell editorial, acessibilidade e light/dark.
 
 ### UI UX PRO MAX
 
-Estado atual:
+Estado:
 
-- instalada e utilizada pontualmente no Lote 4;
-- uso consultivo para UX da busca, acessibilidade, teclado, responsividade e estado vazio;
-- não substitui `PRODUCT.md`, `DESIGN.md` ou `REDESIGN_ARCHITECTURE.md`.
+- instalada;
+- utilizada pontualmente no Lote 4;
+- uso consultivo;
+- não substitui `PRODUCT.md`, `DESIGN.md` ou `REDESIGN_ARCHITECTURE.md`;
+- não constitui Design System paralelo.
 
-Plano atual:
+Plano preservado:
 
 ```text
 Lote 4 — uso pontual concluído
-Lote 5 — uso pontual/opcional concluído, sem criar Design System paralelo
-Lotes 6 e 7 — UI UX PRO MAX + Impeccable
+Lote 5 — uso pontual/opcional concluído
+Lote 6 — uso quando trouxer ganho real; Impeccable como auditoria crítica
+Lote 7 — UI UX PRO MAX + Impeccable conforme necessidade
 Lote 9 — Impeccable principal; UI UX PRO MAX somente se necessário
 ```
-
-Papel esperado quando usadas juntas:
-
-```text
-UI UX PRO MAX
-→ explorar padrões e alternativas
-
-Impeccable
-→ auditar, criticar e funcionar como quality gate
-```
-
-UI UX PRO MAX não deve:
-
-- substituir `PRODUCT.md`;
-- substituir `DESIGN.md`;
-- substituir `REDESIGN_ARCHITECTURE.md`;
-- gerar um Design System paralelo;
-- apagar a identidade GoDocs.
 
 ### Regra de escolha de modelo no Codex
 
@@ -1261,64 +1317,69 @@ Antes de cada nova tarefa do Codex, indicar explicitamente:
 
 Convenção operacional adotada:
 
-- arquitetura ou trabalho de alto risco: Sol High quando realmente necessário;
-- implementação técnica/editorial delimitada: Terra, geralmente High;
-- validação visual/focal: Terra Medium;
-- tarefas Git simples: Luna Medium pode ser suficiente.
+- arquitetura, debugging sensível ou implementação de alto risco: **Sol High** quando necessário;
+- implementação técnica/editorial bem delimitada: **Terra High**;
+- validação visual/focal e tarefas documentais delimitadas: **Terra Medium**;
+- tarefas Git simples: **Luna Medium**.
 
 Não usar Sol High/Extra High por padrão sem necessidade.
 
-### Configuração histórica do Lote 3
+### Recomendação para a próxima implementação
 
-No início do Lote 3, a direção era:
+Para **Sidebar V2.5 Final Interaction Polish**:
 
 ```text
-Modelo: Terra
+Modelo: Sol
 Nível: High
-Chat: novo chat
-Impeccable: não
-UI UX PRO MAX: não
+Chat: dedicado ao escopo da Sidebar
 ```
 
-O registro acima sobre o Lote 3 é histórico. UI UX PRO MAX foi instalada e usada pontualmente no Lote 4; o próximo marco é o Lote 6.
-
----
+O motivo é a combinação de interação por pointer, timers, motion, regressões geométricas, responsividade e acessibilidade.
 
 ## 15. Desenvolvimento entre máquinas e contas
 
-O desenvolvimento entre computador do trabalho e computador pessoal foi definido usando o GitHub como fonte central.
+O desenvolvimento entre computador do trabalho e computador pessoal continua usando o repositório remoto como fonte de continuidade.
 
-O caminho local da pasta não precisa ser igual.
+O caminho local da pasta não precisa ser igual nas duas máquinas.
 
-Fluxo:
+A governança atual usa `develop` como branch de desenvolvimento.
+
+Fluxo normal ao iniciar trabalho em uma máquina:
 
 ```bash
+git switch develop
+git pull --ff-only origin develop
 git status
-git pull origin main
 ```
 
-desenvolver e validar, depois:
+Depois de implementar, validar e decidir versionar uma mudança de desenvolvimento:
 
 ```bash
 git status
-git add .
+git add <arquivos aprovados>
 git commit -m "mensagem descritiva"
-git push origin main
+git push origin develop
 ```
 
-No outro computador:
+A promoção para produção é uma etapa separada e ocorre somente após aprovação:
 
-```bash
-git pull origin main
+```text
+develop aprovado
+→ main
+→ push de main
+→ Vercel produção
 ```
 
-Regras:
+Como `develop` e `main` possuem históricos próprios, mudanças aprovadas podem ser promovidas isoladamente e receber SHAs diferentes em cada branch.
+
+Regras preservadas:
 
 - não depender de sincronização de pastas locais entre máquinas;
 - `node_modules` permanece local;
 - segredos e `.env` não devem ser versionados;
 - Git é a fonte de continuidade;
-- confirmar deployment Vercel quando o marco for publicado.
+- confirmar o deployment Vercel quando um marco for promovido para produção;
+- não desenvolver continuamente em `main`.
 
 ### Alternância entre contas Plus no Codex
 
@@ -1330,8 +1391,6 @@ Foi validado que o usuário pode:
 - não migrar o projeto do ChatGPT por causa da troca de conta do Codex.
 
 A continuidade do Codex deve vir dos arquivos do projeto e do Git, não da memória da conta autenticada.
-
----
 
 ## 16. Governança de contexto
 
@@ -1373,22 +1432,25 @@ O arquivo está versionado como memória canônica do projeto. Neste fechamento 
 
 ## 17. Débitos e riscos atuais
 
-### P1 — Fechamento dos Lotes 2 e 3
+### P1 — Sidebar V2.5 Final Interaction Polish
 
-- [x] hub de Documentos concluído com os cinco cards após `Conceitos importantes`;
-- [x] desktop, mobile, light e dark validados manualmente;
-- [x] compatibilidade de Documentos e Workflows preservada;
-- [x] checkpoints do lote sincronizados em `origin/main`;
-- [x] baseline técnico final revalidado.
-- [x] Workflows decomposto em hub e sete filhas;
-- [x] `Explore Workflows`, drawer, paginação, aliases e cards validados;
-- [x] correção de derivação genérica de hubs versionada em `415a113`.
+- [x] Sidebar V2.5 estabilizada e promovida para produção;
+- [x] geometria estrutural `240 / 48 / 240` consolidada;
+- [x] shell editorial, drawer mobile, branches e acessibilidade preservados no baseline V2.5;
+- [ ] reproduzir e corrigir o hover preview intermitente;
+- [ ] confirmar ou rejeitar a hipótese atual relacionada ao tratamento de `pointerenter`/área de intenção;
+- [ ] aumentar e calibrar o inset interno esquerdo de itens expanded/preview;
+- [ ] reduzir a percepção de delay/travamento sem criar regressões;
+- [ ] validar 30+ ciclos válidos de hover com 100% de sucesso após intent válido;
+- [ ] executar validações técnicas e Impeccable focal;
+- [ ] realizar validação visual humana antes de commit/push/deploy da rodada.
 
-### P1 — Arquitetura e documentação interna
+### P1 — Escopos congelados durante o polish da Sidebar
 
-- [x] `REDESIGN_ARCHITECTURE.md` atualizado com o estado concluído do Lote 2;
-- [x] `daily_stats.md` e `Memória.md` atualizados para o fechamento documental;
-- [x] fechamento documental do Lote 3 consolidado e versionado;
+- [x] Background + Logo concluídos e publicados;
+- [x] paleta A2 Contrast Refined implementada e aprovada;
+- [x] Home/cards já possuem refinamentos do Lote 6;
+- [ ] não reabrir Home, Background, Logos, cards, busca, paleta, conteúdo editorial, URLs ou arquitetura do TOC dentro da tarefa da Sidebar.
 
 ### P1 — Editorial
 
@@ -1396,21 +1458,21 @@ O arquivo está versionado como memória canônica do projeto. Neste fechamento 
 - [ ] continuar usando apenas informações sustentadas por evidências;
 - [ ] não inventar permissões ou comportamentos.
 
-### P2 — Navegação futura
+### P2 — Navegação e leitura
 
-- [ ] implementar sidebar desktop retrátil em lote adequado;
-- [ ] manter ramos internos expansíveis;
-- [ ] evoluir `Nesta página` para comportamento hierárquico/progressivo;
-- [ ] preservar drawer no mobile.
+- [x] sidebar desktop retrátil implementada;
+- [x] ramos internos expansíveis preservados;
+- [x] drawer mobile preservado;
+- [ ] evoluir `Nesta página` somente em tarefa específica quando ainda houver necessidade real;
+- [ ] não misturar mudanças do TOC com o polish focal da Sidebar.
 
 ### P2 — Visual
 
-- [ ] revisar paleta do tema claro com prioridade;
-- [ ] refinar tema escuro;
-- [ ] realizar revisão por tokens;
-- [ ] consolidar valores finais no `DESIGN.md` somente após desenho/validação;
-- [ ] preservar laranja GoDocs como accent;
-- [ ] evitar poluição visual.
+- [x] paleta A2 Contrast Refined implementada;
+- [x] Background + Logo concluídos;
+- [ ] concluir o polish focal de interação da Sidebar;
+- [ ] preservar a paleta aprovada durante essa rodada;
+- [ ] não criar V3 de Background/Logo sem novo problema visual comprovado.
 
 ### P2 — FAQ
 
@@ -1427,11 +1489,13 @@ O arquivo está versionado como memória canônica do projeto. Neste fechamento 
 
 ### Governança
 
-- [x] revalidar o estado real de `Memória.md` na `main` neste fechamento documental;
+- [x] `godocs-docs` definido como pasta principal;
+- [x] `develop` definido como branch padrão de desenvolvimento;
+- [x] `main` reservada à produção;
+- [x] Editor E1 preservado em `feature/editor`;
 - [ ] continuar consolidando decisões importantes nos arquivos canônicos;
-- [ ] evitar tratar snapshots antigos como estado atual.
-
----
+- [ ] evitar tratar snapshots históricos como estado atual;
+- [ ] confirmar sempre o estado Git real antes de qualquer implementação.
 
 ## 18. Stack e comandos de validação
 
@@ -1526,67 +1590,101 @@ Testes: 242/242
 Build: 50 páginas estáticas
 ```
 
-Esses números pertencem a snapshots diferentes. Não compará-los como se fossem a mesma suíte sem considerar o crescimento da implementação.
+### Lote 5 — baseline final
 
----
+```text
+Documentos da coleção: 21
+Busca: 147 entradas, 126 seções
+Payload bruto: 250639 bytes
+Payload gzip: 29456 bytes
+Testes: 250/250
+Build: 50 páginas estáticas
+Documentos: 30/30 aliases
+Workflows: 49/49 aliases
+```
+
+### Lote 6 — validação mais recente registrada antes do polish final da Sidebar
+
+Na correção final de Background + Logo foi reportado:
+
+```text
+Testes: 283 aprovados
+Testes focados: 59 aprovados
+content:validate: aprovado
+typecheck: aprovado
+lint: aprovado
+build: aprovado
+git diff --check: aprovado
+```
+
+Esses números pertencem ao snapshot correspondente à correção final de Background + Logo e não devem ser tratados como resultado da futura Sidebar V2.5 Final Interaction Polish.
+
+Cada baseline pertence ao snapshot em que foi executado. Não reutilizar resultados antigos como se tivessem sido reexecutados depois de novas alterações.
 
 ## 20. Roadmap oficial atualizado
 
 ```text
 Lote 0 — Contrato ✅
 Lote 0.1 — Consolidação ✅
-Lote 1 — Fundação ✅ versionado
-
-Lote 2 — Documentos ✅ concluído
-├── decomposição ✅
-├── compatibilidade ✅
-├── busca/SEO ✅
-├── Explore Documentos ✅
-├── validação técnica ✅
-└── validação visual manual ✅
-
-Lote 3 — Workflows ✅ concluído
-├── hub + sete filhas ✅
-├── compatibilidade 49/49 ✅
-├── Explore Workflows ✅
-├── validação técnica ✅
-└── validação visual manual ✅
-
-Lote 4 — Busca ✅ concluído
-Lote 5 — Descoberta e consolidação ✅ concluído
-Lote 6 — Home + Hubs + identidade visual — próxima frente
-Lote 7 — Refinamento visual e microinterações
-Lote 8 — Governança editorial
-Lote 9 — Reauditoria Impeccable + regressão final
+Lote 1 — Fundação ✅
+Lote 2 — Documentos ✅
+Lote 3 — Workflows ✅
+Lote 4 — Busca ✅
+Lote 5 — Descoberta e consolidação ✅
+Lote 6 — Home + Hubs + identidade visual 🔄 em andamento
+Lote 7 — Refinamento visual e microinterações ⏳
+Lote 8 — Governança editorial ⏳
+Lote 9 — Reauditoria Impeccable + regressão final ⏳
 ```
 
-### Próximo marco
+### Estado do Lote 6
+
+Já concluído ou estabilizado dentro do Lote 6:
 
 ```text
-Lote 5 concluído e versionado (`34ffcb9`)
-→ fechamento documental
-→ Lote 6 — Home + Hubs + identidade visual
+Paleta A2 Contrast Refined
+Cards/Home em rodadas de refinamento já promovidas
+Sidebar V2.5 estabilizada
+Background oficial da Home
+Logos GoDocs Client
+Background + Logo — correção final responsiva
 ```
 
-### Lotes 6 e 7
+Próxima intervenção:
 
-Concentrarão a evolução visual mais profunda:
+```text
+Sidebar V2.5 Final Interaction Polish
+```
 
-- paletas;
-- tema claro;
-- tema escuro;
-- tokens;
-- superfícies;
-- cards;
-- hubs;
-- sidebar;
-- estados;
-- hover/focus/active;
-- microinterações.
+Problemas delimitados:
 
-Impeccable e UI UX PRO MAX deverão trabalhar de forma complementar nesses lotes.
+```text
+hover preview intermitente
++
+inset esquerdo insuficiente
++
+motion com percepção de delay/travamento
+```
 
----
+O prompt canônico consolidado é:
+
+```text
+Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md
+```
+
+### Depois do polish
+
+A próxima decisão de roadmap deve ser tomada somente após:
+
+```text
+implementação
+→ testes
+→ Impeccable focal
+→ validação visual humana
+→ eventual promoção para produção
+```
+
+Não antecipar Lote 7 dentro da tarefa atual.
 
 ## 21. Ideias futuras discutidas, sem implementação confirmada
 
@@ -1604,19 +1702,49 @@ Nenhuma implementação dessas ideias é assumida por este arquivo.
 
 ## 22. Próximas ações recomendadas
 
-### 1. Revisar e versionar este fechamento documental do Lote 5
+### 1. Sincronizar a documentação operacional atualizada
 
-O commit funcional de Related / Próximos Passos é `34ffcb9`; este fechamento deve ser revisado e versionado sem inferir deployment.
+Atualizar os arquivos canônicos necessários sem apagar o histórico relevante e sem transformar hipóteses em fatos.
 
-### 2. Iniciar o Lote 6 — Home + Hubs + identidade visual
+### 2. Executar Sidebar V2.5 Final Interaction Polish
 
-Preservar o Lote 5 como baseline de Discovery; decisões visuais detalhadas continuam subordinadas a `DESIGN.md` e à tarefa específica.
+Usar:
 
-### 3. Manter Configurações como frente editorial separada
+```text
+Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md
+```
 
-Não misturar publicação de Configurações com o fechamento técnico do Lote 2 sem uma tarefa específica.
+como contrato canônico.
 
----
+Escopo restrito:
+
+```text
+hover preview intermitente
+inset esquerdo
+perceived motion
+```
+
+Não reabrir Background, Logo, Home, cards, busca, paleta, conteúdo editorial ou TOC.
+
+### 3. Validar antes de versionar
+
+Exigir:
+
+- reprodução da causa do hover;
+- 30+ ciclos válidos;
+- regression guards geométricos;
+- desktop/intermediário/mobile;
+- light/dark;
+- teclado;
+- reduced motion;
+- testes automatizados;
+- build;
+- Impeccable focal;
+- validação visual humana.
+
+### 4. Manter Configurações como frente editorial separada
+
+Não misturar publicação de Configurações com a tarefa focal da Sidebar.
 
 ## 23. Registro recente
 
@@ -1661,7 +1789,16 @@ Não misturar publicação de Configurações com o fechamento técnico do Lote 
 | 20/08/2026 | `5c8a7c` | Checkpoint funcional: Lote 4 — Busca implementado e validado visualmente |
 | 20/08/2026 | Revisão focal | `sem` preservado como termo semântico; testes de stopwords e diversidade fortalecidos para 242/242 |
 | 21/08/2026 | `5b69be4` | Infraestrutura: ESLint Flat Config ignora exclusivamente `.agents/skills/**`; lint final 0 erros e 0 warnings |
-
+| 28/08/2026 | Governança do Editor | E1 preservado em `feature/editor`; produção e desenvolvimento separados sem integrar o Editor. |
+| 01/09/2026 | Governança de branches | `godocs-docs` voltou a ser a pasta principal; `develop` passou a ser a branch padrão de desenvolvimento e `main` ficou reservada à produção. |
+| 01/09/2026 | `ad0212e` | Paleta A2 Contrast Refined promovida para produção. |
+| 02/09/2026 | `2a74e87` | Refinamento V2 dos cards da Home promovido para produção. |
+| 08/09/2026 | `fa3ff62` | Sidebar V2.5 e estabilização final promovidas para produção. |
+| 09/09/2026 | `0630b60` | Background oficial da Home promovido para produção. |
+| 09/09/2026 | `430d269` | Refinamento de Background + Logo promovido para `main`. |
+| 09/09/2026 | `07635a6` | Correção final responsiva do background e estabilidade das logos promovida; Vercel confirmou deployment `READY` em produção. |
+| 09/09/2026 | Sidebar V2.5 | Auditoria do prompt histórico separou regressions guards dos três problemas ainda abertos. |
+| 09/09/2026 | Prompt canônico | `Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md` consolidado para a próxima implementação. |
 ---
 
 ## 24. Protocolo de manutenção
@@ -1712,56 +1849,79 @@ Ao iniciar uma nova sessão:
 3. ler `DESIGN.md` se afetar interface;
 4. ler `project-docs/REDESIGN_ARCHITECTURE.md` se afetar o redesign;
 5. ler `Memória.md` quando precisar de contexto amplo;
-6. ler este arquivo para estado operacional;
-7. inspecionar `git status`, branch e HEAD antes de assumir o estado do repositório;
-8. não inventar fatos do GoDocs;
-9. preservar white-label, permissões por ação e proporcionalidade editorial;
-10. antes de tarefa no Codex, indicar modelo + nível;
-11. após marco relevante, atualizar os arquivos canônicos correspondentes.
-
----
+6. ler este arquivo para o estado operacional;
+7. abrir a pasta `godocs-docs`;
+8. confirmar `develop` como branch de trabalho, salvo tarefa explícita de promoção;
+9. inspecionar `git status`, `git diff`, `git diff --cached` e HEAD antes de assumir o estado do repositório;
+10. tratar `1d392c1...` e `07635a6...` como baselines auditados em 09/09/2026, não como HEADs obrigatórios se houver somente avanço documental posterior;
+11. preservar qualquer WIP legítimo;
+12. não inventar fatos do GoDocs;
+13. preservar white-label, permissões por ação e proporcionalidade editorial;
+14. antes de tarefa no Codex, indicar modelo + nível;
+15. para a próxima implementação, usar `Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md`;
+16. não reabrir os escopos congelados dentro do polish da Sidebar;
+17. após marco relevante, atualizar os arquivos canônicos correspondentes.
 
 ## 26. Estado ao encerrar esta atualização
 
-O HEAD confirmado antes deste fechamento documental é:
+O baseline de desenvolvimento auditado em 09/09/2026 é:
 
 ```text
-34ffcb9 — Implementacao do Lote 5
+develop
+1d392c18360d7535ddbdce7452880356bc5a6671
+Finaliza background responsivo e estabilidade das logos
 ```
 
-Os Lotes 1, 2, 3, 4 e 5 estão concluídos e sincronizados com `origin/main`; o SHA funcional do Lote 5 é `34ffcb9`:
+A produção confirmada é:
 
 ```text
-21 documentos
-147 entradas de busca
-126 seções
-250/250 testes
-50 páginas estáticas no build
-30/30 aliases de Documentos preservados
-49/49 aliases/anchors de Workflows preservados
+main
+07635a6d1fa8480bebec0e485ef85c4f8e451d89
+Finaliza background responsivo e estabilidade das logos
+
+Vercel:
+state READY
+target production
 ```
 
-O hub de Workflows permanece encerrado com `Explore Workflows`, sete cards derivados da coleção, mobile em uma coluna e árvore ativa/recolhível validada. A busca preserva limite de 12, snippet de 220, diversidade de três por documento e `sem` como termo semântico. Related está implementado de forma manual e factual em 3 páginas / 4 relações. A próxima frente é o Lote 6 — Home + Hubs + identidade visual.
+Os Lotes 1, 2, 3, 4 e 5 permanecem concluídos. O Lote 6 está em andamento.
 
-As decisões de arquitetura preservadas incluem:
+Estado consolidado do Lote 6:
 
-- Funcionalidades com seis cards uniformes;
-- cards internos no final dos hubs;
-- Workflows implementado no mesmo padrão;
-- decomposição orientada por intenção, não por tempo isolado;
-- `Nesta página` progressivo em páginas densas;
-- sidebar desktop retrátil;
-- drawer mobile preservado;
-- FAQ factual em etapa posterior;
-- revisão futura das paletas com prioridade para tema claro;
-- revisão visual sistêmica por tokens;
-- UI UX PRO MAX usada de modo consultivo sem criar Design System paralelo; decisões visuais detalhadas permanecem no Lote 6.
+```text
+Paleta A2 Contrast Refined — implementada/aprovada
+Sidebar V2.5 — estabilizada e em produção
+Background oficial — em produção
+Logos GoDocs Client — em produção
+Background + Logo final — aprovado e em produção
+Sidebar V2.5 Final Interaction Polish — próximo escopo
+```
 
-Nenhum commit, push ou deployment é inferido por esta atualização documental.
+A Sidebar V2.5 Final Interaction Polish possui apenas três problemas abertos confirmados no contrato:
 
----
+```text
+1. hover preview intermitente
+2. inset esquerdo insuficiente
+3. motion com percepção de delay/travamento
+```
+
+Existe uma hipótese técnica concreta para o primeiro problema relacionada à entrada por pointer/área de intenção, mas ela ainda deve ser reproduzida e confirmada no navegador antes de qualquer correção.
+
+O prompt canônico da próxima implementação está consolidado como:
+
+```text
+Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md
+```
+
+Background, Logos, Home, cards, busca, paleta, conteúdo editorial, URLs e arquitetura do TOC permanecem fora do escopo dessa rodada.
+
+O Editor E1 continua preservado e pausado em `feature/editor`.
+
+Esta atualização documental não deve ser tratada como evidência de nova implementação, novo commit ou novo deployment além dos marcos explicitamente confirmados acima.
 
 ## 27. Lote 5 — fechamento documental
+
+> **Registro histórico preservado:** esta seção descreve o fechamento do Lote 5 no momento em que o Lote 6 ainda era a próxima frente. O estado operacional posterior está consolidado nas seções 2, 20, 22, 26 e 28.
 
 O Lote 5 — Discovery / Consolidação foi implementado e versionado em `34ffcb9eae1c155b66f07abc7efa2cdb68195471` (`Implementacao do Lote 5`). A cronologia foi: auditoria de Discovery → Related identificado como núcleo → plano ajustado → implementação → revisão focal → dois P2 de testes → correção dos P2 → 250/250 → commit da implementação → fechamento documental.
 
@@ -1774,3 +1934,180 @@ O baseline atual validado é: 21 documentos, 147 entradas, 126 seções, 250639 
 A revisão focal encontrou dois P2 exclusivamente de cobertura: prova de que draft intercalado não contamina a paginação pública e limites positivos de 1 e 4 relações. Ambos foram corrigidos antes do commit. Permanecem como P3 não bloqueantes: teste completo de sequência Tab em Related e reavaliação futura do primitive `RelatedLinks`, que ficou sem uso nos MDX publicados e não foi removido por limpeza especulativa.
 
 A próxima frente é o Lote 6 — Home + Hubs + identidade visual. Nenhuma decisão visual detalhada, implementação de sidebar retrátil, TOC, paletas, temas, FAQ, IA, RAG, embeddings ou similaridade foi antecipada pelo Lote 5.
+
+---
+
+## 28. Lote 6 — estado operacional consolidado em 09/09/2026
+
+### Paleta A2 Contrast Refined
+
+Implementada e aprovada.
+
+Referência de produção registrada:
+
+```text
+ad0212eb65d72ef4272ba269d995962350e6cdb7
+Implementa paleta A2 Contrast Refined
+```
+
+Direção consolidada:
+
+```text
+light canvas: #f6f7f9
+dark canvas: #151515
+nav: #1a1a1a
+cards: #202020
+interactive: #262626
+elevated: #2c2c2c
+orange light: #ff7600
+orange dark: #ff7a1a
+```
+
+A paleta está congelada durante a rodada atual da Sidebar.
+
+### Sidebar V2.5
+
+Implementada, estabilizada e promovida.
+
+```text
+develop:
+861a502c01f519601744bf840d708ca47aa4a317
+
+main:
+fa3ff62e9f800b21fb55d09db5f29090497a8b64
+```
+
+Baseline funcional preservado:
+
+```text
+expanded: 240px
+collapsed: 48px
+preview: 240px
+left: 0
+```
+
+Motion auditado:
+
+```text
+hover intent: 130ms
+preview close: 240ms
+width open: 195ms
+width close: 185ms
+reveal start: 85ms
+reveal duration: 95ms
+opacity: .35 → 1
+translateX: -4px → 0
+cascade: até 9ms/item e até 85ms total
+branch: 180ms geometry / 125ms opacity / 7ms stagger
+toggle: 120ms
+```
+
+O baseline também preserva:
+
+- uma única `NavigationTree`;
+- preview sem mover/cobrir o artigo;
+- TOC estável;
+- ícones sem salto estrutural;
+- hubs navegáveis com chevron separado;
+- `active` independente de `open`;
+- drawer mobile;
+- acessibilidade;
+- reduced motion;
+- ausência de nova dependência de motion/UI.
+
+### Sidebar V2.5 Final Interaction Polish
+
+Próxima implementação.
+
+Problemas delimitados:
+
+1. hover preview intermitente;
+2. inset esquerdo insuficiente nos itens expanded/preview;
+3. perceived motion com sensação de delay/travamento.
+
+O aumento do inset é requisito visual confirmado; a calibração deve partir aproximadamente da faixa `12–16px`, preservando a geometria.
+
+A hipótese atual para o hover é apenas uma hipótese técnica: precisa ser reproduzida e confirmada antes de alteração.
+
+O contrato exige pelo menos 30 ciclos válidos de hover e 100% de sucesso após intent satisfeito, além dos regression guards:
+
+```text
+icon centerY delta <= 1px
+article centerX delta <= 1px
+TOC delta <= 1px
+```
+
+Prompt canônico:
+
+```text
+Lote_6_Sidebar_V2_5_Final_Interaction_Polish.md
+```
+
+### Background + Logo
+
+Concluídos, aprovados e publicados.
+
+Histórico confirmado:
+
+```text
+develop:
+50435b44dabf583d7cf4f928ae0b277082ea71d8
+Implementa background oficial da Home
+
+main:
+0630b6067ef54b492e971cd4f7a664cb712a14f9
+Implementa background oficial da Home
+```
+
+Refinamento:
+
+```text
+develop:
+a2a88df49aaffdd281ac9d3a170c47e95966a227
+
+main:
+430d269
+
+Refina background da Home e atualiza logos
+```
+
+Correção final:
+
+```text
+develop:
+1d392c18360d7535ddbdce7452880356bc5a6671
+
+main:
+07635a6d1fa8480bebec0e485ef85c4f8e451d89
+
+Finaliza background responsivo e estabilidade das logos
+```
+
+O deployment de produção do commit `07635a6d1fa8480bebec0e485ef85c4f8e451d89` foi confirmado como `READY`.
+
+Decisão atual:
+
+- Background + Logo encerrados;
+- não criar V3 sem um problema novo e comprovado;
+- manter esses elementos congelados durante a Sidebar.
+
+### Próximo fluxo
+
+```text
+documentação operacional atualizada
+↓
+Sidebar V2.5 Final Interaction Polish em develop
+↓
+validações técnicas
+↓
+30+ ciclos de hover
+↓
+Impeccable focal
+↓
+validação visual humana
+↓
+commit/push somente após aprovação
+↓
+eventual promoção isolada para main
+```
+
