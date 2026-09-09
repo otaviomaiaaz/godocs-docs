@@ -1,7 +1,7 @@
 # GoDocs Docs — Arquitetura do Redesign
 
 > **Status:** APROVADO PARA IMPLEMENTAÇÃO PROGRESSIVA  
-> **Fase:** Redesign estrutural e evolução visual progressiva  
+> **Fase:** Redesign estrutural e evolução visual progressiva
 > **Implementação:** Lotes 1, 2, 3, 4 e 5 implementados e concluídos; Lote 6 está em andamento.
 > **Commit-base verificado:** `587069f` — `Contrato da nova arquitetura`
 > **Origem:** Lote 0 — Contrato da Nova Arquitetura, consolidado no Lote 0.1 em 18/08/2026.
