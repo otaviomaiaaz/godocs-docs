@@ -23,22 +23,11 @@ const searchableExtensions = new Set([
 ]);
 
 type LogoManifest = {
-  sourcePackage: string;
-  sourcePackageSha256: string;
   headerDark: {
     file: string;
     sha256: string;
-    width: number;
-    height: number;
   };
   headerLight: {
-    file: string;
-    sha256: string;
-    width: number;
-    height: number;
-    unchangedThroughColumn: number;
-  };
-  socialDark: {
     file: string;
     sha256: string;
     width: number;
@@ -290,7 +279,7 @@ describe("identidade e prevenção de regressões visuais", () => {
     ).toBe(true);
   });
 
-  it("usa o raster oficial, preserva a mão e deriva apenas docs no tema claro", async () => {
+  it("usa as duas logos oficiais transparentes por tema", async () => {
     const manifest = JSON.parse(
       await readFile(
         path.join(
@@ -308,144 +297,18 @@ describe("identidade e prevenção de regressões visuais", () => {
     const lightContents = await readFile(
       path.join(projectRoot, manifest.headerLight.file),
     );
-    const socialContents = await readFile(
-      path.join(projectRoot, manifest.socialDark.file),
-    );
-    const dark = decodeRgbaPng(darkContents);
     const light = decodeRgbaPng(lightContents);
-    const social = decodeRgbaPng(socialContents);
 
     expect(sha256(darkContents)).toBe(manifest.headerDark.sha256);
     expect(sha256(lightContents)).toBe(manifest.headerLight.sha256);
-    expect(sha256(socialContents)).toBe(manifest.socialDark.sha256);
-    expect([dark.width, dark.height]).toEqual([
-      manifest.headerDark.width,
-      manifest.headerDark.height,
-    ]);
     expect([light.width, light.height]).toEqual([
       manifest.headerLight.width,
       manifest.headerLight.height,
     ]);
-    expect([social.width, social.height]).toEqual([
-      manifest.socialDark.width,
-      manifest.socialDark.height,
-    ]);
-    expect(dark.width / dark.height).toBe(social.width / social.height);
-    expect(pixelAt(dark, 0, 0)[3]).toBe(0);
-
-    let officialOrange = 0;
-    let lightOrange = 0;
-    let handInterior = 0;
-    let handOutline = 0;
-    let handOverlap = 0;
-    let darkDocsPixels = 0;
-    let whiteDocsPixels = 0;
-
-    for (let y = 0; y < dark.height; y += 1) {
-      for (let x = 0; x < dark.width; x += 1) {
-        const [darkRed, darkGreen, darkBlue, darkAlpha] = pixelAt(dark, x, y);
-        const [lightRed, lightGreen, lightBlue, lightAlpha] = pixelAt(
-          light,
-          x,
-          y,
-        );
-
-        if (
-          darkRed === 255 &&
-          darkGreen === 140 &&
-          darkBlue === 66 &&
-          darkAlpha > 0
-        ) {
-          officialOrange += 1;
-        }
-        if (
-          lightRed === 255 &&
-          lightGreen === 140 &&
-          lightBlue === 66 &&
-          lightAlpha > 0
-        ) {
-          lightOrange += 1;
-        }
-
-        if (x >= 35 && x <= 52) {
-          if (
-            darkRed === 26 &&
-            darkGreen === 26 &&
-            darkBlue === 26 &&
-            darkAlpha > 0
-          ) {
-            handInterior += 1;
-          }
-          if (
-            darkRed === darkGreen &&
-            darkGreen === darkBlue &&
-            darkRed >= 80 &&
-            darkAlpha > 0
-          ) {
-            handOutline += 1;
-          }
-          if (
-            darkRed === 255 &&
-            darkGreen === 140 &&
-            darkBlue === 66 &&
-            darkAlpha > 0
-          ) {
-            handOverlap += 1;
-          }
-        }
-
-        if (x > manifest.headerLight.unchangedThroughColumn) {
-          if (
-            lightRed === 26 &&
-            lightGreen === 26 &&
-            lightBlue === 26 &&
-            lightAlpha === 255
-          ) {
-            darkDocsPixels += 1;
-          }
-          if (
-            lightRed === 255 &&
-            lightGreen === 255 &&
-            lightBlue === 255 &&
-            lightAlpha > 0
-          ) {
-            whiteDocsPixels += 1;
-          }
-        }
-      }
-    }
-
-    for (let y = 0; y < dark.height; y += 1) {
-      for (
-        let x = 0;
-        x <= manifest.headerLight.unchangedThroughColumn;
-        x += 1
-      ) {
-        expect(pixelAt(light, x, y)).toEqual(pixelAt(dark, x, y));
-      }
-    }
-
-    expect(officialOrange).toBeGreaterThan(400);
-    expect(lightOrange).toBe(officialOrange);
-    expect(handInterior).toBeGreaterThan(80);
-    expect(handOutline).toBeGreaterThan(80);
-    expect(handOverlap).toBeGreaterThan(100);
-    expect(darkDocsPixels).toBeGreaterThan(700);
-    expect(whiteDocsPixels).toBe(0);
-
-    const packageCandidates = [
-      path.join(projectRoot, manifest.sourcePackage),
-      path.join(projectRoot, "..", manifest.sourcePackage),
-    ];
-    for (const candidate of packageCandidates) {
-      try {
-        const packageContents = await readFile(candidate);
-        expect(sha256(packageContents)).toBe(manifest.sourcePackageSha256);
-        break;
-      } catch {
-        // O pacote de origem é externo ao checkout; o manifesto preserva sua proveniência.
-      }
-    }
+    expect(darkContents.toString("utf8")).toContain('viewBox="16 27 212 88"');
+    expect(darkContents.toString("utf8")).not.toContain("<rect");
+    expect(pixelAt(light, 0, 0)[3]).toBe(0);
+    expect(pixelAt(light, light.width - 1, light.height - 1)[3]).toBe(0);
   });
 
   it("separa marca, acento operacional e estados em tokens semânticos", async () => {

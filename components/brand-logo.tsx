@@ -1,48 +1,30 @@
-import Image from "next/image";
+import type { CSSProperties } from "react";
 
 import { SITE_BASE_PATH } from "@/lib/site";
 
 export type BrandLogoSize = "compact" | "default";
 
-const BRAND_LOGO_ASSETS = {
-  dark: `${SITE_BASE_PATH}/brand/godocs-logo-official-dark.png`,
-  light: `${SITE_BASE_PATH}/brand/godocs-logo-official-light.png`,
-  height: 58,
-  width: 150,
-};
-
 type BrandLogoProps = {
   size?: BrandLogoSize;
 };
 
+type BrandLogoStyle = CSSProperties & {
+  "--brand-logo-dark": string;
+  "--brand-logo-light": string;
+};
+
 export function BrandLogo({ size = "default" }: BrandLogoProps) {
+  const style: BrandLogoStyle = {
+    "--brand-logo-dark": `url("${SITE_BASE_PATH}/brand/godocs-logo-official-dark.svg")`,
+    "--brand-logo-light": `url("${SITE_BASE_PATH}/brand/godocs-logo-official-light.png")`,
+  };
+
   return (
     <span
-      aria-label="GoDocs"
+      aria-hidden="true"
       className="brand-logo"
       data-size={size}
-      role="img"
-    >
-      <Image
-        alt=""
-        aria-hidden="true"
-        className="brand-logo__image brand-logo__image--dark"
-        height={BRAND_LOGO_ASSETS.height}
-        priority
-        src={BRAND_LOGO_ASSETS.dark}
-        unoptimized
-        width={BRAND_LOGO_ASSETS.width}
-      />
-      <Image
-        alt=""
-        aria-hidden="true"
-        className="brand-logo__image brand-logo__image--light"
-        height={BRAND_LOGO_ASSETS.height}
-        priority
-        src={BRAND_LOGO_ASSETS.light}
-        unoptimized
-        width={BRAND_LOGO_ASSETS.width}
-      />
-    </span>
+      style={style}
+    />
   );
 }
