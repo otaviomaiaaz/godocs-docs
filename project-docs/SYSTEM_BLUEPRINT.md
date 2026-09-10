@@ -1,688 +1,1713 @@
-# GoDocs Docs — Esqueleto técnico e visual do MVP
+# GoDocs Docs — Blueprint técnico e estrutural
+
+> **Papel deste arquivo:** registrar a arquitetura técnica e estrutural complementar do GoDocs Docs.
+>
+> **Estado de referência:** arquitetura consolidada após os Lotes 0–5 e evolução técnica/visual do Lote 6 registrada até 09/09/2026.
+>
+> Este documento descreve contratos técnicos, fluxo de conteúdo, componentes estruturais, integração do Design System, responsividade, acessibilidade, SEO e limites do baseline atual. Estado operacional, branch, HEAD, deploy e próxima tarefa pertencem a `project-docs/daily_stats.md`.
 
 ## 1. Finalidade deste documento
 
-Este arquivo é a fonte de verdade para a arquitetura de produto, interface e implementação do GoDocs Docs.
+O `SYSTEM_BLUEPRINT.md` é o **blueprint técnico e estrutural complementar** do GoDocs Docs.
 
-Ele descreve o sistema que deve existir após o MVP e separa:
+Ele não é a fonte universal de verdade do projeto e não deve competir com documentos especializados.
 
-- o que é renderizado agora;
-- o que precisa funcionar como fundação;
-- o que fica explicitamente fora do MVP.
+Responsabilidades:
+
+| Fonte | Responsabilidade principal |
+|---|---|
+| `AGENTS.md` | regras operacionais e de execução |
+| `PRODUCT.md` | produto, público, propósito, capacidades e restrições |
+| `DESIGN.md` | sistema visual, UX, interação e tokens canônicos |
+| `project-docs/REDESIGN_ARCHITECTURE.md` | arquitetura editorial, hubs, navegação, URLs e contratos do redesign |
+| `project-docs/SYSTEM_BLUEPRINT.md` | arquitetura técnica/estrutural e integração entre essas camadas |
+| `README.md` | execução prática, comandos e criação de conteúdo |
+| `content/docs/` | conteúdo publicado e fatos funcionais documentados |
+| implementação atual | estado factual do código |
+| `project-docs/Memória.md` | contexto universal e histórico consolidado |
+| `project-docs/daily_stats.md` | estado operacional e próxima tarefa |
+
+Este arquivo deve explicar:
+
+- como o conteúdo entra no sistema;
+- como é validado e normalizado;
+- como gera rotas, navegação, busca, TOC, paginação e Related;
+- quais componentes estruturam a experiência;
+- quais contratos técnicos devem sobreviver a evoluções visuais;
+- como temas, responsividade, acessibilidade, SEO e assets são integrados;
+- quais frentes futuras continuam fora do baseline principal.
+
+### 1.1 Regra de conflito
+
+A implementação atual comprova **como o código está**, mas não redefine automaticamente produto, design ou arquitetura.
+
+Se este arquivo divergir de `PRODUCT.md`, `DESIGN.md`, `REDESIGN_ARCHITECTURE.md` ou da implementação:
+
+1. identificar o domínio da divergência;
+2. verificar se este blueprint ficou desatualizado;
+3. não escolher silenciosamente uma interpretação;
+4. não transformar drift de código em nova regra;
+5. atualizar a fonte correta quando a decisão estiver confirmada.
+
+### 1.2 Evolução em relação ao blueprint inicial
+
+O blueprint original descrevia um MVP ainda quase vazio, com artigos e vários componentes tratados como futuros.
+
+Esse cenário foi superado.
+
+O baseline atual já possui:
+
+- coleção real de documentação;
+- Home derivada do conteúdo;
+- hubs editoriais;
+- páginas `hub`, `task` e `reference`;
+- navegação hierárquica;
+- sidebar e drawer;
+- TOC progressivo;
+- busca local determinística;
+- paginação hierárquica por domínio;
+- Related manual;
+- compatibilidade de URLs/anchors;
+- imagens instrutivas;
+- metadata, sitemap e imagens sociais;
+- temas claro e escuro;
+- suíte automatizada e validação de conteúdo.
+
+Por isso, este arquivo passa a documentar **o sistema existente e seus contratos**, e não uma implementação futura hipotética.
+
+---
 
 ## 2. Princípios do produto
 
-1. **Documentação antes de promoção:** a interface existe para encontrar e ler informação.
-2. **GoDocs na identidade:** laranja, neutros escuros, wordmark e tom corporativo.
-3. **Mintlify na experiência:** busca central, navegação clara, leitura ampla e hierarquia precisa.
-4. **Vazio intencional:** sem artigos, a home continua completa sem inventar seções.
-5. **Conteúdo como arquivo:** Markdown/MDX é a fonte única para artigos, navegação e busca.
-6. **Progressão simples:** adicionar conteúdo não exige reconstruir layouts.
-7. **Acessibilidade nativa:** teclado, foco, contraste e semântica fazem parte do componente.
+Os princípios abaixo são relevantes para a arquitetura técnica. Definições completas de produto pertencem ao `PRODUCT.md`.
+
+1. **Documentação antes de promoção:** a interface existe para encontrar, compreender e aplicar informação.
+2. **Conteúdo como fonte versionada:** Markdown/MDX publicado no repositório continua sendo a fonte pública da documentação.
+3. **Uma coleção canônica:** rotas, Home, hubs, navegação, busca, TOC, paginação, Related, sitemap e metadata devem derivar do mesmo conteúdo normalizado sempre que aplicável.
+4. **Sem cadastros paralelos:** não criar listas manuais concorrentes para representar documentos já disponíveis na coleção.
+5. **Git-native:** mudanças públicas devem permanecer versionáveis, revisáveis e reproduzíveis pelo repositório.
+6. **Progressão estrutural:** adicionar ou reorganizar conteúdo deve utilizar taxonomia e metadados, não exigir hardcodes por página.
+7. **Verdade antes de completude:** lacunas de informação devem permanecer lacunas; não inventar comportamento do GoDocs.
+8. **Identidade própria:** referências como Mintlify servem para benchmark de experiência, não para cópia de implementação ou marca.
+9. **Acessibilidade nativa:** teclado, foco, semântica, contraste e movimento reduzido fazem parte do contrato dos componentes.
+10. **Responsividade estrutural:** desktop, notebook, tablet e mobile devem compartilhar conteúdo e navegação, adaptando apenas a apresentação.
+11. **Evolução sem regressão pública:** URLs, anchors e comportamentos estabilizados devem ser preservados durante redesigns.
+12. **Separação de responsabilidades:** conteúdo público versionado, código da plataforma e futuras estruturas de autoria não devem se tornar fontes concorrentes.
+
+---
 
 ## 3. Leitura das referências
 
+As referências visuais servem como evidência e inspiração. Elas são **somente leitura**.
+
+A autoridade visual canônica é `DESIGN.md`.
+
 ### 3.1 GoDocs — fonte de identidade
 
-Arquivos:
+Diretório:
 
-- `references/GoDocs/Captura de tela 2026-07-21 130720.png`
-- `references/GoDocs/Captura de tela 2026-07-21 130833.png`
+```text
+project-docs/references/GoDocs/
+```
 
-Características a transportar:
+Características relevantes:
 
-- wordmark com `go` em laranja e `docs` em branco;
-- fundo grafite, não preto absoluto;
-- sidebar e cards com pequenas variações de luminosidade;
-- bordas finas em cinza;
-- item ativo com laranja forte;
-- títulos brancos e textos auxiliares em cinza frio;
-- ícones lineares brancos/laranja;
-- radius moderado;
-- tom corporativo e funcional.
+- identidade laranja do GoDocs;
+- neutros grafite;
+- contraste entre fundo, navegação e superfícies;
+- ícones lineares;
+- bordas e radius controlados;
+- aparência corporativa e funcional;
+- relação entre wordmark, branco e laranja.
 
-Características a adaptar:
+O que deve ser adaptado para documentação:
 
-- reduzir a densidade do dashboard para favorecer leitura;
-- usar laranja em destaque, não em grandes áreas persistentes;
-- aumentar espaço em branco e largura de linha controlada;
-- manter a marca sem reproduzir os cards e gráficos do dashboard.
+- menor densidade que um dashboard;
+- maior conforto de leitura;
+- laranja como sinal de atenção e estado, não como grande superfície persistente;
+- hierarquia editorial acima de elementos administrativos.
 
-### 3.2 AbacatePay/Mintlify — fonte de experiência
+### 3.2 Mintlify / AbacatePay — fonte de experiência
 
-Arquivos:
+Diretório:
 
-- `references/AbacatePay - Mintlify/Captura de tela 2026-07-22 103140.png`
-- `references/AbacatePay - Mintlify/Captura de tela 2026-07-22 103206.png`
-- `references/AbacatePay - Mintlify/Captura de tela 2026-07-22 103234.png`
+```text
+project-docs/references/AbacatePay - Mintlify/
+```
 
-Características a transportar:
+Padrões úteis:
 
-- header horizontal com busca central dominante;
-- largura máxima consistente e grandes margens laterais;
-- separação sutil entre header, navegação e conteúdo;
-- títulos fortes e texto secundário de baixo contraste controlado;
-- cards simples com ícone, título e descrição;
-- grades responsivas e ritmo vertical generoso;
-- superfícies discretas e bordas finas;
-- navegação contextual que permanece disponível durante o scroll.
+- busca central e fácil de acionar;
+- navegação persistente;
+- conteúdo com largura de leitura controlada;
+- hierarquia tipográfica clara;
+- cards simples;
+- bordas e superfícies discretas;
+- ritmo vertical confortável;
+- descoberta contextual.
 
 Não transportar:
 
-- verde da marca;
-- logo e nome AbacatePay;
-- conteúdo de API;
-- links `llms.txt`, repositório e dashboard;
-- categorias e cards das screenshots;
-- botão verde ou hierarquia promocional específica.
+- marca;
+- verde;
+- textos;
+- CTAs;
+- links;
+- conteúdo;
+- categorias;
+- componentes copiados literalmente;
+- estrutura comercial específica.
 
-### 3.3 Síntese visual
+### 3.3 Síntese atual
 
 ```text
-Estrutura Mintlify                       Identidade GoDocs
-header compacto                         wordmark laranja + branco
-busca central                           foco e ativos em laranja
-conteúdo amplo                          fundo grafite
-cards de borda fina                     superfícies cinza-escuras
-ritmo vertical generoso                 tom corporativo
-                    ↓
-              GoDocs Docs
+maturidade de documentação moderna
+            +
+identidade visual GoDocs
+            +
+arquitetura editorial própria
+            +
+conteúdo versionado
+            ↓
+        GoDocs Docs
 ```
+
+Direção consolidada:
+
+> **robusto na estrutura e clean na apresentação.**
+
+---
 
 ## 4. Arquitetura de informação
 
-### 4.1 Rotas do MVP
+A arquitetura editorial detalhada pertence ao `REDESIGN_ARCHITECTURE.md`. Esta seção registra como ela se manifesta tecnicamente.
 
-| Rota | Estado no MVP | Função |
+### 4.1 Rotas atuais
+
+| Rota | Estado | Função |
 |---|---:|---|
-| `/` | Renderizada | Home institucional e estado sem conteúdo |
-| `/docs/[...slug]` | Funcional | Renderizar artigos futuros por slug |
-| `not-found` | Renderizada quando necessário | Informar página inexistente e retornar à home |
+| `/` | Implementada | Home derivada da coleção publicada |
+| `/docs/[...slug]` | Implementada | renderização de documentos por slug |
+| `/search-index.json` | Implementada | índice estático da busca local |
+| `/sitemap.xml` | Implementada | sitemap derivado dos documentos publicados |
+| `/robots.txt` | Implementada | regras atuais de crawling |
+| `/opengraph-image` | Implementada | imagem social padrão |
+| `/share-image/[...slug]` | Implementada | imagem social por documento |
+| `not-found` | Implementada | página inexistente |
 
-Não criar rotas para login, dashboard, API, busca dedicada, admin ou CMS.
+A rota de documento utiliza `generateStaticParams()` para os slugs publicados conhecidos e mantém `dynamicParams = true`.
 
-### 4.2 Estados de conteúdo
+O índice de busca usa route handler com:
 
-**Sem artigos — estado inicial:**
+```ts
+export const dynamic = "force-static";
+```
 
-- home ampla;
-- header com marca, busca e tema;
-- nenhuma sidebar vazia;
-- nenhuma navegação de categoria vazia;
-- nenhuma grade de cards;
-- pesquisa apresenta estado vazio.
+Não existe rota pública dedicada de busca; a experiência permanece em diálogo/modal.
 
-**Com artigos — comportamento futuro já suportado:**
+### 4.2 Arquitetura editorial atual
 
-- categorias de primeiro nível podem alimentar navegação contextual;
-- páginas alimentam a sidebar hierárquica;
-- headings alimentam o sumário;
-- metadados e texto alimentam a busca;
-- ordem documental alimenta anterior/próxima.
+```text
+Home
+├── Comece por aqui
+│   ├── O que é o GoDocs?
+│   └── Primeiro Acesso
+│
+└── Funcionalidades
+    ├── Visão Geral
+    ├── Busca Inteligente
+    ├── Documentos
+    │   ├── Organizar pastas e subpastas
+    │   ├── Adicionar documentos
+    │   ├── Localizar, filtrar e consultar metadados
+    │   ├── Visualizar e gerenciar documentos
+    │   └── Logs e ações
+    ├── Favoritos
+    ├── Workflows
+    │   ├── Cards, Kanban e Lista
+    │   ├── Automações
+    │   ├── Criar e configurar
+    │   ├── Fases e transições
+    │   ├── Formulários e campos
+    │   ├── Membros e papéis
+    │   └── Formulário público e acompanhamento
+    └── Relatórios
+```
+
+Modelo editorial:
+
+```text
+Home
+→ hub de domínio
+→ página de tarefa ou referência
+→ Related / próximos passos
+```
+
+### 4.3 Função editorial por página
+
+O schema aceita:
+
+```yaml
+pageType: hub
+pageType: task
+pageType: reference
+```
+
+- `hub`: organiza um domínio e pode possuir filhos diretos;
+- `task`: orienta uso ou execução de uma atividade;
+- `reference`: explica informação de consulta/referência.
+
+`pageType` é explícito. Não inferir `hub` somente porque existem páginas-filhas.
+
+### 4.4 Hubs
+
+Hubs de domínio com filhos diretos seguem:
+
+```text
+H1 + resumo
+→ conteúdo geral/conceitual
+→ informações ou requisitos relevantes
+→ Conceitos importantes, quando existir
+→ cards compactos das páginas-filhas
+→ paginação
+```
+
+O `DocPage` deriva os filhos do hub pela coleção canônica:
+
+- prefixo de segmentos;
+- profundidade imediatamente inferior;
+- `order`.
+
+Não criar hardcode específico para Documentos, Workflows ou futuros hubs equivalentes.
+
+### 4.5 Estados de conteúdo
+
+O schema distingue:
+
+```yaml
+status: published | draft
+availability: available | coming-soon
+```
+
+Regras:
+
+- somente `published` entra na experiência pública;
+- drafts não entram na navegação pública;
+- uma página publicada não deve apontar para draft;
+- `coming-soon` representa uma página publicada e navegável em preparação;
+- disponibilidade não substitui status de publicação.
+
+---
 
 ## 5. Wireframes
+
+Os wireframes abaixo representam a **estrutura**, não medidas visuais canônicas. Valores exatos devem seguir `DESIGN.md` e `app/globals.css`.
 
 ### 5.1 Home desktop
 
 ```text
-┌──────────────────────────────────────────────────────────────────────┐
-│ godocs | Documentação [ Pesquisar na documentação... Ctrl K ]   ◐  │
-├──────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│                GODOCS DOCS                                           │
-│                Documentação do GoDocs                               │
-│                Encontre guias, conceitos e instruções...             │
-│                Novos conteúdos serão publicados progressivamente.    │
-│                                                                      │
-│                     detalhe laranja sutil                            │
-│                                                                      │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│ GoDocs Docs               [ Pesquisar...  Ctrl/Cmd K ]          tema  │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│                         Hero / introdução                              │
+│                    background oficial da Home                          │
+│                                                                        │
+│                  Comece por aqui / descoberta                          │
+│                                                                        │
+│                    Funcionalidades                                     │
+│               cards derivados do conteúdo                              │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-Não existe sidebar ou card vazio na home inicial.
+A Home não usa uma lista manual independente para as funcionalidades. Os cards são derivados dos documentos publicados da seção `funcionalidades`.
 
-### 5.2 Artigo desktop futuro
+### 5.2 Artigo desktop — sidebar expandida
 
 ```text
-┌──────────────────────────────────────────────────────────────────────┐
-│ godocs | Documentação [ Pesquisar na documentação... Ctrl K ]   ◐  │
-├──────────────────────────────────────────────────────────────────────┤
-│ Sidebar 240px │ Conteúdo 720–760px                    │ TOC 220px   │
-│               │ breadcrumb                           │ nesta página │
-│ Categoria     │ # Título                             │ heading      │
-│   Página      │ descrição                            │ heading      │
-│   Página      │ corpo do artigo                      │ heading      │
-│               │ anterior / próxima                   │              │
-└──────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│ Header                                                                 │
+├───────────────┬──────────────────────────────────────┬─────────────────┤
+│ Sidebar       │ Conteúdo                             │ Nesta página     │
+│ 240px         │ breadcrumb                           │ TOC              │
+│               │ H1 + descrição                       │                  │
+│ árvore        │ artigo MD/MDX                        │                  │
+│ canônica      │ hub cards quando aplicável           │                  │
+│               │ Related                              │                  │
+│               │ anterior / próxima                   │                  │
+└───────────────┴──────────────────────────────────────┴─────────────────┘
 ```
 
-### 5.3 Mobile
+### 5.3 Artigo desktop — sidebar recolhida / preview
+
+Baseline estabilizado da Sidebar V2.5:
 
 ```text
-┌──────────────────────────────────┐
-│ ☰  godocs | Docs     Buscar  ◐  │
-├──────────────────────────────────┤
-│                                  │
-│ Título / conteúdo                │
-│                                  │
-└──────────────────────────────────┘
-
-☰ abre drawer apenas quando existe navegação documental.
-Buscar abre o diálogo em tela adequada ao viewport.
+expanded: 240px
+collapsed: 48px
+preview: 240px
+left: 0
 ```
+
+O rail recolhido preserva a área estrutural do layout. O preview é temporário e não deve:
+
+- deslocar o artigo;
+- alterar a centralização do conteúdo;
+- deslocar o TOC;
+- virar uma segunda árvore de navegação.
+
+### 5.4 Mobile
+
+```text
+┌──────────────────────────────────────┐
+│ menu   marca        busca      tema  │
+├──────────────────────────────────────┤
+│                                      │
+│ breadcrumb                           │
+│ título                               │
+│ conteúdo                             │
+│                                      │
+│ Nesta página / controle adaptado     │
+│ Related / paginação                  │
+│                                      │
+└──────────────────────────────────────┘
+
+menu → abre drawer com a mesma árvore da sidebar
+busca → abre diálogo adaptado ao viewport
+```
+
+---
 
 ## 6. Sistema visual
 
-### 6.1 Cores semânticas
+O sistema visual canônico é definido em `DESIGN.md`.
 
-Use variáveis CSS. Os nomes são contratuais; os valores podem receber pequenos ajustes após inspeção visual.
+Esta seção registra apenas os **contratos técnicos de integração** e um snapshot dos tokens estruturais implementados. Uma divergência futura entre esta seção e `DESIGN.md` deve ser tratada como necessidade de sincronização, não como precedência deste arquivo.
 
-#### Marca
+### 6.1 Cores semânticas implementadas
 
-| Token | Valor inicial | Uso |
-|---|---:|---|
-| `--brand` | `#FF7900` | links, ícones ativos, indicador e foco |
-| `--brand-hover` | varia por tema | hover de elementos de marca com contraste adequado |
-| `--brand-active` | varia por tema | estado pressionado com contraste adequado |
-| `--brand-contrast` | `#FFFFFF` | texto sobre laranja quando inevitável |
-| `--brand-subtle` | `rgba(255,121,0,.12)` | fundos sutis |
-| `--brand-border` | `rgba(255,121,0,.30)` | borda de destaque |
-| `--brand-text` | varia por tema | laranja com contraste adequado para texto |
-| `--focus-ring` | varia por tema | foco visível com contraste mínimo de componente |
+#### Tema escuro (`:root`)
 
-#### Tema escuro
-
-| Token | Valor inicial |
+| Token | Valor atual |
 |---|---:|
-| `--background` | `#1B1B1B` |
-| `--header` | `#1D1D1D` |
-| `--surface-1` | `#242424` |
-| `--surface-2` | `#2B2B2B` |
-| `--surface-hover` | `#333333` |
-| `--border` | `#474747` |
-| `--border-subtle` | `#393939` |
-| `--divider` | `#3E3E3E` |
-| `--text-primary` | `#F6F6F6` |
-| `--text-secondary` | `#C2C2C2` |
-| `--text-muted` | `#9A9A9A` |
-| `--overlay` | `rgba(0,0,0,.58)` |
+| `--brand-logo` | `#ff8c42` |
+| `--accent-primary` | `#ff7a1a` |
+| `--accent-text` | `#ff7600` |
+| `--background` | `#151515` |
+| `--navigation-surface` | `#1a1a1a` |
+| `--surface` | `#202020` |
+| `--surface-interactive` | `#262626` |
+| `--surface-elevated` | `#2c2c2c` |
+| `--surface-border` | `#4b4b4b` |
+| `--text-primary` | `#ffffff` |
+| `--text-secondary` | `#c4c4c4` |
+| `--text-muted` | `#a1a1a1` |
+| `--focus-ring` | `#ff8a3d` |
 
-#### Tema claro
+#### Tema claro (`html[data-theme="light"]`)
 
-| Token | Valor inicial |
+| Token | Valor atual |
 |---|---:|
-| `--background` | `#F8F9FB` |
-| `--header` | `rgba(255,255,255,.94)` |
-| `--surface-1` | `#FFFFFF` |
-| `--surface-2` | `#F1F3F5` |
-| `--surface-hover` | `#ECEFF2` |
-| `--border` | `#CFD4DB` |
-| `--border-subtle` | `#DDE1E6` |
-| `--divider` | `#D6DBE1` |
-| `--text-primary` | `#202020` |
-| `--text-secondary` | `#555B63` |
-| `--text-muted` | `#6F7680` |
-| `--overlay` | `rgba(24,24,24,.35)` |
+| `--accent-primary` | `#ff7600` |
+| `--accent-text` | `#a84b00` |
+| `--background` | `#f6f7f9` |
+| `--navigation-surface` | `#f1f3f5` |
+| `--surface` | `#ffffff` |
+| `--surface-interactive` | `#e9edf1` |
+| `--surface-elevated` | `#ffffff` |
+| `--surface-border` | `#bec7d1` |
+| `--text-primary` | `#17202a` |
+| `--text-secondary` | `#435160` |
+| `--text-muted` | `#66717d` |
+| `--focus-ring` | `#a84b00` |
 
-#### Estados
+Cores funcionais de sucesso, aviso, perigo e informação não substituem o laranja como identidade.
 
-| Token | Valor inicial |
-|---|---:|
-| `--success` | `#2FBF71` |
-| `--warning` | `#F5A524` |
-| `--danger` | `#F05252` |
-| `--info` | `#4C8DFF` |
+### 6.2 Tipografia implementada
 
-Essas cores são funcionais e não substituem o laranja como identidade.
+Fonte principal:
 
-### 6.2 Tipografia
+```text
+Inter Variable, Inter, ui-sans-serif, system-ui, sans-serif
+```
 
-- Fonte primária: Inter via `next/font`, ou fonte equivalente já presente.
-- Fonte monoespaçada: Geist Mono, JetBrains Mono ou equivalente local.
-- Peso normal: 400.
-- Peso médio: 500.
-- Peso semibold: 600.
-- Peso bold: 700, usado com moderação.
+Tokens tipográficos estruturais atuais:
 
-| Papel | Desktop | Mobile | Line-height |
-|---|---:|---:|---:|
-| Hero | 40px / 700 | 30px / 700 | 1.16 |
-| H1 de artigo | 36px / 700 | 28px / 700 | 1.16 |
-| H2 | 26px / 650 | 21px / 650 | 1.3 |
-| H3 | 21px / 600 | 19px / 600 | 1.4 |
-| Corpo | 16px / 400 | 16px / 400 | 1.68 |
-| Texto pequeno | 14px / 400 | 14px / 400 | 1.55 |
-| Navegação | 13px / 400 | 13px / 400 | 1.45 |
-| Label | 12px / 600 | 12px / 600 | 1.4 |
+```text
+--type-home-title
+--type-article-title
+--type-lead
+--type-h2
+--type-h3
+--type-home-section
+--type-body
+--type-card-title
+--type-card-description
+--type-ui
+--type-navigation
+```
 
-Comprimento ideal do corpo: 60–78 caracteres por linha.
+O corpo usa base de `16px`.
+
+O Design System deve controlar hierarquia e escala; componentes não devem espalhar tamanhos arbitrários quando um token semântico já existir.
 
 ### 6.3 Espaçamento e layout
 
-Escala base: `4px`.
+Tokens estruturais relevantes:
 
 ```text
-1: 4px   2: 8px   3: 12px   4: 16px
-5: 20px  6: 24px  8: 32px  10: 40px
-12: 48px 16: 64px 20: 80px 24: 96px
+--header-height: 64px
+--page-max: 1440px
+--content-width: 44rem
+--home-content-width: 1120px
+
+--page-padding-desktop: 32px
+--page-padding-tablet: 24px
+--page-padding-mobile: 20px
 ```
 
-| Elemento | Medida inicial |
-|---|---:|
-| Altura do header | 64px |
-| Largura máxima global | 1440px |
-| Largura da sidebar | 240px |
-| Largura do conteúdo | `70ch` |
-| Largura do TOC | 220px |
-| Gap entre colunas | 40px |
-| Padding desktop | 32px |
-| Padding tablet | 24px |
-| Padding mobile | 20px |
+Sidebar V2.5:
+
+```text
+expanded: 240px
+collapsed: 48px
+preview: 240px
+```
+
+A geometria da sidebar não deve ser alterada durante ajustes puramente de motion/interaction polish sem nova decisão arquitetural.
 
 ### 6.4 Radius, bordas e sombra
 
-| Token | Valor | Uso |
-|---|---:|---|
-| `--radius-sm` | 8px | atalhos, tags, pequenos controles |
-| `--radius-md` | 12px | inputs e botões |
-| `--radius-lg` | 16px | cards e painéis |
-| `--radius-xl` | 20px | diálogo de busca |
-| Borda padrão | 1px | separação de superfícies |
+Tokens atuais:
 
-Sombras devem ser quase imperceptíveis no tema escuro. No tema claro, use uma sombra curta e suave apenas em elementos elevados, como diálogo e drawer.
+```text
+--radius-compact: 6px
+--radius-sm: 8px
+--radius-md: 12px
+--radius-lg: 16px
+--radius-xl: 20px
+```
+
+Princípio:
+
+- bordas e variações de superfície estruturam primeiro;
+- sombras são reservadas a elevação real;
+- não usar glassmorphism ou profundidade ornamental como padrão.
 
 ### 6.5 Movimento
 
-- duração rápida: 120ms;
-- duração padrão: 180ms;
-- easing: `cubic-bezier(.2,.8,.2,1)`;
-- animar somente opacity, transform e mudanças simples de cor;
-- desativar movimento não essencial com `prefers-reduced-motion`.
+Tokens globais atuais:
 
-## 7. Componentes do MVP
+```text
+--duration-fast: 120ms
+--duration-base: 180ms
+--duration-interaction: 200ms
+--ease: cubic-bezier(0.2, 0.8, 0.2, 1)
+```
 
-### 7.1 `Brand`
+Motion deve:
 
-- Exibe `go` em laranja e `docs` em cor primária.
-- Usa separador e rótulo `Documentação`; em mobile, o rótulo pode ser abreviado visualmente para `Docs`.
-- Mantém o nome acessível `GoDocs Documentação` em todas as variantes.
-- Não redesenha o símbolo a partir do screenshot.
-- Aceita substituição futura por asset oficial.
+- explicar transição ou relação espacial;
+- evitar mudança de layout desnecessária;
+- respeitar `prefers-reduced-motion`;
+- permanecer curto e funcional.
+
+A Sidebar V2.5 possui parâmetros próprios auditados de hover/preview/reveal. Esses valores pertencem ao componente e não devem virar tokens globais automaticamente.
+
+---
+
+## 7. Componentes principais
+
+Esta seção substitui a antiga lista de “componentes futuros”. Os componentes abaixo existem ou representam contratos estruturais já implementados.
+
+### 7.1 `BrandLogo` / `Brand`
+
+- usam os ativos oficiais disponíveis;
+- mantêm nome acessível;
+- preservam identidade GoDocs;
+- não redesenham a marca por inferência de screenshot.
 
 ### 7.2 `DocsHeader`
 
-- Sticky no topo, z-index consistente.
-- Fundo sólido ou levemente translúcido com borda inferior.
-- Marca à esquerda, busca central, tema à direita.
-- Em mobile: marca compacta, botão de busca e tema; menu apenas quando houver navegação.
+- cabeçalho global;
+- combina marca, busca, navegação mobile quando aplicável e alternância de tema;
+- recebe navegação derivada da coleção publicada;
+- não mantém taxonomia paralela.
 
-### 7.3 `SearchTrigger`
+### 7.3 `SearchDialog`
 
-- Aparência de input, comportamento de botão.
-- Ícone de lupa, placeholder e hint de atalho.
-- Largura desktop aproximada: 420–520px.
-- Foco visível com ring de marca.
+- interface da busca local;
+- consome `/search-index.json`;
+- mantém semântica de combobox/listbox;
+- suporta teclado;
+- `Ctrl/Cmd + K` abre a busca;
+- `Escape` fecha;
+- consultas sem termos úteis não geram ranking arbitrário;
+- resultados distinguem Página e Seção.
 
-### 7.4 `SearchDialog`
+### 7.4 `ThemeToggle`
 
-- Modal acessível com overlay.
-- Campo focado ao abrir.
-- Estado vazio real no MVP.
-- Estrutura futura de resultados: título, descrição curta, breadcrumb e termo destacado.
-- Fecha com `Escape`, clique controlado fora e ação explícita.
+- alterna `light` / `dark`;
+- grava preferência em `localStorage` sob `godocs-theme`;
+- sem preferência, acompanha `prefers-color-scheme`;
+- atualiza `data-theme` e `colorScheme`;
+- possui nome acessível da ação.
 
-### 7.5 `ThemeToggle`
+A inicialização anterior à interação é feita por `/theme-initialization.js` para reduzir flash de tema incorreto.
 
-- Controle acessível com nome do estado/ação.
-- Persiste preferência.
-- Evita flash de tema incorreto.
-- Não depende somente de ícone sem label acessível.
+### 7.5 `HomeIntro`
 
-### 7.6 `HomeIntro`
+- estrutura a Home;
+- recebe grupos da navegação canônica;
+- recebe cards de funcionalidades derivados da coleção;
+- utiliza `cardDescription` quando disponível;
+- deve continuar funcionando sem cadastro manual de cards.
 
-- Eyebrow opcional `GODOCS DOCS`.
-- Título e descrição definidos no prompt.
-- Mensagem progressiva em tom secundário.
-- Sem CTA ou card fictício.
-- Elemento abstrato laranja limitado ao background e baixa opacidade.
+Background e logos atuais foram estabilizados no Lote 6 e não devem ser reconstruídos sem um novo problema visual comprovado.
 
-### 7.7 `DocsSidebar`
+### 7.6 `DocCard`
 
-- Não renderiza na home vazia.
-- Renderiza em páginas de artigo quando houver árvore de navegação.
-- Suporta grupos, níveis aninhados, expansão, item ativo e scroll próprio.
-- O ramo do item ativo abre automaticamente.
+- representa destinos documentais na Home e superfícies equivalentes;
+- usa metadados da coleção;
+- respeita `availability`;
+- possui foco visível;
+- interações não devem provocar salto de layout.
 
-### 7.8 `MobileNavDrawer`
+### 7.7 `NavigationTree`
 
-- Só aparece quando há navegação disponível.
-- Trap e retorno de foco.
-- Fecha com `Escape`, seleção de item e ação explícita.
+É a árvore compartilhada pela navegação desktop e mobile.
 
-### 7.9 `ArticleShell`
+Contrato:
 
-- Breadcrumb, título, descrição e conteúdo.
-- Sidebar e TOC condicionais.
-- Layout mantém conteúdo central mesmo sem uma das colunas.
-- `scroll-margin-top` em headings.
+- uma árvore, múltiplas apresentações;
+- hubs clicáveis quando possuem destino;
+- expansão controlada separadamente do link;
+- estado ativo separado do estado aberto;
+- descendentes derivados da taxonomia;
+- não criar menu paralelo.
 
-### 7.10 `TableOfContents`
+### 7.8 `DocsSidebar`
 
-- Exibido com pelo menos dois headings relevantes.
-- Geração a partir do conteúdo, não de lista manual.
-- Destaca seção visível via Intersection Observer ou solução equivalente.
-- Navegação por âncora e sticky no desktop.
+Baseline V2.5:
 
-### 7.11 `DocCard` — preparado para conteúdo futuro
+```text
+expanded: 240px
+collapsed: 48px
+preview: 240px
+```
 
-Não renderizar no MVP vazio. Quando houver conteúdo, seguir:
+Requisitos:
 
-- ícone linear de 20–24px em laranja;
-- título semibold;
-- descrição de até três linhas;
-- borda de 1px e fundo discreto;
-- radius de 16px;
-- padding de 24px;
-- card inteiro clicável com foco visível;
-- hover por borda/superfície, sem salto de layout;
-- grid: 3 colunas desktop, 2 tablet, 1 mobile.
+- recolhimento por ação do usuário;
+- estado ativo independente de ramo expandido;
+- preview temporário no modo collapsed;
+- preview não move nem cobre o artigo;
+- geometria do shell editorial permanece estável;
+- acessibilidade e reduced motion permanecem obrigatórios.
 
-### 7.12 Componentes de conteúdo futuros
+### 7.9 `MobileNavDrawer`
 
-Preparar estilos/contratos para:
+- usa a mesma `NavigationTree`;
+- não duplica dados;
+- fecha com `Escape`;
+- gerencia foco;
+- devolve foco ao acionador;
+- fecha após navegação quando apropriado;
+- mantém touch targets adequados.
 
-- `Callout` (`info`, `tip`, `warning`, `danger`);
-- `Steps` e `Step`;
-- `CodeBlock` com copiar;
-- `Figure` com imagem, legenda e zoom opcional futuro;
-- tabela responsiva;
-- anterior/próxima.
+### 7.10 `ArticleShell`
 
-Não criar demonstrações públicas fictícias.
+Integra:
 
-## 8. Funcionalidades
+- sidebar;
+- breadcrumbs;
+- título e descrição;
+- metadados editoriais aplicáveis;
+- conteúdo MDX;
+- TOC;
+- Related;
+- paginação;
+- compatibilidade de anchors.
 
-| Funcionalidade | MVP | Comportamento |
+O shell deve manter o conteúdo central estável mesmo quando sidebar/TOC mudam de apresentação.
+
+### 7.11 `TableOfContents`
+
+- deriva de headings;
+- usa H2/H3 para navegação visual;
+- H4 permanece disponível para seções/busca/compatibilidade, mas não deve dominar o TOC;
+- acompanha seção ativa;
+- usa divulgação progressiva em páginas densas;
+- mantém versão adaptada/recolhível no mobile.
+
+### 7.12 `HubNavigation`
+
+- renderiza filhos diretos de páginas `hub`;
+- itens derivados da coleção;
+- usa `navTitle` e `cardDescription` quando disponíveis;
+- não hardcode domínios;
+- cards aparecem ao final do conteúdo do hub.
+
+### 7.13 Paginação
+
+`getAdjacentDocs()` utiliza domínios derivados da árvore.
+
+Regras:
+
+- paginação não é lista global plana;
+- hub e filhos formam domínio editorial;
+- não saltar automaticamente para outro domínio;
+- o fim do domínio pode encerrar anterior/próxima.
+
+### 7.14 Related
+
+- deriva de `metadata.related`;
+- é manual e opcional;
+- máximo de 4 destinos;
+- não usa IA ou similaridade automática;
+- não aceita autorreferência;
+- não deve repetir previous/next;
+- não lista automaticamente todos os filhos de um hub.
+
+### 7.15 `Figure` / `DocumentFigure`
+
+Contrato obrigatório:
+
+```text
+src
+alt
+width
+height
+```
+
+Opções implementadas incluem:
+
+```text
+caption
+loading
+size: default | instructional
+zoom
+```
+
+- `zoom` é habilitado por padrão;
+- `instructional` limita a apresentação para imagens de tutorial;
+- lightbox usa diálogo acessível;
+- foco retorna ao acionador;
+- imagens publicáveis ficam em `public/docs/`.
+
+### 7.16 Componentes MDX
+
+Componentes permitidos atualmente:
+
+```text
+Callout
+CodeBlock
+ExpectedResult
+Figure
+Info
+KeyboardShortcut
+Permissions
+RelatedLinks
+Requirements
+Step
+Steps
+Tip
+Warning
+```
+
+Imports e exports arbitrários dentro de documentos MDX não são permitidos.
+
+`Step` pode participar da estrutura documental quando recebe:
+
+```text
+title
+id
+headingLevel
+```
+
+`headingLevel` aceita 2, 3 ou 4.
+
+---
+
+## 8. Funcionalidades e contratos atuais
+
+| Funcionalidade | Estado atual | Contrato |
 |---|---:|---|
-| Home institucional | Sim | Estado vazio visualmente completo |
-| Tema claro/escuro | Sim | Sistema inicial + persistência local |
-| Busca local | Sim | Modal e índice; vazio sem documentos |
-| Atalho `Ctrl/Cmd + K` | Sim | Abre busca sem conflitar com campos editáveis |
-| Markdown/MDX | Sim | Pipeline local funcional |
-| Navegação hierárquica | Sim | Árvore canônica com destino explícito de seção e suporte a hub → filha |
-| Rota dinâmica de artigo | Sim | `/docs/[...slug]` e `not-found` |
-| Sumário automático | Fundação funcional | Gerado quando artigo tiver headings |
-| Anterior/próxima | Sim | Paginação hierárquica limitada ao domínio da árvore |
-| Drawer mobile | Condicional | Exibido quando houver navegação |
-| Busca externa/IA | Não | Fora do MVP |
-| CMS/banco/admin | Não | Fora do MVP |
-| Autenticação | Não | Fora do MVP |
-| Analytics | Não | Fora do MVP |
+| Home | Implementada | derivada da coleção publicada |
+| Tema claro/escuro | Implementado | sistema + persistência local |
+| Busca local | Implementada | determinística, índice local |
+| Atalho `Ctrl/Cmd + K` | Implementado | abre busca |
+| Markdown/MDX | Implementado | fonte documental versionada |
+| Navegação hierárquica | Implementada | coleção/taxonomia canônica |
+| Hubs | Implementados | `pageType: hub`, filhos derivados |
+| Rota de artigo | Implementada | `/docs/[...slug]` |
+| TOC | Implementado | H2/H3 + progressão para páginas densas |
+| Paginação | Implementada | hierárquica por domínio |
+| Related | Implementado | manual, opcional, máximo 4 |
+| Compatibilidade histórica | Implementada | manifesto + resolução de aliases |
+| Imagens de documentação | Implementadas | `Figure`, zoom e modo instructional |
+| SEO/metadata | Implementado | canonical, OG, Twitter, sitemap |
+| Busca externa/semântica/IA | Não | fora da arquitetura atual da busca do Docs |
+| CMS runtime | Não | fora do baseline principal |
+| Banco de dados runtime | Não | fora do baseline principal |
+| Editor próprio | Pausado | frente isolada, não integrada ao baseline |
+| Supabase | Pausado | associado ao Editor futuro |
+| Autenticação própria | Fora do baseline atual | evolução futura ligada ao Editor/proteção da documentação |
+| Analytics de produto | Não confirmado no baseline | não assumir |
+| Comentários/feedback de artigo | Não implementado | não assumir |
+
+### 8.1 Busca do Docs × Busca Inteligente
+
+São sistemas diferentes.
+
+```text
+Busca do GoDocs Docs
+→ pesquisa dentro da documentação
+→ local
+→ determinística
+→ sem IA
+
+Busca Inteligente
+→ funcionalidade documentada do GoDocs
+→ pode utilizar IA/contexto
+→ serviço adicional quando contratado
+```
+
+Nunca compartilhar arquitetura ou comportamento por inferência entre as duas.
+
+---
 
 ## 9. Arquitetura técnica
 
-### 9.1 Estrutura sugerida
-
-Adapte somente se a stack existente exigir.
+### 9.1 Stack atual confirmada
 
 ```text
-app/
-├── layout.tsx
-├── page.tsx
-├── not-found.tsx
-├── globals.css
-└── docs/
-    └── [...slug]/
-        └── page.tsx
-
-components/
-├── brand.tsx
-├── docs-header.tsx
-├── home-intro.tsx
-├── search-dialog.tsx
-├── search-trigger.tsx
-├── theme-provider.tsx
-├── theme-toggle.tsx
-└── docs/
-    ├── article-shell.tsx
-    ├── breadcrumbs.tsx
-    ├── docs-sidebar.tsx
-    ├── mobile-nav-drawer.tsx
-    ├── pagination.tsx
-    ├── table-of-contents.tsx
-    └── mdx-components.tsx
-
-content/
-└── docs/
-    └── .gitkeep
-
-lib/
-└── docs/
-    ├── schema.ts
-    ├── source.ts
-    ├── navigation.ts
-    ├── search.ts
-    └── headings.ts
-
-public/
-└── brand/
-
-references/                 # somente leitura
-AGENTS.md
-PROJECT_PROMPT.md
-SYSTEM_BLUEPRINT.md
-README.md
+Next.js 16.2.11
+React 19.2.8
+React DOM 19.2.8
+TypeScript 6.0.3
+Tailwind CSS 4.3.3
+pnpm 11.9.0
+Vitest 4.1.10
+Zod 4.4.3
+next-mdx-remote 6.0.0
+Lucide React 1.25.0
+Inter Variable
 ```
 
-### 9.2 Fonte de conteúdo
+Bibliotecas do pipeline documental incluem também:
 
-Um documento é definido por arquivo Markdown/MDX e frontmatter validado.
+```text
+gray-matter
+github-slugger
+remark-parse
+remark-mdx
+remark-gfm
+rehype-slug
+unified
+mdast-util-to-string
+unist-util-visit
+```
 
-Contrato mínimo:
+Package manager obrigatório:
+
+```text
+pnpm@11.9.0
+```
+
+### 9.2 Estrutura atual de alto nível
+
+```text
+godocs-docs/
+├── app/
+│   ├── docs/
+│   │   └── [...slug]/
+│   │       └── page.tsx
+│   ├── search-index.json/
+│   │   └── route.ts
+│   ├── share-image/
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── not-found.tsx
+│   ├── opengraph-image.tsx
+│   ├── robots.ts
+│   └── sitemap.ts
+│
+├── components/
+│   ├── brand-logo.tsx
+│   ├── brand.tsx
+│   ├── doc-card.tsx
+│   ├── docs-header.tsx
+│   ├── home-intro.tsx
+│   ├── navigation-tree.tsx
+│   ├── search-dialog.tsx
+│   ├── theme-toggle.tsx
+│   ├── use-modal-behavior.ts
+│   └── docs/
+│       ├── anchor-compatibility.tsx
+│       ├── article-shell.tsx
+│       ├── breadcrumbs.tsx
+│       ├── code-block.tsx
+│       ├── docs-sidebar-state.tsx
+│       ├── docs-sidebar.tsx
+│       ├── document-figure.tsx
+│       ├── hub-navigation.tsx
+│       ├── mdx-components.tsx
+│       ├── mobile-nav-drawer.tsx
+│       ├── pagination.tsx
+│       └── table-of-contents.tsx
+│
+├── content/
+│   └── docs/
+│
+├── lib/
+│   └── docs/
+│       ├── compatibility.ts
+│       ├── headings.ts
+│       ├── navigation.ts
+│       ├── schema.ts
+│       ├── search.ts
+│       ├── source.ts
+│       └── validation.ts
+│
+├── public/
+│   ├── brand/
+│   └── docs/
+│
+├── project-docs/
+│   ├── Memória.md
+│   ├── daily_stats.md
+│   ├── REDESIGN_ARCHITECTURE.md
+│   ├── SYSTEM_BLUEPRINT.md
+│   ├── PROJECT_PROMPT.md
+│   └── references/
+│
+├── scripts/
+├── tests/
+├── AGENTS.md
+├── DESIGN.md
+├── PRODUCT.md
+├── README.md
+├── next.config.ts
+├── package.json
+└── pnpm-lock.yaml
+```
+
+A estrutura acima registra os elementos estruturais relevantes; não pretende listar todo arquivo de teste ou configuração.
+
+### 9.3 Fonte de conteúdo
+
+`lib/docs/source.ts` procura recursivamente:
+
+```text
+content/docs/**/*.md
+content/docs/**/*.mdx
+```
+
+Fluxo de cada arquivo:
+
+```text
+arquivo
+→ gray-matter
+→ frontmatter
+→ parseDocFrontmatter()
+→ parseDocumentText()
+→ DocRecord
+```
+
+`DocRecord` concentra:
+
+```text
+metadata
+slug
+segments
+href
+source
+searchableText
+headings
+sections
+readingMinutes
+filePath
+```
+
+A estimativa de leitura usa o texto pesquisável e base aproximada de 200 palavras por minuto, com mínimo de 1 minuto.
+
+Documentos são ordenados por:
+
+1. `section.order`;
+2. `section.label`;
+3. `order`;
+4. `title`.
+
+Slugs duplicados causam erro explícito.
+
+### 9.4 Contrato de frontmatter
+
+Schema atual:
 
 ```yaml
 ---
 title: Título da página
-description: Descrição curta da página.
-slug: caminho-da-pagina
-pageType: reference
+description: Descrição curta.
+cardDescription: Descrição opcional para cards.
+slug: funcionalidades/exemplo
+pageType: task
 section:
-  id: identificador-da-secao
-  label: Nome da seção
-  description: Descrição da seção.
-  entrySlug: caminho-da-pagina
-  order: 10
+  id: funcionalidades
+  label: Funcionalidades
+  description: Recursos documentados do GoDocs.
+  entrySlug: funcionalidades
+  order: 20
+navTitle: Título curto
+ancestors:
+  - segment: funcionalidades
+    label: Funcionalidades
+    order: 20
 order: 10
-availability: available
 keywords:
   - termo
+status: published
+availability: available
+updatedAt: 2026-09-09
+version: GoDocs 4
+permission: Informação opcional de permissão
+related:
+  - funcionalidades/visao-geral
 ---
 ```
 
 Regras:
 
 - `title`, `description`, `slug`, `pageType` e `order` são obrigatórios;
-- `pageType` aceita o enum fechado `hub`, `task` ou `reference` sem impor estilo visual;
-- `section` é obrigatório quando houver categorias publicadas e define `entrySlug` explícito, sem depender do primeiro documento por `order`;
-- `availability` é opcional e diferencia conteúdo disponível de páginas publicadas em preparação, sem retirar essas páginas de rotas, navegação ou busca;
-- `keywords` é opcional;
-- slug não começa nem termina com `/`;
-- slugs duplicados falham de forma clara no build;
-- dados inválidos não são ignorados silenciosamente;
-- sidebar, drawer, breadcrumbs, busca, paginação e rotas consomem a mesma coleção normalizada;
-- breadcrumbs apontam apenas para ancestrais publicados reais;
-- paginação percorre domínios hierárquicos e não cruza automaticamente para outra seção ou para o item posterior a um hub com filhos;
-- fragments H2/H3/H4 e aliases do manifesto central são validados;
-- compatibilidade de hash entre URLs usa manifesto tipado e resolução client-side quando o destino canônico muda.
+- `cardDescription` é opcional;
+- `section` é opcional no schema, mas deve ser coerente quando utilizada;
+- `navTitle` é opcional;
+- `ancestors` aceita no máximo dois níveis no schema atual;
+- quantidade e segmentos de `ancestors` devem corresponder ao slug;
+- `keywords` padrão `[]`;
+- `status` padrão `published`;
+- `availability` padrão `available`;
+- `updatedAt` usa `YYYY-MM-DD`;
+- `related` padrão `[]`, máximo 4;
+- `related` não pode repetir destino nem apontar para a própria página;
+- `order` e ordens de section/ancestors são inteiros não negativos;
+- slug usa segmentos minúsculos, números e hífens.
 
-### 9.3 Pipeline
+### 9.5 Pipeline documental
 
 ```text
-content/docs/**/*.mdx
-        ↓
-leitura + validação de frontmatter
-        ↓
-coleção normalizada e ordenada
-        ├── rotas
-        ├── árvore da sidebar
-        ├── índice de busca
-        ├── anterior/próxima
-        └── headings/TOC
+content/docs/**/*.md|mdx
+          ↓
+descoberta recursiva
+          ↓
+gray-matter
+          ↓
+Zod / frontmatter
+          ↓
+parser estrutural MD/MDX
+          ↓
+DocRecord[]
+          ↓
+coleção normalizada/publicada
+          ├── Home
+          ├── /docs/[...slug]
+          ├── HubNavigation
+          ├── NavigationTree
+          ├── sidebar
+          ├── drawer
+          ├── breadcrumbs
+          ├── paginação
+          ├── Related
+          ├── TOC
+          ├── search-index.json
+          ├── sitemap
+          └── metadata/social
 ```
 
-### 9.4 Busca
+A mesma coleção deve continuar sendo o centro do sistema.
 
-- índice gerado localmente a partir de metadados e texto;
-- busca case-insensitive e tolerante a acentos;
-- ordenação inicial: título, keywords, descrição e corpo;
-- sem requisições para terceiros;
-- com zero documentos, retornar coleção vazia sem erro;
-- resultados navegáveis por teclado.
+### 9.6 Taxonomia e navegação
 
-### 9.5 Tema
+`buildNavigation()` agrupa documentos por `section`.
 
-- atributo `data-theme` ou classe no elemento raiz;
-- tokens CSS compartilham os mesmos nomes entre temas;
-- preferência salva em `localStorage`;
-- ausência de preferência usa o sistema;
-- script inicial seguro evita flash incorreto;
-- controle mantém `aria-label` coerente.
+`section` define:
+
+```text
+id
+label
+description
+entrySlug
+order
+```
+
+Regras:
+
+- documentos de uma mesma section devem repetir os mesmos dados estruturais;
+- `entrySlug` precisa apontar para documento publicado;
+- quando o `entrySlug` representa um `hub`, ele funciona como destino explícito da seção;
+- ramos são derivados de segmentos de slug e `ancestors`;
+- labels e ordens divergentes para o mesmo ancestral são inválidos;
+- ancestors devem corresponder a páginas reais/publicadas.
+
+`cardDescription` é preferida sobre `description` em superfícies compactas de navegação quando disponível.
+
+### 9.7 Headings, seções e TOC
+
+`parseDocumentText()` analisa o AST do Markdown/MDX.
+
+Contratos:
+
+- H1 no corpo é inválido;
+- o H1 vem do frontmatter;
+- H2/H3 entram no TOC visual;
+- H2/H3/H4 entram na estrutura de seções pesquisáveis;
+- IDs são gerados com `github-slugger`;
+- IDs duplicados geram erro;
+- `<Step>` pode criar heading estrutural explícito;
+- listas e conteúdo MDX relevante entram no texto pesquisável.
+
+Essa separação permite:
+
+```text
+TOC visual mais controlado
++
+busca/compatibilidade com maior profundidade
+```
+
+### 9.8 Paginação
+
+`getAdjacentDocs()` deriva domínios da árvore de navegação.
+
+O algoritmo preserva:
+
+- hubs de entrada;
+- filhos aninhados;
+- sequência por domínio;
+- término de domínio sem salto arbitrário.
+
+Não substituir por uma ordenação global simples de todos os documentos.
+
+### 9.9 Related
+
+O frontmatter `related` é resolvido contra a coleção publicada.
+
+A validação garante:
+
+- destino existente;
+- destino publicado;
+- não repetido;
+- diferente da própria página;
+- máximo de 4;
+- não duplicação de previous/next.
+
+A ordem declarada pelo autor é preservada.
+
+### 9.10 Compatibilidade de URLs e anchors
+
+O redesign preserva um manifesto explícito em:
+
+```text
+lib/docs/compatibility.ts
+```
+
+Baseline contratual:
+
+```text
+Documentos: 30
+Workflows: 49
+Total: 79
+```
+
+Objetivos:
+
+- deep links antigos continuam resolvendo;
+- aliases não criam resultados duplicados;
+- mudança de página canônica pode ser resolvida no cliente quando o fragment original precisa migrar;
+- H2/H3/H4 e aliases participam da validação.
+
+Não remover uma entrada de compatibilidade apenas porque o heading antigo desapareceu do conteúdo atual. A decisão depende do contrato público.
+
+### 9.11 Busca
+
+Arquitetura atual:
+
+```text
+DocRecord[]
+→ createSearchIndex()
+→ /search-index.json
+→ SearchDialog
+→ searchDocuments()
+```
+
+Características:
+
+- índice versão 2;
+- local;
+- determinístico;
+- normalização de acentos;
+- lowercase pt-BR;
+- matching por palavras exatas e prefixos;
+- bônus por frase;
+- todos os termos úteis precisam ter match;
+- score completo calculado antes da diversidade;
+- ordenação por score e título;
+- diversidade aplicada por documento canônico.
+
+Pesos atuais priorizam:
+
+```text
+title
+→ keywords
+→ description
+→ section
+→ content
+```
+
+Contratos:
+
+```text
+SEARCH_RESULT_LIMIT = 12
+SEARCH_RESULTS_PER_DOCUMENT = 3
+SEARCH_SNIPPET_LENGTH = 220
+```
+
+`sem` não é tratado como stopword.
+
+Consultas compostas apenas por termos considerados ruído retornam zero resultados.
+
+A busca não possui:
+
+- IA;
+- embeddings;
+- NLP externo;
+- autocomplete complexo;
+- chamadas a terceiros.
+
+### 9.12 Validação de conteúdo
+
+`lib/docs/validation.ts` e os scripts do repositório validam:
+
+- frontmatter;
+- slug;
+- compilação MDX;
+- componentes permitidos;
+- imports/exports indevidos;
+- links internos;
+- status do destino;
+- fragments;
+- assets;
+- taxonomia;
+- Related;
+- compatibilidade de anchors.
+
+Assets locais não podem apontar para fora do workspace.
+
+Formatos locais reconhecidos pela validação incluem:
+
+```text
+avif
+gif
+jpg/jpeg
+png
+svg
+webp
+ico
+pdf
+mp4
+webm
+```
+
+### 9.13 Tema
+
+Tema atual:
+
+```text
+dark
+light
+```
+
+Implementação:
+
+- `data-theme` no elemento `html`;
+- `localStorage` com chave `godocs-theme`;
+- fallback para preferência do sistema;
+- `colorScheme` sincronizado;
+- inicialização beforeInteractive por script próprio;
+- mesmos nomes de tokens semânticos entre temas.
+
+Tema claro e escuro são variações completas do mesmo sistema, não simples inversão de cores.
+
+### 9.14 Server e Client Components
+
+Princípio técnico:
+
+- renderização de conteúdo e composição estática/server-side por padrão;
+- Client Components somente onde existe estado ou interação de navegador.
+
+Exemplos de interações client-side:
+
+- alternância de tema;
+- busca;
+- sidebar/drawer;
+- TOC ativo;
+- lightbox;
+- compatibilidade de anchor quando necessário.
+
+### 9.15 Relação futura com Editor e persistência
+
+A arquitetura pública deve continuar Git-native.
+
+Princípio já aprovado para a evolução futura:
+
+```text
+Editor
+→ interface de autoria
+→ conteúdo versionável
+→ repositório oficial
+→ validação/preview
+→ publicação
+```
+
+O Editor não deve criar uma segunda fonte pública concorrente ao Markdown/MDX.
+
+Enquanto estiver pausado:
+
+- nenhuma dependência de Supabase é requisito do baseline principal;
+- não executar migrations;
+- não alterar autenticação;
+- não alterar pipeline público por causa do Editor.
+
+Na arquitetura futura discutida, dados como usuários, permissões e estados temporários podem pertencer a persistência própria do Editor, enquanto o conteúdo publicado permanece versionado. Essa divisão só deve ser materializada nos lotes específicos do Editor.
+
+---
 
 ## 10. Responsividade
 
-| Faixa | Layout |
-|---|---|
-| `>= 1280px` | Artigo em três colunas; header completo |
-| `1024–1279px` | Sidebar + conteúdo; TOC oculto ou compacto |
-| `768–1023px` | Conteúdo amplo; navegação em drawer |
-| `< 768px` | Uma coluna; header compacto; diálogo adaptado |
+A autoridade final está na implementação e no `DESIGN.md`.
 
-Requisitos em todas as faixas:
+Breakpoints relevantes já usados/testados incluem adaptações em:
+
+```text
+1023px
+767px
+```
+
+O sistema também possui tratamento de telas compactas menores.
+
+### Desktop amplo
+
+- sidebar persistente;
+- conteúdo central;
+- TOC quando houver espaço;
+- busca completa no header.
+
+### Notebook / largura intermediária
+
+- preservar leitura antes de colunas auxiliares;
+- TOC pode compactar/ocultar conforme implementação;
+- sidebar continua respeitando sua geometria.
+
+### Tablet
+
+- conteúdo ganha prioridade;
+- navegação migra para drawer quando o layout exigir;
+- cards reduzem colunas;
+- TOC adapta densidade.
+
+### Mobile
+
+- uma coluna;
+- drawer para navegação;
+- busca adaptada ao viewport;
+- header compacto;
+- TOC recolhível;
+- cards em uma coluna;
+- imagens responsivas.
+
+Requisitos universais:
 
 - sem overflow horizontal;
-- imagens com largura responsiva;
-- tabelas com container de rolagem próprio;
-- alvos de toque de pelo menos 44px quando apropriado;
-- linha de texto confortável;
-- sticky elements sem cobrir conteúdo.
+- imagens responsivas;
+- tabelas com rolagem própria quando necessário;
+- touch targets adequados;
+- sticky elements sem cobrir conteúdo;
+- foco não pode desaparecer por clipping;
+- conteúdo principal não deve mudar de posição de forma inesperada durante preview da sidebar.
+
+---
 
 ## 11. Estados e microinterações
 
-### Vazio da home
+Os estados textuais específicos da documentação pertencem ao conteúdo/produto quando tiverem implicação editorial. Esta seção registra padrões técnicos.
 
-`Novos conteúdos serão publicados progressivamente.`
+### 11.1 Busca sem consulta útil
 
-### Vazio da busca
+Não abrir listbox arbitrário.
 
-`Nenhum conteúdo disponível para pesquisa.`
+O diálogo deve orientar a pesquisa sem sugerir conteúdo falso.
 
-### Sem resultados futuro
+### 11.2 Busca sem resultados
 
-`Nenhum resultado encontrado para “{termo}”.`
+Exibir estado vazio claro e permitir nova tentativa.
 
-### Página inexistente
+Não usar resultados fallback sem relação com a consulta.
 
-- título curto;
-- explicação clara;
-- link real para `/`;
-- sem linguagem promocional.
+### 11.3 Página inexistente
 
-### Feedback
+- mensagem clara;
+- retorno real para a Home;
+- sem CTA promocional;
+- sem conteúdo fictício.
+
+### 11.4 Conteúdo `coming-soon`
+
+- permanece publicado/navegável;
+- deve comunicar indisponibilidade/preparação pela interface adequada;
+- não deve ser confundido com draft.
+
+### 11.5 Sidebar
+
+Estados conceitualmente separados:
+
+```text
+active
+open/expanded branch
+sidebar expanded/collapsed
+preview
+hover intent
+```
+
+Um estado não deve forçar indevidamente outro.
+
+### 11.6 Feedback de interação
 
 - hover discreto;
-- foco com ring de marca;
-- pressed sem deslocamento de layout;
-- transições de 120–180ms;
-- skeletons apenas quando existir carregamento real.
+- pressed sem deslocamento;
+- foco visível;
+- motion funcional;
+- skeleton somente quando existir carregamento real;
+- sem animação ornamental como resposta padrão.
+
+### 11.7 Reduced motion
+
+Quando `prefers-reduced-motion` estiver ativo:
+
+- remover ou reduzir movimento não essencial;
+- não remover informação ou estado;
+- manter affordance e foco.
+
+---
 
 ## 12. Acessibilidade
 
+Contratos mínimos:
+
 - um único `h1` por página;
-- `header`, `nav`, `main` e `aside` semanticamente corretos;
-- link “Pular para o conteúdo” visível ao foco;
-- contraste mínimo WCAG AA;
-- busca com `role="dialog"`, nome acessível e foco preso;
-- drawer com o mesmo padrão de foco;
+- corpo MDX não contém H1;
+- `html lang="pt-BR"`;
+- `header`, `nav`, `main`, `aside` e demais landmarks semanticamente adequados;
+- link **Pular para o conteúdo** disponível ao foco;
+- WCAG AA como referência de contraste;
+- teclado funcional em toda interação;
+- foco visível;
 - ícones decorativos com `aria-hidden`;
 - botões de ícone com nome acessível;
-- ordem de tabulação coerente;
-- `Escape` fecha overlays;
+- `Escape` fecha overlays quando aplicável;
 - foco retorna ao acionador;
-- movimento reduzido respeitado.
+- dialog/drawer gerenciam foco;
+- sem significado comunicado apenas por cor;
+- reduced motion respeitado.
+
+### Busca
+
+Preservar:
+
+- combobox;
+- listbox;
+- estados ARIA coerentes;
+- navegação por setas;
+- Enter;
+- Escape;
+- `Ctrl/Cmd + K`;
+- foco inicial e retorno apropriado.
+
+### Sidebar / drawer
+
+- link do hub e controle de expansão não devem virar uma ação ambígua;
+- estado ativo é comunicado semanticamente;
+- chevrons decorativos não substituem labels;
+- drawer reutiliza estrutura lógica da sidebar.
+
+### TOC
+
+- `aria-current` acompanha seção ativa;
+- scroll e IntersectionObserver podem cooperar para manter estado correto;
+- divulgação progressiva deve permanecer operável por teclado.
+
+### Figure / lightbox
+
+- `alt` obrigatório;
+- trigger possui nome acessível;
+- diálogo possui título acessível;
+- botão de fechar identificado;
+- foco retorna ao trigger.
+
+---
 
 ## 13. Performance e SEO básico
 
+### 13.1 Performance
+
+Princípios:
+
 - Server Components por padrão;
-- JavaScript cliente apenas para interações;
-- fontes via `next/font` ou mecanismo equivalente;
-- imagens futuras otimizadas sem perder legibilidade de screenshots;
-- metadata com título e descrição padrão;
-- título de artigo no formato `{Página} | GoDocs Docs`;
-- semantic HTML;
-- sem scripts de terceiros no MVP;
-- build não deve depender de rede após dependências instaladas.
+- JavaScript cliente somente para interações;
+- conteúdo carregado do filesystem no servidor;
+- leitura de documentos memoizada com `cache()` do React;
+- índice de busca gerado localmente;
+- sem chamadas externas necessárias para pesquisar;
+- dependências novas somente quando justificadas.
 
-## 14. Critérios de aceite visual
+Não afirmar static export puro: o `next.config.ts` atual não configura `output: "export"`.
 
-- O primeiro olhar remete ao GoDocs pela marca, laranja e superfícies.
-- A organização remete a uma documentação moderna, não ao dashboard original.
-- A busca é o principal controle do header.
-- A home vazia parece deliberada, não incompleta.
-- O laranja orienta atenção sem dominar a tela.
-- Texto secundário permanece legível no tema escuro.
-- Tema claro possui contraste e superfícies próprios.
-- Não há verde de marca, cards fictícios ou links copiados.
-- Desktop e mobile mantêm hierarquia equivalente.
+### 13.2 Imagens
 
-## 15. Fora do MVP
+- `next/image` é utilizado em `DocumentFigure`;
+- dimensões explícitas são obrigatórias;
+- tamanhos responsivos variam entre `default` e `instructional`;
+- screenshots devem preservar legibilidade;
+- assets públicos devem existir e passar pela validação.
 
-- conteúdo documental real;
-- login e permissões;
-- sincronização com o GoDocs;
-- CMS ou edição no navegador;
-- busca semântica/IA;
+### 13.3 Metadata
+
+O layout global define:
+
+- `metadataBase`;
+- título padrão/template;
+- description;
+- application name;
+- canonical;
+- Open Graph;
+- Twitter card.
+
+Artigos geram:
+
+- title;
+- description;
+- canonical individual;
+- Open Graph do artigo;
+- imagem social por slug;
+- Twitter metadata.
+
+### 13.4 Sitemap e robots
+
+O sitemap deriva dos documentos publicados.
+
+O baseline público atual usa:
+
+```text
+robots: allow /
+sitemap: /sitemap.xml
+```
+
+Se autenticação da documentação for introduzida no futuro, essa política deverá ser revisada no lote correspondente; não antecipar essa alteração no baseline atual.
+
+### 13.5 Rede e terceiros
+
+A leitura e busca da documentação não devem depender de serviços de terceiros para funcionar.
+
+O build deve permanecer previsível após dependências instaladas e não deve introduzir chamadas externas desnecessárias.
+
+---
+
+## 14. Critérios de aceite visual e estrutural
+
+Os critérios visuais detalhados pertencem ao `DESIGN.md`. Para o blueprint técnico, uma mudança de interface deve preservar:
+
+- identidade GoDocs;
+- caráter de documentação;
+- temas claro e escuro;
+- hierarquia de leitura;
+- busca como controle principal de descoberta;
+- arquitetura de Home e hubs;
+- sidebar/drawer derivados da mesma árvore;
+- TOC funcional;
+- foco e teclado;
+- responsividade;
+- ausência de overflow;
+- ausência de salto de layout indevido;
+- conteúdo factual inalterado em tarefas puramente visuais.
+
+Para mudanças na Sidebar V2.5, preservar especialmente:
+
+```text
+expanded = 240px
+collapsed = 48px
+preview = 240px
+left = 0
+```
+
+e a estabilidade do artigo/TOC.
+
+Home, Background e Logos estabilizados no Lote 6 não devem ser reabertos durante ajustes focais de Sidebar sem um novo problema comprovado ou novo escopo aprovado.
+
+---
+
+## 15. Fora do baseline atual
+
+Os itens abaixo podem fazer parte da evolução do produto, mas **não pertencem à arquitetura principal atualmente integrada**.
+
+### 15.1 Editor próprio
+
+Estado:
+
+```text
+preservado
+pausado
+```
+
+Não retomar automaticamente.
+
+### 15.2 Supabase
+
+Relacionado à frente futura do Editor.
+
+Não é requisito da aplicação pública atual.
+
+### 15.3 Autenticação própria
+
+Existe direção de produto para uma experiência autenticada futura, associada à evolução do Editor/proteção da documentação, mas ela não está integrada ao baseline público atual.
+
+Não adicionar login, sessão ou proteção de rota fora do lote autorizado.
+
+### 15.4 Chat/assistente da documentação
+
+Ideia futura aprovada para exploração, mas não faz parte da arquitetura atual.
+
+Não confundir com a busca local.
+
+### 15.5 GoPractice
+
+Microssimulações interativas foram aprovadas como ideia futura, mas explicitamente não são prioridade atual.
+
+### 15.6 IA na busca do Docs
+
+Não faz parte da busca atual.
+
+A busca permanece local/determinística até nova decisão arquitetural.
+
+### 15.7 CMS runtime como fonte pública
+
+Não existe no baseline.
+
+Mesmo com Editor futuro, o princípio aprovado é preservar conteúdo publicado versionado no repositório, evitando uma fonte pública paralela.
+
+### 15.8 Outros itens não confirmados
+
+Não assumir implementação de:
+
 - analytics;
-- comentários e feedback de artigo;
-- versionamento de documentação;
+- comentários;
+- feedback por artigo;
 - internacionalização;
-- integração com GitHub ou repositórios públicos;
-- publicação/deploy, salvo solicitação separada.
+- versionamento público de documentação;
+- integrações privadas do GoDocs;
+- APIs privadas;
+- cadastro público irrestrito.
+
+---
 
 ## 16. Checklist de conclusão
 
-### Produto
+Use este checklist como referência arquitetural. Os comandos executáveis e regras operacionais completas pertencem ao `AGENTS.md` e `README.md`.
 
-- [ ] Home em `/` sem conteúdo fictício.
-- [ ] Rota futura `/docs/[...slug]` funcional.
-- [ ] Estado vazio de busca correto.
-- [ ] Nenhuma integração privada.
+### Produto e conteúdo
 
-### Visual
+- [ ] Conteúdo permanece em Markdown/MDX versionado.
+- [ ] Nenhum comportamento do GoDocs foi inventado.
+- [ ] White-label foi preservado.
+- [ ] Permissões e serviços condicionais não foram generalizados.
+- [ ] Mudança visual não alterou fatos sem autorização editorial.
 
-- [ ] Identidade GoDocs aplicada.
-- [ ] Estrutura inspirada no Mintlify sem cópia.
-- [ ] Tema claro e escuro revisados.
-- [ ] Breakpoints principais inspecionados.
+### Arquitetura documental
+
+- [ ] Rotas continuam derivadas da coleção.
+- [ ] `pageType` permanece explícito.
+- [ ] Taxonomia continua coerente.
+- [ ] Hubs derivam filhos da coleção.
+- [ ] Cards de hub permanecem no final do conteúdo.
+- [ ] Sidebar e drawer reutilizam a mesma árvore.
+- [ ] Breadcrumbs representam ancestrais reais.
+- [ ] Paginação continua limitada ao domínio.
+- [ ] Related continua manual e válido.
+- [ ] Compatibilidade histórica foi preservada.
+
+### Busca e TOC
+
+- [ ] Busca permanece determinística.
+- [ ] Limite de 12 resultados preservado.
+- [ ] Máximo de 3 resultados por documento preservado.
+- [ ] Snippet de 220 caracteres preservado.
+- [ ] Aliases não duplicam resultados.
+- [ ] TOC deriva de headings.
+- [ ] H2/H3 permanecem a hierarquia visual principal.
+- [ ] H4 continua disponível para estrutura/busca/compatibilidade.
 
 ### Engenharia
 
-- [ ] Conteúdo centralizado e tipado.
-- [ ] Busca, navegação e TOC derivados da fonte documental.
-- [ ] Sem componentes ou controles inativos.
-- [ ] Sem erros silenciados ou logs de depuração.
+- [ ] `pnpm` continua sendo o package manager.
+- [ ] TypeScript permanece estrito.
+- [ ] Não foi criada fonte paralela de conteúdo.
+- [ ] Dependências novas são necessárias e justificadas.
+- [ ] Client Components foram limitados a interações necessárias.
+- [ ] Erros não foram silenciados.
+- [ ] Assets permanecem dentro do repositório.
+
+### Design e responsividade
+
+- [ ] `DESIGN.md` foi respeitado.
+- [ ] Tokens semânticos foram reutilizados.
+- [ ] Tema claro e escuro funcionam.
+- [ ] Desktop, notebook, tablet e mobile foram considerados.
+- [ ] Não há overflow horizontal introduzido.
+- [ ] Sidebar/TOC não sofreram deslocamento indevido.
+- [ ] `prefers-reduced-motion` foi respeitado.
 
 ### Acessibilidade
 
-- [ ] Fluxo principal utilizável por teclado.
-- [ ] Foco e contraste adequados.
-- [ ] Dialog e drawer gerenciam foco.
-- [ ] Movimento reduzido respeitado.
+- [ ] Fluxo principal funciona por teclado.
+- [ ] Foco é visível.
+- [ ] Hierarquia de headings é válida.
+- [ ] Dialogs/drawers gerenciam foco.
+- [ ] `Escape` funciona onde aplicável.
+- [ ] Foco retorna ao acionador.
+- [ ] Ícones e estados possuem semântica adequada.
+- [ ] Contraste permanece compatível com os critérios adotados.
+
+### SEO e publicação técnica
+
+- [ ] Metadata continua coerente.
+- [ ] Canonical continua correto.
+- [ ] Sitemap usa documentos publicados.
+- [ ] Imagens sociais continuam válidas quando afetadas.
+- [ ] Nenhuma política futura de autenticação/robots foi antecipada sem decisão.
 
 ### Validação
 
-- [ ] Aplicação executada e inspecionada.
-- [ ] Lint aprovado.
-- [ ] Typecheck aprovado.
-- [ ] Testes relevantes aprovados.
-- [ ] Build de produção aprovado.
-- [ ] Console sem erros introduzidos.
+Quando aplicável:
+
+```bash
+pnpm content:validate
+pnpm search:benchmark
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm audit:prod
+```
+
+- [ ] Foram executadas as validações proporcionais ao impacto.
+- [ ] Nenhum resultado não executado foi declarado como aprovado.
+- [ ] Falhas preexistentes, quando houver, foram diferenciadas de regressões novas.

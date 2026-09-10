@@ -43,3 +43,9 @@
 # Python cache
 __pycache__/
 *.py[cod]
+
+# Obsidian — estado local do Knowledge Brain
+/project-knowledge/.obsidian/workspace.json
+/project-knowledge/.obsidian/workspace-mobile.json
+/project-knowledge/.obsidian/cache/
+/project-knowledge/.trash/

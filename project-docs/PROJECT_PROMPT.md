@@ -1,219 +1,592 @@
-# GoDocs Docs — Prompt de implementação do MVP
+# GoDocs Docs — Prompt mestre de retomada e evolução
+
+> **Papel deste arquivo:** servir como prompt auxiliar para retomar e evoluir o GoDocs Docs com contexto suficiente para executar uma tarefa real no estado atual do projeto.
+>
+> Este arquivo **não substitui** `AGENTS.md`, `PRODUCT.md`, `DESIGN.md`, `project-docs/REDESIGN_ARCHITECTURE.md`, `project-docs/SYSTEM_BLUEPRINT.md`, `project-docs/daily_stats.md` nem a implementação atual. Quando for utilizado, essas fontes devem ser consultadas conforme o domínio da tarefa.
+>
+> O antigo objetivo de “implementar o MVP inicial do zero” foi superado. O projeto já possui aplicação, conteúdo publicado, navegação, busca, hubs, temas, acessibilidade, compatibilidade histórica e uma arquitetura consolidada. A missão agora é **preservar o que já está correto e evoluir somente o escopo solicitado**.
 
 ## Tarefa
 
-Implemente integralmente o MVP inicial do **GoDocs Docs**, uma aplicação independente de documentação para o GoDocs 4.
+Retome o **GoDocs Docs** no estado real do repositório e execute integralmente a tarefa atual solicitada pelo usuário.
+
+Não reconstrua o projeto do zero e não trate este arquivo como autorização para iniciar um novo redesign, refatoração geral ou funcionalidade futura.
 
 Antes de começar:
 
 1. leia o `AGENTS.md` completo;
-2. leia o `SYSTEM_BLUEPRINT.md` completo;
-3. inspecione todas as imagens de `references/GoDocs/` e `references/AbacatePay - Mintlify/`;
-4. examine todo o repositório e identifique o que já existe.
+2. leia `project-docs/daily_stats.md` para identificar o estado operacional, a fase atual, o último baseline confirmado e a próxima tarefa;
+3. verifique o estado real do repositório:
 
-O `SYSTEM_BLUEPRINT.md` é a especificação técnica e visual desta entrega. Implemente seus requisitos de MVP, respeitando as regras permanentes do `AGENTS.md`.
+```bash
+git status
+git branch --show-current
+git rev-parse HEAD
+git remote -v
+```
 
-Não entregue apenas um plano ou mockup. Crie a aplicação funcional, execute-a, faça inspeção visual, corrija problemas e valide o build.
+4. leia as fontes canônicas adicionais conforme o escopo:
+   - produto, conteúdo, posicionamento ou comportamento documental → `PRODUCT.md`;
+   - UI, UX, identidade, acessibilidade visual ou componentes → `DESIGN.md`;
+   - hubs, navegação, URLs, compatibilidade ou redesign → `project-docs/REDESIGN_ARCHITECTURE.md`;
+   - arquitetura técnica ou comportamento estrutural → `project-docs/SYSTEM_BLUEPRINT.md`;
+   - retomada de decisões históricas → `project-docs/Memória.md`;
+5. inspecione a implementação atual da área que será modificada;
+6. consulte `project-docs/references/` somente quando a tarefa realmente envolver interface, identidade ou evidência visual;
+7. identifique alterações locais existentes antes de editar qualquer arquivo.
+
+Se fontes divergirem, não escolha silenciosamente uma interpretação. Determine o domínio do conflito, diferencie decisão canônica de estado acidental do código e reporte a inconsistência quando ela exigir decisão de produto, design, arquitetura ou governança.
+
+### Estado consolidado de referência
+
+O snapshot documental confirmado até **09/09/2026** registra:
+
+```text
+Lotes 0–5
+→ concluídos
+
+Lote 6
+→ em andamento / avançado
+
+Paleta A2 Contrast Refined
+→ implementada e aprovada
+
+Home Cards V2
+→ implementados
+
+Sidebar V2.5
+→ implementada e estabilizada
+
+Background oficial da Home + Logos
+→ implementados, refinados e promovidos
+
+Editor E1
+→ preservado e pausado
+
+Governança documentada
+→ develop para desenvolvimento
+→ main para produção
+```
+
+A intervenção registrada como próxima naquele snapshot era:
+
+```text
+Sidebar V2.5 Final Interaction Polish
+```
+
+Esse bloco é **apenas referência histórica recente**. Se `daily_stats.md`, o Bitbucket ou o repositório atual apresentarem estado mais novo, prevalece o estado corrente confirmado.
+
+O remoto oficial mais recente informado para o projeto é o **Bitbucket**. GitHub pode existir como histórico ou snapshot auxiliar e não deve ser usado para sobrepor o estado do repositório oficial.
 
 ## Contexto do produto
 
-O GoDocs Docs não será incorporado ao código ou aos serviços privados do GoDocs. Ele será publicado como uma aplicação própria e deve manter coerência visual com o ecossistema do produto, sem se declarar oficial.
+O **GoDocs Docs** é a aplicação de documentação oficial do **GoDocs 4** para usuários finais.
+
+Seu objetivo é permitir que pessoas aprendam o sistema, consultem funcionalidades, recuperem procedimentos e resolvam dúvidas com maior autonomia.
+
+O produto é independente do GoDocs 4:
+
+- não deve presumir integração com o código privado do GoDocs;
+- não deve presumir acesso a APIs privadas;
+- não deve presumir autenticação interna;
+- não deve utilizar dados reais de clientes sem necessidade e autorização;
+- não deve inventar comportamentos para preencher lacunas.
+
+A direção de produto é substituir progressivamente a dependência do **Confluence** como experiência principal de documentação do GoDocs.
+
+O **Mintlify** é benchmark de maturidade de documentação. Ele pode inspirar padrões de busca, navegação, organização e leitura, mas não deve ser copiado.
 
 Combine:
 
-- **GoDocs:** marca, laranja, superfícies escuras, bordas discretas, tipografia corporativa e ícones lineares;
-- **Mintlify/AbacatePay:** arquitetura de documentação, header, busca em destaque, leitura confortável, navegação contextual e cards futuros.
+- **GoDocs:** identidade, ativos oficiais, laranja, neutros grafite, caráter corporativo e linguagem própria;
+- **documentação moderna:** leitura confortável, boa descoberta, busca central, navegação previsível, hubs, Related e experiência responsiva;
+- **arquitetura editorial própria:** biblioteca operacional orientada por intenção.
 
-Não copie literalmente nenhuma referência. Não use o verde, os textos, links, logo ou conteúdo da AbacatePay.
+Direção visual consolidada:
 
-## Decisões obrigatórias do MVP
+> **robusto na estrutura e clean na apresentação.**
+
+O produto deve parecer uma documentação moderna do ecossistema GoDocs, não:
+
+- dashboard administrativo;
+- landing page promocional;
+- reprodução literal do GoDocs 4;
+- clone de Mintlify/AbacatePay.
+
+### Usuários e contexto
+
+O público principal inclui usuários operacionais, responsáveis por processos, administradores e gestores quando aplicável.
+
+A mesma documentação precisa funcionar para:
+
+- primeiro contato;
+- aprendizado de funcionalidade;
+- execução de tarefa;
+- consulta rápida;
+- resolução de dúvida.
+
+O GoDocs é white-label. Não universalize nomes, cargos, pastas, workflows, fases, formulários, grupos ou processos de um único ambiente.
+
+### Notion e conteúdo publicado
+
+O Notion, quando utilizado, serve apenas para autoria, organização e revisão interna.
+
+A documentação oficial pública é o conteúdo consolidado e versionado no repositório.
+
+## Decisões e contratos obrigatórios atuais
 
 - A home canônica é `/`.
-- Artigos futuros usam `/docs/[...slug]`.
-- A home não exibe uma sidebar vazia; ela usa conteúdo amplo e centralizado.
-- Sidebar e sumário pertencem ao layout de artigos e passam a aparecer quando houver conteúdo.
-- Não existem artigos, categorias ou cards de conteúdo publicados nesta entrega.
-- A pesquisa é local e apresenta estado vazio até existirem documentos.
-- Tema escuro é a referência principal; tema claro também deve ser completo.
-- O conteúdo futuro deve ser baseado em Markdown/MDX e metadados centralizados.
-- Não use banco de dados, CMS, autenticação ou serviços externos de busca.
+- Artigos usam `/docs/[...slug]`.
+- O conteúdo público vem de `content/docs/**/*.md` e `content/docs/**/*.mdx`.
+- Markdown/MDX versionado permanece a fonte pública da documentação.
+- A mesma coleção normalizada alimenta, conforme a arquitetura atual, Home, artigos, hubs, rotas, sidebar, drawer, breadcrumbs, busca, TOC, paginação, Related, sitemap e metadados.
+- Não criar uma segunda lista manual concorrente para representar documentos já existentes na coleção.
+- `pageType` aceita `hub`, `task` e `reference`.
+- Um hub é declarado explicitamente; não deve ser inferido somente pela existência de filhos.
+- Hubs com páginas-filhas mantêm os cards internos **no final do conteúdo**, depois de “Conceitos importantes” quando essa seção existir.
+- Os cards internos dos hubs são compactos e subordinados ao artigo.
+- Os seis cards principais de Funcionalidades permanecem visualmente equivalentes:
+  - Visão Geral;
+  - Busca Inteligente;
+  - Documentos;
+  - Favoritos;
+  - Workflows;
+  - Relatórios.
+- Documentos e Workflows não recebem maior peso visual apenas por possuírem páginas-filhas.
+- Sidebar e drawer consomem a mesma árvore de navegação.
+- Estado ativo e estado expandido da navegação são independentes.
+- A Sidebar V2.5 preserva a geometria estrutural:
+
+```text
+expanded: 240px
+collapsed: 48px
+preview: 240px
+left: 0
+```
+
+- Recolher a sidebar não deve deslocar indevidamente artigo ou TOC.
+- O estado expanded/collapsed atual não usa storage permanente; uma nova montagem inicia expanded.
+- Preview por ponteiro deve respeitar dispositivos com hover/pointer apropriados; teclado e `Escape` continuam suportados.
+- O TOC prioriza H2/H3 visualmente.
+- H4 pode continuar participando da estrutura, busca e compatibilidade sem dominar o TOC.
+- Páginas densas usam organização/progressive disclosure antes de serem divididas apenas por causa do tamanho do TOC.
+- A busca do GoDocs Docs é diferente da **Busca Inteligente** do GoDocs.
+- A busca da documentação permanece local, determinística e sem IA/embeddings.
+- Contratos atuais da busca:
+
+```text
+máximo de 12 resultados
+até 3 resultados por documento canônico
+snippet de 220 caracteres
+ranking antes da diversidade
+```
+
+- Aliases históricos não podem gerar resultados duplicados.
+- Compatibilidade atualmente protegida:
+
+```text
+Documentos: 30 aliases/anchors
+Workflows: 49 aliases/anchors
+Total: 79
+```
+
+- `related` é manual, factual, opcional e limitado a no máximo 4 destinos.
+- Related não utiliza similaridade automática ou IA.
+- Paginação permanece hierárquica por domínio; não deve virar uma sequência global plana.
+- Temas claro e escuro são requisitos estruturais.
+- A paleta atual é a **A2 Contrast Refined**.
+- O background oficial da Home possui variantes responsivas para tema claro e escuro e é baseline aprovado.
+- Logos oficiais atuais também são baseline aprovado.
+- Não reabrir Background, Logos ou paleta em tarefa focal sem problema comprovado ou novo escopo explícito.
+- Home Cards V2 possuem resposta visual mais rica apenas dentro dos limites definidos no `DESIGN.md`.
+- Imagens instrutivas já fazem parte da experiência documental.
+- `Figure` suporta apresentação `instructional` e lightbox quando necessário.
+- **Busca Inteligente** é serviço adicional do GoDocs e depende de contratação no ambiente.
+- **Workflows** também é serviço adicional; ações podem variar conforme permissões.
+- Permissões devem ser tratadas por ação quando necessário, sem presumir que um usuário pode criar, editar, mover, concluir, excluir ou configurar tudo.
+- A documentação atual não exige autenticação própria para leitura.
+- O Editor próprio e Supabase estão fora do baseline principal e permanecem pausados.
+- Chat/assistente e GoPractice são direções futuras, não funcionalidades atuais e não devem ser iniciados por inferência.
 
 ## Stack
 
-Preserve a stack existente se ela for adequada.
+Preserve a stack atual do repositório.
 
-Se o repositório contiver apenas especificações e referências, inicialize com:
+Baseline confirmado no `package.json`:
 
-- Next.js com App Router;
-- TypeScript estrito;
-- Tailwind CSS;
-- React Server Components por padrão;
-- componentes client-side apenas para busca, tema, drawer e outras interações reais;
-- `next/font` com Inter ou fonte equivalente disponível;
-- Lucide Icons ou alternativa enxuta e consistente;
-- pipeline local de Markdown/MDX compatível com build estático/servidor.
+```text
+Next.js 16.2.11
+React 19.2.8
+React DOM 19.2.8
+TypeScript 6.0.3
+Tailwind CSS 4.3.3
+pnpm 11.9.0
+Vitest 4.1.10
+Zod 4.4.3
+next-mdx-remote 6.0.0
+Lucide React 1.25.0
+Inter Variable
+```
 
-Use o gerenciador indicado por lockfile. Se não houver lockfile, escolha um único gerenciador comum. Instale apenas dependências necessárias.
+O package manager obrigatório é:
 
-## O que implementar
+```text
+pnpm@11.9.0
+```
+
+Não use npm, Yarn ou Bun para instalar dependências e não crie lockfiles concorrentes.
+
+Scripts atuais relevantes:
+
+```bash
+pnpm dev
+pnpm content:validate
+pnpm search:benchmark
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+pnpm audit:prod
+```
+
+Use React Server Components por padrão quando não houver necessidade real de estado/interação no cliente.
+
+Reutilize componentes e dependências existentes antes de criar abstrações ou instalar pacotes novos.
+
+## O que implementar / preservar
+
+Implemente **somente o escopo da tarefa atual** e preserve os contratos consolidados que não fazem parte da mudança.
 
 ### Fundação
 
-- aplicação configurada e executável;
-- TypeScript estrito;
-- scripts claros para desenvolvimento, lint, typecheck, testes existentes e build;
-- metadados básicos da aplicação;
-- tokens semânticos para cores, tipografia, spacing, radius, bordas e layout;
-- estrutura organizada conforme o blueprint.
+- Não reinicialize o projeto.
+- Examine a arquitetura existente antes de escrever código.
+- Preserve TypeScript estrito.
+- Preserve a coleção local de Markdown/MDX.
+- Preserve a separação entre conteúdo, navegação, layout, busca e regras de domínio.
+- Reutilize componentes, utilitários e tokens existentes.
+- Não crie nova fonte de conteúdo.
+- Não faça refatoração geral como efeito colateral de uma tarefa focal.
+- Não silencie erros com `any`, `@ts-ignore`, mocks permanentes ou stubs.
+- Se a tarefa alterar uma decisão estrutural, sincronize a fonte canônica correspondente quando isso fizer parte do escopo.
 
 ### Home
 
-- header sticky;
-- wordmark textual com `go` em laranja e `docs` na cor primária, seguido por separador e pelo rótulo `Documentação`;
-- nome acessível completo: `GoDocs Documentação`;
-- busca em posição de destaque;
-- alternância de tema;
-- apresentação institucional curta;
-- estado indicando que o conteúdo será publicado progressivamente;
-- detalhe abstrato laranja muito sutil, se contribuir para o acabamento;
-- nenhuma sidebar vazia, seção inventada, card fictício ou CTA sem destino.
+A Home atual já é uma superfície real de descoberta.
 
-Use estes textos:
+Preserve, salvo escopo explícito:
 
-- título: `Documentação do GoDocs`;
-- descrição: `Guias, conceitos e instruções para utilizar o GoDocs.`;
-- estado: `Novos conteúdos serão publicados progressivamente.`
+- Hero com título, descrição e busca;
+- background oficial responsivo por tema;
+- header próprio da Home;
+- seção “Comece por aqui”;
+- seis cards de Funcionalidades equivalentes;
+- estrutura editorial derivada da coleção;
+- comportamento responsivo;
+- FAQ apenas no estado realmente implementado, sem inventar perguntas para preencher espaço;
+- footer e ativos de marca atuais.
+
+Background e logos estão encerrados como baseline visual. Não criar uma nova rodada apenas por preferência estética.
 
 ### Header e marca
 
-- menu mobile à esquerda quando aplicável;
-- wordmark inspirado na relação visual do logo GoDocs: `go` em laranja, `docs` em cor de texto, separador discreto e rótulo `Documentação`;
-- não redesenhe nem vetorize o logo a partir do screenshot;
-- encapsule a marca em componente substituível por asset oficial;
-- busca central com placeholder `Pesquisar na documentação...`;
-- indicação do atalho `Ctrl K` ou `⌘ K`;
-- toggle de tema à direita;
-- nenhum link externo fictício.
+- Use os ativos oficiais disponíveis em `public/brand/`.
+- Não volte ao antigo wordmark textual improvisado do MVP.
+- Não redesenhe ou vetorize logo por inferência de screenshot.
+- Preserve variantes adequadas aos temas.
+- Header permanece funcional, legível e responsivo.
+- A Home pode usar comportamento transparente → superfície após scroll conforme implementação atual.
+- Páginas de documentação preservam header sticky e controles previstos pelo Design System.
+- Nenhum link externo fictício.
 
 ### Pesquisa
 
-- abre por clique, `Ctrl + K` e `Cmd + K`;
-- fecha por `Escape`;
-- possui label acessível;
-- gerencia, prende e restaura foco;
-- funciona por teclado e em mobile;
-- usa índice local derivado dos documentos;
-- estado vazio: `Nenhum conteúdo disponível para pesquisa.`;
-- não contém resultados fictícios.
+Preserve a arquitetura atual:
+
+- índice local;
+- busca determinística;
+- clique e `Ctrl/Cmd + K`;
+- `Escape`;
+- teclado;
+- combobox/listbox e ARIA;
+- foco inicial e retorno adequado;
+- página/seção como tipos de resultado;
+- limite de 12;
+- até 3 resultados por documento;
+- snippet de 220;
+- sem duplicar aliases.
+
+Não introduza:
+
+- IA;
+- embeddings;
+- serviço externo;
+- ranking novo;
+- autocomplete complexo;
+
+sem uma tarefa específica de arquitetura de busca.
 
 ### Conteúdo e navegação
 
-- diretório `content/docs/` pronto para arquivos Markdown/MDX;
-- loader/índice único e tipado para metadados e conteúdo;
-- navegação, busca, paginação e sumário preparados para consumir essa fonte;
-- rota de artigos em `/docs/[...slug]`;
-- `not-found` coerente para slug inexistente;
-- ausência de artigo demonstrativo publicado;
-- documentação curta no README ou arquivo apropriado explicando como adicionar a primeira página.
-
-O suporte declarado a Markdown/MDX deve ser real. Adicionar um arquivo válido conforme o contrato do blueprint deve ser suficiente para torná-lo disponível após build, sem reconstruir manualmente o layout. Se uma etapa de registro for tecnicamente necessária, centralize-a e documente-a.
+- Conteúdo público permanece em `content/docs/`.
+- Slugs e URLs publicados são contratos.
+- Preserve os 79 aliases/anchors protegidos.
+- Navegação deve continuar derivada da coleção.
+- Sidebar e drawer continuam compartilhando a mesma árvore.
+- Hubs continuam derivados da taxonomia, não de listas hardcoded específicas.
+- Breadcrumbs representam a hierarquia editorial real.
+- Paginação não salta arbitrariamente entre domínios.
+- Related continua manual e separado de previous/next.
+- Não invente documentação para demonstrar um componente.
 
 ### Layout de artigos
 
-Implemente a estrutura reutilizável necessária para:
+Preserve o `ArticleShell` e a arquitetura atual de leitura:
 
-- sidebar hierárquica à esquerda;
-- breadcrumb, título, descrição e corpo;
-- sumário à direita quando houver headings suficientes;
-- headings com âncoras e offset correto;
-- imagens, listas, links, tabelas e código;
-- callouts e passos;
-- navegação anterior/próxima.
+- sidebar à esquerda em desktop;
+- breadcrumb;
+- título e descrição;
+- metadados quando aplicáveis;
+- corpo MDX;
+- TOC;
+- figuras;
+- callouts;
+- passos;
+- tabelas;
+- código;
+- Related;
+- paginação.
 
-Não crie páginas ou componentes vazios apenas para preencher uma lista. Não publique conteúdo fictício para demonstrar o layout.
+A coluna principal permanece controlada e centrada.
+
+Não use cards, painéis ou ornamentos em excesso dentro do artigo.
+
+Imagens instrutivas devem reduzir ambiguidade. Não devem ser decoração.
 
 ### Tema e responsividade
 
-- temas claro e escuro;
-- preferência persistida;
-- preferência inicial de `prefers-color-scheme`;
-- prevenção de flash de tema incorreto;
-- desktop, notebook, tablet e mobile;
-- drawer de navegação nos artigos em telas menores;
-- sem overflow horizontal;
-- respeito a `prefers-reduced-motion`.
+Preserve a **A2 Contrast Refined**.
+
+Direção cromática consolidada:
+
+```text
+dark canvas: #151515
+dark navigation: #1a1a1a
+dark surface: #202020
+dark interactive: #262626
+dark elevated: #2c2c2c
+
+light canvas: #f6f7f9
+light navigation: #f1f3f5
+light surface: #ffffff
+light interactive: #e9edf1
+
+orange dark accent: #ff7a1a
+orange light accent: #ff7600
+```
+
+Os valores completos e papéis semânticos pertencem ao `DESIGN.md`.
+
+Breakpoints estruturais existentes devem ser preferidos a novos breakpoints isolados:
+
+```text
+1320px
+1024px
+768px
+341px
+```
+
+Valide:
+
+- desktop amplo;
+- notebook;
+- tablet;
+- mobile;
+- tema claro;
+- tema escuro.
+
+Não introduza overflow horizontal.
 
 ### Acessibilidade
 
-- HTML semântico e landmarks;
-- hierarquia válida de headings;
+Preserve e valide:
+
+- HTML semântico;
+- um único H1 por página;
+- landmarks;
+- `lang="pt-BR"`;
+- skip link;
+- navegação completa por teclado;
 - foco visível;
-- labels e nomes acessíveis;
-- contraste adequado;
-- áreas de toque confortáveis;
-- operação completa por teclado;
-- gerenciamento correto de foco em dialog e drawer;
-- estado nunca comunicado apenas por cor.
+- contraste WCAG AA quando aplicável;
+- targets adequados;
+- labels acessíveis;
+- `aria-current`;
+- dialog/drawer/lightbox com foco correto;
+- `Escape`;
+- retorno de foco;
+- informação que não dependa apenas de cor;
+- `prefers-reduced-motion`.
+
+Uma tarefa visual não está concluída apenas porque compila.
 
 ## Restrições
 
 Não:
 
-- integre com o GoDocs real;
-- crie autenticação, banco de dados, CMS, analytics ou editor;
-- use serviço externo de busca;
-- invente documentação, categorias, dados ou funcionalidades;
-- use lorem ipsum;
-- copie o layout ou a marca das referências;
-- use verde como cor principal;
-- transforme a home em dashboard ou landing page promocional;
-- renderize cards de seções inexistentes;
-- inclua GitHub, API, SDK, suporte, redes sociais ou CTAs sem destino real;
-- edite as imagens de referência;
-- faça refatorações fora do escopo;
-- deixe stubs, controles inativos, logs de depuração ou erros silenciados.
+- reconstrua o projeto como se ainda estivesse no MVP inicial;
+- integre com código, APIs privadas ou autenticação interna do GoDocs sem autorização explícita;
+- invente comportamento, permissão, mensagem, dado, integração, link ou funcionalidade do GoDocs;
+- universalize exemplo de cliente ou ambiente;
+- transforme uma tarefa visual em revisão factual de conteúdo sem solicitação;
+- altere URLs, slugs, anchors ou aliases protegidos sem decisão arquitetural;
+- crie uma segunda fonte manual para documentos já presentes na coleção;
+- introduza banco, CMS runtime ou serviço externo sem tarefa específica;
+- transforme a busca atual em IA;
+- retome o Editor, Supabase ou autenticação por iniciativa própria;
+- execute migrations ou bootstrap de owner;
+- crie ou altere secrets;
+- use credenciais privilegiadas de produção em desenvolvimento;
+- faça `push`, merge, PR, promoção ou deploy sem autorização explícita e confirmação do ambiente;
+- assuma que `push = deploy`;
+- assuma que um site acessível corresponde ao `HEAD` atual sem verificar;
+- trate o GitHub auxiliar como fonte superior ao Bitbucket;
+- use npm, Yarn ou Bun para gerenciar dependências;
+- crie `package-lock.json`, `yarn.lock` ou lockfile concorrente;
+- edite `project-docs/references/`;
+- copie Mintlify, AbacatePay, Confluence, 21st.dev ou outra referência literalmente;
+- use verde ou cor funcional como substituta da identidade laranja;
+- transforme a documentação em dashboard ou landing page;
+- reabra Home, Background, Logos, paleta, busca, TOC ou outra frente estabilizada quando ela estiver fora do escopo;
+- deixe logs de depuração, controles inativos, stubs ou erros silenciados;
+- declare validação que não foi realmente executada.
 
 ## Processo obrigatório
 
-1. Analise o repositório, as três especificações e as cinco imagens.
-2. Defina a menor arquitetura capaz de cumprir o blueprint.
-3. Implemente toda a fundação e a interface.
-4. Execute a aplicação e inspecione-a visualmente.
-5. Compare a hierarquia e a leitura com o Mintlify/AbacatePay.
-6. Compare marca, superfícies e contraste com o GoDocs.
-7. Valide desktop e mobile nos breakpoints do blueprint.
-8. Valide temas claro e escuro.
-9. Teste busca por clique, teclado e `Escape`.
-10. Verifique foco, console, links, overflow e estados vazios.
-11. Execute lint, typecheck, testes relevantes e build de produção.
-12. Corrija todos os problemas introduzidos.
-13. Faça uma segunda revisão visual e refine espaçamento, tipografia, contraste, alinhamento e estados interativos.
+1. Leia `AGENTS.md`.
+2. Leia `daily_stats.md`.
+3. Confirme pasta, branch, `HEAD`, remote e working tree.
+4. Identifique o escopo real da solicitação atual.
+5. Leia somente as fontes canônicas adicionais necessárias ao domínio da tarefa.
+6. Examine código, testes e estilos da área afetada.
+7. Identifique contratos e regression guards que precisam permanecer intactos.
+8. Verifique se já existe componente, token, utilitário ou padrão reutilizável.
+9. Implemente a menor mudança coerente capaz de atender integralmente a tarefa.
+10. Não amplie o escopo por iniciativa própria.
+11. Execute as validações proporcionais ao impacto.
+12. Para tarefa visual, execute a aplicação e inspecione a interface real.
+13. Valide breakpoints relevantes e temas claro/escuro.
+14. Teste teclado, foco, hover/pointer e reduced motion quando a interação for afetada.
+15. Verifique console, overflow, links e estados relevantes.
+16. Compare a solução com `DESIGN.md` e referências somente quando aplicável.
+17. Corrija regressões introduzidas pela tarefa.
+18. Faça uma revisão final focada no escopo original.
+19. Não faça operação remota sem autorização explícita.
+20. Se a tarefa alterar uma decisão canônica e incluir documentação de fechamento, atualize a fonte responsável.
+
+### Validação por impacto
+
+Código TypeScript, componente ou lógica:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+```
+
+Conteúdo, MDX, frontmatter, links, assets ou taxonomia:
+
+```bash
+pnpm content:validate
+```
+
+Busca, ranking ou indexação:
+
+```bash
+pnpm search:benchmark
+```
+
+Dependências:
+
+```bash
+pnpm audit:prod
+```
+
+Mudança com impacto de build/publicação:
+
+```bash
+pnpm build
+```
+
+Categorias são cumulativas. Uma mudança que atravesse mais de um domínio precisa combinar as validações relevantes.
+
+### Ferramentas auxiliares
+
+**Impeccable** pode ser usado como auditoria e quality gate, especialmente em tarefas visuais, acessibilidade e fechamento de lote.
+
+**UI UX PRO MAX** pode apoiar pesquisa e revisão de UX.
+
+Essas ferramentas:
+
+- não substituem `DESIGN.md`;
+- não redefinem produto;
+- não autorizam mudança por conta própria;
+- não formam um Design System concorrente.
+
+**Build Web Apps, Lovable e referências externas** pertencem ao fluxo de prototipagem/experimento:
+
+```text
+protótipo
+→ avaliação
+→ decisão
+→ implementação oficial adaptada ao repositório
+```
+
+Não copie solução externa sem adaptação à arquitetura, tokens, tipos, acessibilidade e componentes do projeto.
 
 ## Critérios de aceite
 
 A entrega só está concluída quando:
 
-- a aplicação inicia e o build de produção passa;
-- `/` apresenta uma home profissional e intencional;
-- a interface é reconhecível como GoDocs sem copiar o sistema;
-- a experiência é reconhecível como documentação moderna;
-- tema, pesquisa e responsividade funcionam;
-- teclado e foco funcionam corretamente;
-- a arquitetura aceita o primeiro documento real;
-- não há artigos, categorias, resultados ou links fictícios;
-- não há erros introduzidos de lint, tipos, build ou console;
-- a interface foi inspecionada e refinada visualmente.
+- a solicitação atual foi atendida integralmente dentro do escopo;
+- o código existente relevante foi compreendido antes da alteração;
+- nenhum trabalho local do usuário foi sobrescrito;
+- nenhuma informação do GoDocs foi inventada;
+- URLs, aliases e contratos públicos não foram quebrados sem autorização;
+- conteúdo e navegação continuam derivados das fontes corretas;
+- TypeScript e convenções existentes foram preservados;
+- os comandos aplicáveis foram executados e seus resultados são conhecidos;
+- mudanças visuais foram inspecionadas em interface renderizada;
+- tema claro e escuro permanecem funcionais quando afetados;
+- breakpoints relevantes permanecem utilizáveis;
+- teclado, foco e acessibilidade permanecem funcionais;
+- não há overflow ou erro de console introduzido pela tarefa;
+- a solução segue `PRODUCT.md`, `DESIGN.md`, `REDESIGN_ARCHITECTURE.md` e `SYSTEM_BLUEPRINT.md` nos domínios aplicáveis;
+- nenhuma frente futura foi transformada em capacidade atual por inferência;
+- nenhuma operação de publicação foi feita sem autorização;
+- limitações reais restantes estão claramente registradas.
+
+Para uma alteração visual focal, também confirme que ela não reabriu componentes ou áreas congeladas fora do escopo.
 
 ## Entrega final
 
-Ao concluir, informe:
+Ao concluir, informe de forma objetiva:
 
-- resumo do que foi implementado;
-- stack e arquitetura adotadas;
-- rotas criadas;
-- principais arquivos alterados;
-- como adicionar o primeiro documento;
-- validações executadas e resultados;
-- limitações reais restantes.
+- o que foi implementado;
+- principais arquivos criados ou alterados;
+- decisões técnicas ou visuais relevantes;
+- contratos importantes preservados;
+- validações realmente executadas e seus resultados;
+- inspeção visual realizada, quando aplicável;
+- limitações, riscos ou pendências reais;
+- estado de Git/deploy somente se tiver sido verificado ou modificado durante a tarefa.
 
-Não pare em decisões técnicas triviais. Implemente, valide e refine o MVP completo.
+Não apresente trabalho não executado como concluído.
+
+Não repita todo o histórico do projeto na entrega.
+
+Não pare em decisões técnicas rotineiras que possam ser resolvidas com segurança pelo código, pelos testes ou pelas fontes canônicas.
+
+O princípio operacional é:
+
+> **entenda o estado real, preserve os contratos corretos, altere apenas o necessário, valide proporcionalmente ao impacto e nunca invente o que o projeto não comprova.**
