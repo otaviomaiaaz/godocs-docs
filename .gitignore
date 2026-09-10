@@ -46,3 +46,9 @@ __pycache__/
 
 # release tooling (svu, git-cliff) baixada por scripts/release.sh
 .release-tools
+
+# Obsidian — estado local do Knowledge Brain
+/project-knowledge/.obsidian/workspace.json
+/project-knowledge/.obsidian/workspace-mobile.json
+/project-knowledge/.obsidian/cache/
+/project-knowledge/.trash/

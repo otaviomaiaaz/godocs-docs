@@ -20,12 +20,32 @@ Antes de implementar qualquer tarefa:
 2. siga a solicitação atual do usuário como instrução principal da tarefa;
 3. consulte `project-docs/SYSTEM_BLUEPRINT.md` quando a tarefa envolver arquitetura, interface, experiência ou comportamento estrutural do produto;
 4. inspecione `project-docs/references/` quando a tarefa afetar interface ou identidade visual.
+5. consulte `project-knowledge/` quando a tarefa exigir contexto histórico, decisões anteriores, pesquisas, aprendizados, relações entre conceitos ou conhecimento complementar do projeto; use o MOC relevante como ponto de entrada.
 
 Em caso de conflito, siga esta ordem: solicitação atual do usuário, este arquivo, `project-docs/SYSTEM_BLUEPRINT.md` e referências visuais.
 
 `project-docs/PROJECT_PROMPT.md` é um documento histórico da implementação inicial e não deve ser tratado como instrução ativa, salvo quando o usuário solicitar explicitamente sua consulta.
 
 `project-docs/daily_stats.md` é uma memória de acompanhamento do projeto e não faz parte da leitura obrigatória para tarefas de desenvolvimento, salvo quando o usuário solicitar uma atualização, auditoria de progresso ou retomada de contexto.
+
+### 2.1 Knowledge Brain — Obsidian e Zettelkasten
+
+O diretório `project-knowledge/` é a base de conhecimento conectada do desenvolvimento do GoDocs Docs. Ele preserva decisões, aprendizados, pesquisas, relações entre conceitos, contexto histórico e conhecimento reutilizável por meio do Obsidian e do método Zettelkasten.
+
+Use essa base quando a tarefa exigir contexto que não esteja suficientemente representado nas fontes canônicas ou quando for necessário compreender por que uma decisão existe, com quais conceitos ela se relaciona ou quais aprendizados anteriores devem ser considerados.
+
+Ao consultar o Knowledge Brain:
+
+- use `project-knowledge/20-mocs/MOC - GoDocs Docs.md` ou o MOC específico do domínio como ponto de entrada;
+- consulte `project-knowledge/_system/KNOWLEDGE_CONTRACT.md` quando precisar entender a governança da base;
+- trate notas com `status: draft` como conhecimento ainda não consolidado;
+- trate `project-knowledge/00-inbox/` como conteúdo temporário;
+- não trate arquivos em `project-knowledge/40-sources/` automaticamente como fatos do produto;
+- não promova hipótese, pesquisa ou interpretação do Knowledge Brain para regra oficial sem evidência ou decisão correspondente;
+- em caso de conflito, siga a solicitação atual, o estado real do repositório e a fonte canônica especializada;
+- quando um conhecimento se tornar uma regra oficial do projeto, atualize também a fonte canônica correspondente.
+
+O Knowledge Brain complementa, mas não substitui, `AGENTS.md`, `PRODUCT.md`, `DESIGN.md`, `content/docs/`, os documentos formais de `project-docs/` ou o estado real do código e do Git.
 
 ## 3. Invariantes do produto
 
