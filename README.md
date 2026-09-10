@@ -40,6 +40,31 @@ feature aprovada → PR isolada para main → produção
 
 Se a feature já estiver misturada a outras integrações, crie uma branch de promoção a partir de `main` e selecione apenas os commits aprovados. Nunca use `develop` como promoção automática para produção.
 
+## Release (criar uma nova versão de produção)
+
+O que o `bitbucket-pipelines.yml` deste repo faz: push em `develop` publica o canal
+**stage**; a **produção só sai de uma tag `vX.Y.Z`** (quality → build → Deploy prod).
+
+O script de release é **único para todos os apps do v2** e mora em
+`godocs4-deploy/scripts/v2-release.sh` — antes era um `scripts/release.sh` copiado em
+cada repo e as correções em um nunca chegavam nos outros. Rode-o do clone do
+`godocs4-deploy`, que opera o checkout em `v2/apps/docs/`:
+
+```bash
+cd <caminho>/godocs4-deploy
+git -C v2/apps/docs pull --ff-only        # a develop local igual à origin
+
+./scripts/v2-release.sh docs --dry-run    # mostra versão + CHANGELOG, sem escrever nada
+./scripts/v2-release.sh docs              # bumpa package.json + CHANGELOG, empurra em
+                                          # develop → o STAGE builda em seguida
+# confira o stage, então:
+./scripts/v2-release.sh docs --tag        # empurra a tag vX.Y.Z → build :prod → PROD
+```
+
+A versão sai dos conventional commits (`feat` → minor, `fix` → patch, qualquer outro
+commit → patch). Quando o histórico mente — um `feat` que na prática é uma correção
+pequena — force o nível: `--patch`, `--minor`, `--major`, ou `--version vX.Y.Z`.
+
 ## Configuração local e serviços externos
 
 Arquivos `.env*` reais continuam ignorados pelo Git. Enquanto o Editor estiver pausado, não crie `.env.local`, projeto Supabase, usuário de teste, migration ou bootstrap para ele. A configuração registrada no snapshot `feature/editor` será retomada somente quando essa frente voltar a ser autorizada.

@@ -6,7 +6,7 @@
 #   tag vX.Y.Z        → qualidade → build :vX.Y.Z + :prod + :latest → deploy PROD
 #
 # Estratégia (a mesma da landing e do godocs4-syncer): trunk = `develop`; a PROD
-# só sai da TAG, criada localmente por ./scripts/release.sh (bump do package.json
+# só sai da TAG, criada localmente por ./scripts/v2-release.sh docs (bump do package.json
 # + CHANGELOG na develop, depois `--tag`). A branch `main` não participa do deploy.
 #
 # Duas etapas por deploy:
@@ -145,7 +145,7 @@ pipelines:
             - git config --global --add safe.directory "$DEPLOYDIR"
             - git pull --ff-only
             - ./scripts/v2-redeploy.sh stage godocs4-docs "$BITBUCKET_COMMIT"
-  # Prod: disparado pela tag de versão (criada por ./scripts/release.sh --tag na develop).
+  # Prod: disparado pela tag de versão (criada por ./scripts/v2-release.sh docs --tag na develop).
   tags:
     "v*":
       - step: *quality
