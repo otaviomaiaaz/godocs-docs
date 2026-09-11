@@ -20,6 +20,8 @@ const SESSION_COOKIES = ["gd_at", "gd_rt", "gd_csrf"];
 
 type SessionCheck = "valid" | "rejected" | "unknown";
 
+const refreshesInFlight = new Map<string, Promise<string[] | null>>();
+
 export async function proxy(request: NextRequest) {
   if (process.env.DOCS_AUTH_ENABLED !== "true") return NextResponse.next();
 
@@ -30,6 +32,16 @@ export async function proxy(request: NextRequest) {
   if (session === "valid") {
     await trackOpen(request, cookie as string);
     return NextResponse.next();
+  }
+
+  if (session === "rejected" && cookie) {
+    const renewed = await renewSession(cookie);
+    if (renewed) {
+      await trackOpen(request, cookie);
+      const response = NextResponse.next();
+      for (const value of renewed) response.headers.append("set-cookie", value);
+      return response;
+    }
   }
 
   const login = new URL(LOGIN_PATH, request.nextUrl.origin);
@@ -79,5 +91,34 @@ async function checkSession(cookie: string): Promise<SessionCheck> {
       : "unknown";
   } catch {
     return "unknown";
+  }
+}
+
+function renewSession(cookie: string): Promise<string[] | null> {
+  const pending = refreshesInFlight.get(cookie);
+  if (pending) return pending;
+
+  const attempt = requestRefresh(cookie);
+  refreshesInFlight.set(cookie, attempt);
+  void attempt.then(() => refreshesInFlight.delete(cookie));
+  return attempt;
+}
+
+async function requestRefresh(cookie: string): Promise<string[] | null> {
+  const baseUrl = process.env.DOCS_AUTH_API_URL;
+  if (!baseUrl) return null;
+
+  try {
+    const response = await fetch(`${baseUrl}/api/v1/refresh`, {
+      method: "POST",
+      headers: { cookie },
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+
+    const renewed = response.headers.getSetCookie();
+    return renewed.length > 0 ? renewed : null;
+  } catch {
+    return null;
   }
 }

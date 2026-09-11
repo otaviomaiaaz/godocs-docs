@@ -103,6 +103,87 @@ describe("gate de sessão da doc", () => {
     expect((await proxy(request("/primeiro-acesso", "gd_at=abc"))).status).toBe(307);
   });
 
+  it("renova a sessão pelo /refresh quando só o access expirou", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    const fetchMock = vi.fn(async (url: string) =>
+      url.endsWith("/refresh")
+        ? new Response(null, {
+            status: 200,
+            headers: { "set-cookie": "gd_at=novo; Path=/; HttpOnly" },
+          })
+        : new Response(null, { status: 401 }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await proxy(request("/primeiro-acesso", "gd_rt=valido"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.getSetCookie()).toContain(
+      "gd_at=novo; Path=/; HttpOnly",
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://app:3333/api/v1/refresh",
+      expect.objectContaining({ method: "POST", headers: { cookie: "gd_rt=valido" } }),
+    );
+  });
+
+  it("não expira os cookies quando o refresh renova a sessão", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        url.endsWith("/refresh")
+          ? new Response(null, {
+              status: 200,
+              headers: { "set-cookie": "gd_rt=rodado; Path=/; HttpOnly" },
+            })
+          : new Response(null, { status: 401 }),
+      ),
+    );
+
+    const response = await proxy(request("/primeiro-acesso", "gd_rt=velho"));
+
+    expect(response.headers.getSetCookie().join(" ")).not.toContain("Max-Age=0");
+  });
+
+  it("dispara um único refresh para requisições concorrentes do mesmo browser", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    const fetchMock = vi.fn(async (url: string) =>
+      url.endsWith("/refresh")
+        ? new Response(null, {
+            status: 200,
+            headers: { "set-cookie": "gd_at=novo; Path=/; HttpOnly" },
+          })
+        : new Response(null, { status: 401 }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Promise.all([
+      proxy(request("/primeiro-acesso", "gd_rt=corrida")),
+      proxy(request("/instalacao", "gd_rt=corrida")),
+      proxy(request("/suporte", "gd_rt=corrida")),
+    ]);
+
+    const refreshes = fetchMock.mock.calls.filter(([url]) =>
+      (url as string).endsWith("/refresh"),
+    );
+    expect(refreshes).toHaveLength(1);
+  });
+
+  it("manda para o /login quando o refresh também é recusado", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 401 })));
+
+    const response = await proxy(request("/primeiro-acesso", "gd_rt=morto"));
+
+    expect(response.status).toBe(307);
+    expect(response.headers.getSetCookie().join(" ")).toContain("Max-Age=0");
+  });
+
   it("deixa passar a busca interna do otimizador de imagem, que vem sem headers", async () => {
     process.env.DOCS_AUTH_ENABLED = "true";
     process.env.DOCS_AUTH_API_URL = "http://app:3333";
