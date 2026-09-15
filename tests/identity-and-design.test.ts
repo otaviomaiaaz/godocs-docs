@@ -314,19 +314,24 @@ describe("identidade e prevenção de regressões visuais", () => {
     const darkContents = await readFile(
       path.join(projectRoot, manifest.headerDark.file),
     );
+    const normalizedDarkContents = Buffer.from(
+      darkContents.toString("utf8").replaceAll("\r\n", "\n"),
+    );
     const lightContents = await readFile(
       path.join(projectRoot, manifest.headerLight.file),
     );
     const light = decodeRgbaPng(lightContents);
 
-    expect(sha256(darkContents)).toBe(manifest.headerDark.sha256);
+    expect(sha256(normalizedDarkContents)).toBe(manifest.headerDark.sha256);
     expect(sha256(lightContents)).toBe(manifest.headerLight.sha256);
     expect([light.width, light.height]).toEqual([
       manifest.headerLight.width,
       manifest.headerLight.height,
     ]);
-    expect(darkContents.toString("utf8")).toContain('viewBox="16 27 212 88"');
-    expect(darkContents.toString("utf8")).not.toContain("<rect");
+    expect(normalizedDarkContents.toString("utf8")).toContain(
+      'viewBox="16 27 212 88"',
+    );
+    expect(normalizedDarkContents.toString("utf8")).not.toContain("<rect");
     expect(pixelAt(light, 0, 0)[3]).toBe(0);
     expect(pixelAt(light, light.width - 1, light.height - 1)[3]).toBe(0);
     expect(alphaBounds(light)).toEqual({

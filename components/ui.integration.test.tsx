@@ -589,7 +589,7 @@ describe("fluxos interativos", () => {
   });
 
   it("recolhe para um rail acessível e mantém ícones e árvore montados", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
 
     const user = userEvent.setup();
 
@@ -711,7 +711,7 @@ describe("fluxos interativos", () => {
   });
 
   it("abre preview por pointer fine e fecha sem alterar o estado persistente", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -765,7 +765,7 @@ describe("fluxos interativos", () => {
   });
 
   it("fecha com Escape o preview aberto por pointer mesmo com foco externo", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(
       <>
@@ -849,7 +849,7 @@ describe("fluxos interativos", () => {
   });
 
   it("mantém o toggle operável no preview e expande persistentemente ao clicar", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -875,7 +875,7 @@ describe("fluxos interativos", () => {
   });
 
   it("preserva a árvore e indica o ancestral ativo no rail sem expor filhos ou controles ocultos", async () => {
-    pathname.value = "/docs/funcionalidades/documentos/pastas";
+    pathname.value = "/funcionalidades/documentos/pastas";
     const user = userEvent.setup();
     const { container } = renderInSiteShell(renderSidebar());
     const tree = container.querySelector(".navigation-tree--sidebar");
@@ -930,7 +930,7 @@ describe("fluxos interativos", () => {
   });
 
   it("abre o preview por foco, fecha com Escape e não cria focus trap", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
@@ -958,7 +958,7 @@ describe("fluxos interativos", () => {
   });
 
   it("fecha o preview ao navegar sem expandir a sidebar e atualiza o active", async () => {
-    pathname.value = "/docs/funcionalidades/workflows";
+    pathname.value = "/funcionalidades/workflows";
     const user = userEvent.setup();
     const view = renderInSiteShell(renderSidebar());
 
@@ -987,7 +987,7 @@ describe("fluxos interativos", () => {
   });
 
   it("mantém branches operáveis no preview sem alterar o estado global", async () => {
-    pathname.value = "/docs/funcionalidades/documentos";
+    pathname.value = "/funcionalidades/documentos";
     const user = userEvent.setup();
     renderInSiteShell(renderSidebar());
 
