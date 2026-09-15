@@ -14,7 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import type { PointerEvent } from "react";
+import type { CSSProperties, PointerEvent } from "react";
 
 import { Brand } from "@/components/brand";
 import { DocCard } from "@/components/doc-card";
@@ -23,7 +23,7 @@ import type {
   DocNavigationGroup,
   DocNavigationItem,
 } from "@/lib/docs/navigation";
-import { SITE_DESCRIPTION } from "@/lib/site";
+import { SITE_BASE_PATH, SITE_DESCRIPTION } from "@/lib/site";
 
 type HomeIntroProps = {
   features?: HomeFeature[];
@@ -31,6 +31,11 @@ type HomeIntroProps = {
 };
 
 type LinkedNavigationItem = DocNavigationItem & { href: string };
+
+type HomeIntroStyle = CSSProperties & {
+  "--home-background-dark": string;
+  "--home-background-light": string;
+};
 
 export type HomeFeature = {
   availability: "available" | "coming-soon";
@@ -60,6 +65,11 @@ const HOME_CARD_DESCRIPTION_REFINEMENTS: Readonly<Record<string, string>> = {
     "Pesquise documentos por conteúdo, significado e filtros.",
   "funcionalidades/workflows":
     "Crie e acompanhe processos com cards, fases e automações.",
+};
+
+const HOME_STYLE: HomeIntroStyle = {
+  "--home-background-dark": `image-set(url("${SITE_BASE_PATH}/brand/backgrounds/background-godocs-black.avif") type("image/avif"), url("${SITE_BASE_PATH}/brand/backgrounds/background-godocs-black.webp") type("image/webp"))`,
+  "--home-background-light": `image-set(url("${SITE_BASE_PATH}/brand/backgrounds/background-godocs-white.avif") type("image/avif"), url("${SITE_BASE_PATH}/brand/backgrounds/background-godocs-white.webp") type("image/webp"))`,
 };
 
 function supportsPointerTilt(pointerType: string) {
@@ -243,7 +253,7 @@ export function HomeIntro({ features = [], groups }: HomeIntroProps) {
   const hasDocumentation = startEntries.length + features.length > 0;
 
   return (
-    <main className="home" id="main-content">
+    <main className="home" id="main-content" style={HOME_STYLE}>
       <section aria-labelledby="home-title" className="home-hero">
         <h1 id="home-title">Documentação do GoDocs</h1>
         <p className="home-hero__description">{SITE_DESCRIPTION}</p>

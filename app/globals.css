@@ -2915,10 +2915,7 @@ html[data-theme="light"] .docs-sidebar {
   left: 0;
   height: max(810px, 56.25vw);
   z-index: -3;
-  background-image: image-set(
-    url("/brand/backgrounds/background-godocs-black.avif") type("image/avif"),
-    url("/brand/backgrounds/background-godocs-black.webp") type("image/webp")
-  );
+  background-image: var(--home-background-dark);
   background-position: center top;
   background-repeat: no-repeat;
   background-size: max(1440px, 100vw) auto;
@@ -2941,10 +2938,7 @@ html[data-theme="light"] .docs-sidebar {
 }
 
 html[data-theme="light"] .home::before {
-  background-image: image-set(
-    url("/brand/backgrounds/background-godocs-white.avif") type("image/avif"),
-    url("/brand/backgrounds/background-godocs-white.webp") type("image/webp")
-  );
+  background-image: var(--home-background-light);
 }
 
 @media (min-width: 768px) and (max-width: 1279px) {

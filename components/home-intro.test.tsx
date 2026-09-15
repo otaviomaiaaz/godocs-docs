@@ -43,6 +43,7 @@ async function loadHomeData() {
 describe("home orientada ao conteúdo", () => {
   it("mantém o estado vazio útil, com hero, busca global e FAQ compacto", () => {
     const { container } = render(<HomeIntro groups={[]} />);
+    const home = container.querySelector(".home") as HTMLElement;
 
     expect(
       screen.getByText(/Ainda não há documentos publicados\./),
@@ -62,6 +63,12 @@ describe("home orientada ao conteúdo", () => {
         ".home-hero .search-trigger__shortcut",
       ),
     ).toHaveLength(1);
+    expect(home.style.getPropertyValue("--home-background-dark")).toContain(
+      'url("/docs/brand/backgrounds/background-godocs-black.avif")',
+    );
+    expect(home.style.getPropertyValue("--home-background-light")).toContain(
+      'url("/docs/brand/backgrounds/background-godocs-white.avif")',
+    );
     expect(
       screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent),
     ).toEqual(["Perguntas frequentes"]);
