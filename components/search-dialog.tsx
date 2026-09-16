@@ -34,6 +34,7 @@ import {
   type SearchIndex,
   type SearchResult,
 } from "@/lib/docs/search";
+import { SITE_BASE_PATH } from "@/lib/site";
 
 type IndexState = "idle" | "loading" | "ready" | "error";
 type SearchLauncherProps = {
@@ -42,6 +43,7 @@ type SearchLauncherProps = {
 type SearchOpenEvent = CustomEvent<{ trigger: HTMLButtonElement }>;
 
 const OPEN_SEARCH_EVENT = "godocs:open-search";
+const SEARCH_INDEX_PATH = `${SITE_BASE_PATH}/search-index.json`;
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -229,7 +231,7 @@ export function SearchDialog({ showLauncher = true }: { showLauncher?: boolean }
     setIndexState("loading");
 
     try {
-      const response = await fetch("/search-index.json", {
+      const response = await fetch(SEARCH_INDEX_PATH, {
         headers: { Accept: "application/json" },
         signal: controller.signal,
       });

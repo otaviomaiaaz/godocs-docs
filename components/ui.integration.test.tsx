@@ -196,6 +196,12 @@ describe("fluxos interativos", () => {
     await user.click(trigger);
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/docs/search-index.json",
+      expect.objectContaining({
+        headers: { Accept: "application/json" },
+      }),
+    );
 
     const combobox = await screen.findByRole("combobox");
     const dialog = screen.getByRole("dialog", {
