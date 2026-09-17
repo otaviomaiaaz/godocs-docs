@@ -91,7 +91,8 @@ describe("gate de sessão da doc", () => {
 
     const response = await proxy(request("/primeiro-acesso", "gd_at=bom"));
 
-    expect(response.status).toBe(307);
+    expect(response.status).toBe(503);
+    expect(response.headers.get("location")).toBeNull();
     expect(response.headers.getSetCookie()).toHaveLength(0);
   });
 
@@ -100,7 +101,23 @@ describe("gate de sessão da doc", () => {
     process.env.DOCS_AUTH_API_URL = "http://app:3333";
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("ECONNREFUSED")));
 
-    expect((await proxy(request("/primeiro-acesso", "gd_at=abc"))).status).toBe(307);
+    const response = await proxy(request("/primeiro-acesso", "gd_at=abc"));
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
+    expect(response.headers.get("retry-after")).toBe("5");
+  });
+
+  it("não transforma erro transitório da API em logout", async () => {
+    process.env.DOCS_AUTH_ENABLED = "true";
+    process.env.DOCS_AUTH_API_URL = "http://app:3333";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 503 })));
+
+    const response = await proxy(request("/primeiro-acesso", "gd_at=abc"));
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.headers.getSetCookie()).toHaveLength(0);
   });
 
   it("renova a sessão pelo /refresh quando só o access expirou", async () => {
@@ -201,6 +218,9 @@ describe("gate de sessão da doc", () => {
   it("falha fechado quando falta a URL da API", async () => {
     process.env.DOCS_AUTH_ENABLED = "true";
 
-    expect((await proxy(request("/primeiro-acesso", "gd_at=abc"))).status).toBe(307);
+    const response = await proxy(request("/primeiro-acesso", "gd_at=abc"));
+
+    expect(response.status).toBe(503);
+    expect(response.headers.get("location")).toBeNull();
   });
 });

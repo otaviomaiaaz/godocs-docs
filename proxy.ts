@@ -17,6 +17,8 @@ export const config = {
 
 const LOGIN_PATH = "/login";
 const SESSION_COOKIES = ["gd_at", "gd_rt", "gd_csrf"];
+const AUTH_UNAVAILABLE_MESSAGE =
+  "Serviço de autenticação temporariamente indisponível. Tente novamente.";
 
 type SessionCheck = "valid" | "rejected" | "unknown";
 
@@ -33,6 +35,8 @@ export async function proxy(request: NextRequest) {
     await trackOpen(request, cookie as string);
     return NextResponse.next();
   }
+
+  if (session === "unknown") return authenticationUnavailable();
 
   if (session === "rejected" && cookie) {
     const renewed = await renewSession(cookie);
@@ -53,6 +57,17 @@ export async function proxy(request: NextRequest) {
   const response = NextResponse.redirect(login);
   if (session === "rejected") expireHostOnlySession(response);
   return response;
+}
+
+function authenticationUnavailable(): NextResponse {
+  return new NextResponse(AUTH_UNAVAILABLE_MESSAGE, {
+    status: 503,
+    headers: {
+      "cache-control": "private, no-store",
+      "content-type": "text/plain; charset=utf-8",
+      "retry-after": "5",
+    },
+  });
 }
 
 function expireHostOnlySession(response: NextResponse): void {
